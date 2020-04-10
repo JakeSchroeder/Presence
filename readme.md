@@ -12,4 +12,8 @@ An Alternate Reality Game World For Project XGIS
 + 'npm run full-install'
 + 'npm run dev'
 
+`MVP`
++ Feed List
++ 
+
 
