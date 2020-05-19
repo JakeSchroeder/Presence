@@ -1,12 +1,13 @@
 import styled from "styled-components";
 import React from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-
+import axios from "axios";
 export const Colors = {
   primary: "#1Da1F2",
+  primary: "#f9d623",
   red: "#e02460",
   redHover: "rgba(224,36,94,.1)",
-  hover: "rgba(29, 161, 242, .1)",
+  hover: "rgba(249, 214, 35, .1)",
   border: "#e0e0e0",
   light: "#f5f8fa",
   body: "#657786",
@@ -27,7 +28,7 @@ export const FollowBtn = styled.button`
   font-family: inherit;
 
   &:hover {
-    background: rgba(29, 161, 242, 0.1);
+    background: ${Colors.hover};
   }
 `;
 
@@ -46,7 +47,7 @@ export const TweetBtn = styled.button`
   font-family: inherit;
 
   &:hover {
-    background: rgb(26, 145, 218);
+    background: #eac428;
   }
 `;
 
@@ -63,12 +64,14 @@ export const NormalBtn = styled.button`
   font-family: inherit;
   line-height: 39px;
   &:hover {
-    background: rgb(26, 145, 218);
+    background: #eac428;
   }
 `;
 
-export const GenericBtn = ({ children, className }) => (
-  <NormalBtn className={className}>{children}</NormalBtn>
+export const GenericBtn = ({ children, className, onClick }) => (
+  <NormalBtn onClick={onClick} className={className}>
+    {children}
+  </NormalBtn>
 );
 
 export const StyledTabList = styled(TabList)`
@@ -81,7 +84,7 @@ export const StyledTabList = styled(TabList)`
 export const StyledTab = styled(Tab)`
   cursor: pointer;
   text-align: center;
-  width: calc(100% / 3);
+  width: calc(100% / 2);
   padding: 15px;
   font-weight: bold;
   border-bottom: 2px solid transparent;
@@ -95,26 +98,12 @@ export const StyledTab = styled(Tab)`
   }
 `;
 
-const StyledArrow = styled.span`
-  cursor: pointer;
-  margin-right: 20px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    background: ${Colors.hover};
+export const setAuthToken = (token) => {
+  if (token) {
+    // Apply authorization token to every request if logged in
+    axios.defaults.headers.common["Authorization"] = token;
+  } else {
+    // Delete auth header
+    delete axios.defaults.headers.common["Authorization"];
   }
-
-  & svg {
-    width: 24px;
-    fill: ${Colors.primary};
-  }
-`;
-
-export const GoBackBtn = ({ children, onClick }) => (
-  <StyledArrow onClick={onClick}>{children}</StyledArrow>
-);
+};

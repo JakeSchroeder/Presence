@@ -19,13 +19,21 @@ const SearchWrapper = styled.div`
 `;
 
 const SearchInput = styled.input`
+  height: 38px;
   width: 100%;
   border-radius: 999px;
-  font-size: 1rem;
+  font-size: 15px;
   background: #e6ecf0;
   border: 1px solid transparent;
-  padding: 10px 10px 10px 60px;
+  padding: 10px 10px 10px 50px;
   outline: none;
+  color: ${Colors.body};
+
+  &:focus {
+    background: white;
+    color: ${Colors.title};
+    border-color: ${Colors.primary};
+  }
 `;
 
 // const SearchIconWrapper = styled.div`
@@ -41,13 +49,14 @@ const SearchIcon = styled.div`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 20px;
-  width: 24px;
+  left: 15px;
+  min-width: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   svg {
-    width: 100%;
+    fill: ${Colors.body};
+    height: 18.75px;
   }
 `;
 

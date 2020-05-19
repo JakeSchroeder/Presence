@@ -3,22 +3,31 @@ const Schema = mongoose.Schema;
 
 // Create Schema
 const UserSchema = new Schema({
-  name: {
+  avatarPath: { type: String, default: "../../../img/profile.png" },
+  displayName: {
     type: String,
-    required: true
+    required: true,
+  },
+  userName: {
+    type: String,
+    required: true,
   },
   email: {
     type: String,
-    required: true
+    required: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
+  // cart: {
+  //   type: Array,
+  //   required: true
+  // },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = User = mongoose.model("user", UserSchema);

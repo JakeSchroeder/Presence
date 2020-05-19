@@ -1,23 +1,31 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const Comment = require("./Comment");
+
 const TweetSchema = new Schema({
-  name: {
+  content: {
     type: String,
-    required: true
+    required: true,
   },
-  email: {
+  category: {
     type: String,
-    required: true
+    required: false,
   },
-  password: {
-    type: String,
-    required: true
+  comments: [Comment.schema],
+  author: { type: Schema.Types.ObjectId, ref: "user", required: true },
+  replies: {
+    type: Number,
+    default: 0,
+  },
+  likes: {
+    type: Number,
+    default: 0,
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = User = mongoose.model("users", UserSchema);
+module.exports = Tweet = mongoose.model("tweet", TweetSchema);

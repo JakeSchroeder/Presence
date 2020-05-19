@@ -4,6 +4,8 @@ import { Colors, FollowBtn, GenericBtn } from "../../utils";
 import Icons from "../icons";
 import Search from "../search";
 import profile_src from "../../images/profile.png";
+import NewMessage from "./new-message";
+import useModal from "../../hooks/useModal";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -200,42 +202,106 @@ const NewMessageDesc = styled.p``;
 //     );
 // }
 
+// const MessageModal = () => (
+//   <MessageModalWrapper>
+//     <MessageModalHeader>
+//       <CloseBtn>{Icons.close}</CloseBtn>
+//       <MessageTitle>Send Tweet</MessageTitle>
+//     </MessageModalHeader>
+//     <MessageContent>
+//       <SearchWrapperModal>
+//         <Search placeHolderText="Serch people" />
+//       </SearchWrapperModal>
+//     </MessageContent>
+//     <MessageFooter>
+//       <MessageComment type="text" placeholder="Add a comment" />
+//       <MessageSend>{Icons.sendMessage}</MessageSend>
+//     </MessageFooter>
+//   </MessageModalWrapper>
+// );
+
 const Messages = () => {
+  // const doc = document.getElementById("root");
+  // const { isOpen, openModal, closeModal, Modal } = useModal({
+  //   background: "rgba(0, 0, 0, 0.5)",
+  //   closeOnOutsideClick: false,
+  //   closeOnEsc: true,
+  //   bindTo: doc,
+  // });
+
+  const { openModal, closeModal, isModalOpen, Modal } = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 1000;
+    `,
+  });
+
   const messageExists = false;
 
   return (
-    <Wrapper>
-      <Body>
-        <HomeTitleWrapper>
-          <HomeTitle>Messages</HomeTitle>
-          <NewMessageIcon>{Icons.newMessage}</NewMessageIcon>
-        </HomeTitleWrapper>
-        <SearchWrapper>
-          <Search placeHolderText="Search for people and groups" />
-        </SearchWrapper>
-        <SendMessageWrapper>
-          <NewMessageTitle>Send a message, get a message</NewMessageTitle>
-          <NewMessageDesc>
-            Direct Messages are private conversations between you and other
-            people on Twitter. Share Tweets, media, and more!
-          </NewMessageDesc>
-          <NewMessageBtn>Start a conversation</NewMessageBtn>
-        </SendMessageWrapper>
-      </Body>
-      <SidebarWrapper>
-        {messageExists ? (
-          "Feed Here"
-        ) : (
-          <NewMessageWrapper>
-            <NewMessageTitle>You don’t have a message selected</NewMessageTitle>
+    <>
+      {isModalOpen && (
+        <Modal>
+          <NewMessage closeModal={closeModal} />
+        </Modal>
+      )}
+      <Wrapper>
+        <Body>
+          <HomeTitleWrapper>
+            <HomeTitle>Messages</HomeTitle>
+            <NewMessageIcon
+              onClick={(e) => {
+                openModal(e);
+              }}
+            >
+              {Icons.newMessage}
+            </NewMessageIcon>
+          </HomeTitleWrapper>
+          <SearchWrapper>
+            <Search placeHolderText="Search for people and groups" />
+          </SearchWrapper>
+          <SendMessageWrapper>
+            <NewMessageTitle>Send a message, get a message</NewMessageTitle>
             <NewMessageDesc>
-              Choose one from your existing messages, or start a new one.
+              Direct Messages are private conversations between you and other
+              people on Twitter. Share Tweets, media, and more!
             </NewMessageDesc>
-            <NewMessageBtn>New Message</NewMessageBtn>
-          </NewMessageWrapper>
-        )}
-      </SidebarWrapper>
-    </Wrapper>
+            <NewMessageBtn
+              onClick={(e) => {
+                openModal(e);
+              }}
+            >
+              Start a conversation
+            </NewMessageBtn>
+          </SendMessageWrapper>
+        </Body>
+        <SidebarWrapper>
+          {messageExists ? (
+            "Feed Here"
+          ) : (
+            <NewMessageWrapper>
+              <NewMessageTitle>
+                You don’t have a message selected
+              </NewMessageTitle>
+              <NewMessageDesc>
+                Choose one from your existing messages, or start a new one.
+              </NewMessageDesc>
+              <NewMessageBtn
+                onClick={(e) => {
+                  openModal(e);
+                }}
+              >
+                New Message
+              </NewMessageBtn>
+            </NewMessageWrapper>
+          )}
+        </SidebarWrapper>
+      </Wrapper>
+    </>
   );
 };
 

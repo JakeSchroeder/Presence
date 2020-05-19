@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 const FeedWrapper = styled.div``;
 
+const FeedHero = styled.div``;
+
 const FeedHeader = styled.div``;
 
 const Search = styled.div``;

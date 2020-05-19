@@ -1,17 +1,64 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link, withRouter, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Colors } from "../../../utils";
+import profile_src from "../../../images/profile.png";
+import Search from "../../search";
 import Icons from "../../icons";
+import useModal from "../../../hooks/useModal";
+import { useDropdown } from "../../../hooks/useDropdown";
+import SendMessage from "../../messages/send-message";
+// import RelpyTweetModal from "../reply-tweet";
+import NewTweetReplyModal from "../reply-tweet/modal";
+import axios from "axios";
 
 const TweetWrapper = styled.div`
+  cursor: ${({ withReply }) => (withReply ? `default` : `pointer`)};
+  position: relative;
   display: flex;
+
   padding: 10px 15px 0 15px;
 
   border-bottom: 1px solid ${Colors.border};
+
+  ${({ withReply }) =>
+    withReply
+      ? null
+      : `&:hover {
+    background: ${Colors.light};
+  }`}
 `;
+
+// const LinkWrapper = styled(Link)`
+//   &:hover {
+//     background: ${Colors.light};
+//   }
+//   display: block;
+//   /* position: absolute;
+//   top: 0;
+//   left: 0;
+//   z-index: -1; */
+//   width: 100%;
+//   height: 100%;
+// `;
 
 const TweetImgWrapper = styled.div`
   margin: 0 5px;
+  ${({ withReply }) =>
+    withReply
+      ? `
+  position: relative;
+    &:before {
+      content: "";
+      width: 2px;
+      height: 100%;
+      background: ${Colors.border};
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+    }
+  `
+      : null}
 `;
 
 const TweetImg = styled.img`
@@ -26,6 +73,10 @@ const TweetContent = styled.div`
 const NameWrapper = styled.div`
   display: flex;
   align-items: center;
+`;
+
+const StyledLink = styled(Link)`
+  display: flex;
 `;
 
 const DisplayName = styled.p`
@@ -107,14 +158,21 @@ const ShowThread = styled.p`
 
 const ModalWrapper = styled.div`
   border-radius: 5px;
-  z-index: 999;
-  position: absolute;
   background: white;
-  top: 10px;
-  right: calc(100% - 26px);
 
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px,
     rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
+`;
+
+const ModalBG = styled.div`
+  z-index: 990;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: none;
+  cursor: default;
 `;
 
 const ModalList = styled.ul``;
@@ -163,81 +221,258 @@ const ModalIconDesc = styled.span`
 //   background: rgba(0, 0, 0, 0.1);
 // `;
 
-const ActionModal = ({ toggleModal }) => {
-  const node = useRef();
+const MessageModalWrapper = styled.div`
+  border-radius: 15px;
+  position: relative;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
 
-  const handleClick = (e) => {
-    if (node.current.contains(e.target)) {
-      // inside click
-      return;
-    }
-    // outside click
-    toggleModal();
+  min-height: 400px;
+
+  height: 650px;
+
+  max-width: 80vw;
+
+  max-height: 90vh;
+  background: white;
+  min-width: 600px;
+`;
+
+const MessageModalHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-bottom: 1px solid ${Colors.border};
+  padding: 5px 15px;
+`;
+
+const MessageTitle = styled.h2`
+  margin: 10px;
+`;
+
+const MessageComment = styled.input`
+  height: 38px;
+  width: 100%;
+  border-radius: 999px;
+  font-size: 15px;
+  background: #e6ecf0;
+  border: 1px solid transparent;
+  padding: 10px 10px 10px 50px;
+  outline: none;
+  color: ${Colors.body};
+
+  &:focus {
+    background: white;
+    color: ${Colors.title};
+    border-color: ${Colors.primary};
+  }
+`;
+
+const MessageContent = styled.div`
+  height: 100%;
+`;
+
+const MessageSend = styled.div`
+  margin-left: 10px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  &:hover {
+    background: ${Colors.hover};
+  }
+  & svg {
+    fill: ${Colors.primary};
+    width: 22.5px;
+  }
+`;
+
+const MessageFooter = styled.div`
+  border-top: 1px solid ${Colors.border};
+  padding: 15px;
+  display: flex;
+`;
+
+const SearchWrapper = styled.div`
+  padding: 15px;
+`;
+
+const CloseBtn = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background: ${Colors.hover};
+  }
+  & svg {
+    fill: ${Colors.primary};
+    width: 22.5px;
+  }
+`;
+
+export const Tweet = ({ tweet, noToolbar, replying, parent }) => {
+  const history = useHistory();
+
+  const [openModal, closeModal, isModalOpen, Modal] = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      z-index: 1000;
+    `,
+  });
+
+  const [
+    openReplyModal,
+    closeReplyModal,
+    isReplyModalOpen,
+    ReplyModal,
+  ] = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+      position: fixed;
+      left: 50%;
+      top: 5%;
+      transform: translate(-50%,-5%);
+      z-index: 1000;
+    `,
+  });
+
+  const { toggleDropdown, isDropdownOpen, Dropdown } = useDropdown({
+    openLeft: true,
+    openBottom: true,
+  });
+
+  const handleHistoryPush = () => {
+    history.push(`/${tweet.author.userName}/status/${tweet._id}`);
   };
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClick);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClick);
-    };
-  }, []);
-  return (
-    <>
-      <ModalWrapper ref={node}>
-        <ModalList>
-          <ModalItem>
-            <ModalIcon>{Icons.modalMessage}</ModalIcon>
-            <ModalIconDesc>Send via Direct Message</ModalIconDesc>
-          </ModalItem>
-        </ModalList>
-      </ModalWrapper>
-    </>
-  );
-};
-
-const Tweet = ({ tweet }) => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const toggleModal = () => {
-    setModalOpen(!isModalOpen);
+  const handleLike = () => {
+    axios.post(`/api/tweet/${tweet._id}/like`).then((res) => {
+      console.log(res);
+    });
   };
+
   return (
     <>
-      <TweetWrapper>
+      {isModalOpen && (
+        <Modal>
+          <SendMessage closeModal={closeModal} />
+        </Modal>
+      )}
+      {isReplyModalOpen && (
+        <ReplyModal>
+          <NewTweetReplyModal tweet={tweet} closeModal={closeReplyModal} />
+        </ReplyModal>
+      )}
+      <TweetWrapper
+        withReply={replying}
+        {...(!replying && { onClick: handleHistoryPush })}
+      >
         <TweetImgWrapper>
-          <TweetImg src={tweet.img_src} />
+          <TweetImg src={profile_src} />
         </TweetImgWrapper>
         <TweetContent>
           <NameWrapper>
-            <DisplayName>{tweet.display_name}</DisplayName>
-            <UserName>{tweet.user_name}</UserName>
+            <StyledLink
+              to={`/${tweet.author.userName}`}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <DisplayName>{tweet.author.displayName}</DisplayName>
+
+              <UserName>@{tweet.author.userName}</UserName>
+            </StyledLink>
           </NameWrapper>
-          <TweetDescription>{tweet.tweet_desc}</TweetDescription>
-          <TweetActions>
-            <TweetActionWrapper>
-              <TweetActionItem className="reply">
-                <TweetAction>{Icons.reply}</TweetAction>
-                {tweet.replies}
-              </TweetActionItem>
-            </TweetActionWrapper>
-            <TweetActionWrapper>
-              <TweetActionItem className="like">
-                <TweetAction>{Icons.heart}</TweetAction>
-                {tweet.likes}
-              </TweetActionItem>
-            </TweetActionWrapper>
-            <TweetActionWrapper>
-              <TweetActionItem
-                className="share"
-                onClick={() => {
-                  toggleModal();
-                }}
-              >
-                <TweetAction>{Icons.share}</TweetAction>
-              </TweetActionItem>
-              {isModalOpen ? <ActionModal toggleModal={toggleModal} /> : null}
-            </TweetActionWrapper>
-          </TweetActions>
+          {parent ? (
+            <StyledLink
+              to={`/${parent}`}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <UserName style={{ marginLeft: "0" }}>
+                Replying to
+                <span style={{ color: `${Colors.primary}` }}> @{parent}</span>
+              </UserName>
+            </StyledLink>
+          ) : null}
+          <TweetDescription>{tweet.content}</TweetDescription>
+          {noToolbar ? null : (
+            <TweetActions>
+              <TweetActionWrapper>
+                <TweetActionItem
+                  className="reply"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openReplyModal(e);
+                  }}
+                >
+                  <TweetAction>{Icons.reply}</TweetAction>
+                  {tweet.replies}
+                </TweetActionItem>
+              </TweetActionWrapper>
+              <TweetActionWrapper>
+                <TweetActionItem
+                  className="like"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike();
+                  }}
+                >
+                  <TweetAction>{Icons.heart}</TweetAction>
+                  {tweet.likes}
+                </TweetActionItem>
+              </TweetActionWrapper>
+              <TweetActionWrapper>
+                <TweetActionItem
+                  className="share"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDropdown(e);
+                  }}
+                >
+                  <TweetAction>{Icons.share}</TweetAction>
+                </TweetActionItem>
+                {isDropdownOpen && (
+                  <Dropdown>
+                    <ModalWrapper>
+                      <ModalList>
+                        <ModalItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown();
+                            openModal(e);
+                          }}
+                        >
+                          <ModalIcon>{Icons.modalMessage}</ModalIcon>
+                          <ModalIconDesc>Send via Direct Message</ModalIconDesc>
+                        </ModalItem>
+                        {/* <ModalItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <ModalIcon>{Icons.edit}</ModalIcon>
+                        <ModalIconDesc>Edit Tweet</ModalIconDesc>
+                      </ModalItem> */}
+                      </ModalList>
+                    </ModalWrapper>
+                  </Dropdown>
+                )}
+              </TweetActionWrapper>
+            </TweetActions>
+          )}
+
           {tweet.replies > 0 ? <ShowThread>Show this thread</ShowThread> : null}
         </TweetContent>
       </TweetWrapper>
@@ -245,4 +480,181 @@ const Tweet = ({ tweet }) => {
   );
 };
 
-export default Tweet;
+const LargeDesc = styled.p`
+  font-size: 23px;
+  color: ${Colors.title};
+  margin-top: 15px;
+  margin-bottom: 15px;
+`;
+
+const LargeTweetAction = styled(TweetAction)`
+  & svg {
+    width: 22.5px;
+  }
+`;
+
+const NumLikes = styled.div`
+  display: flex;
+  border-top: 1px solid ${Colors.border};
+  padding: 10px 0;
+`;
+
+const LikeCount = styled.span`
+  color: ${Colors.title};
+  font-weight: bold;
+  display: block;
+  margin-right: 5px;
+`;
+
+export const TweetThread = ({ tweet }) => {
+  // const [isModalOpen, setModalOpen] = useState(false);
+  // const toggleModal = (e) => {
+  //   e.preventDefault();
+  //   setModalOpen(!isModalOpen);
+
+  // };
+
+  const [openModal, closeModal, isModalOpen, Modal] = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      z-index: 1000;
+    `,
+  });
+
+  const [
+    openReplyModal,
+    closeReplyModal,
+    isReplyModalOpen,
+    ReplyModal,
+  ] = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+      position: fixed;
+      left: 50%;
+      top: 5%;
+      transform: translate(-50%,-5%);
+      z-index: 1000;
+    `,
+  });
+
+  const { toggleDropdown, isDropdownOpen, Dropdown } = useDropdown({
+    openLeft: true,
+    openBottom: true,
+  });
+
+  const handleLike = () => {
+    axios.post(`/api/tweet/${tweet._id}/like`).then((res) => {
+      console.log(res);
+    });
+  };
+  return (
+    <>
+      {isModalOpen && (
+        <Modal>
+          <SendMessage closeModal={closeModal} />
+        </Modal>
+      )}
+      {isReplyModalOpen && (
+        <ReplyModal>
+          <NewTweetReplyModal tweet={tweet} closeModal={closeReplyModal} />
+        </ReplyModal>
+      )}
+      <TweetWrapper>
+        <TweetImgWrapper>
+          <TweetImg src={profile_src} />
+        </TweetImgWrapper>
+        <TweetContent>
+          <NameWrapper>
+            <StyledLink
+              to={`/${tweet.author.userName}`}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <DisplayName>{tweet.author.displayName}</DisplayName>
+
+              <UserName>@{tweet.author.userName}</UserName>
+            </StyledLink>
+          </NameWrapper>
+          <LargeDesc>{tweet.content}</LargeDesc>
+          <NumLikes>
+            <LikeCount>{tweet.likes}</LikeCount> Likes
+          </NumLikes>
+          <TweetActions
+            style={{
+              borderTop: `1px solid ${Colors.border}`,
+              paddingTop: "10px",
+            }}
+          >
+            <TweetActionWrapper>
+              <TweetActionItem
+                className="reply"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openReplyModal(e);
+                }}
+              >
+                <LargeTweetAction>{Icons.reply}</LargeTweetAction>
+                {tweet.replies}
+              </TweetActionItem>
+            </TweetActionWrapper>
+            <TweetActionWrapper>
+              <TweetActionItem
+                className="like"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleLike();
+                }}
+              >
+                <LargeTweetAction>{Icons.heart}</LargeTweetAction>
+                {tweet.likes}
+              </TweetActionItem>
+            </TweetActionWrapper>
+            <TweetActionWrapper>
+              <TweetActionItem
+                className="share"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleDropdown(e);
+                }}
+              >
+                <LargeTweetAction>{Icons.share}</LargeTweetAction>
+              </TweetActionItem>
+              {isDropdownOpen && (
+                <Dropdown>
+                  <ModalWrapper>
+                    <ModalList>
+                      <ModalItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleDropdown();
+                          openModal(e);
+                        }}
+                      >
+                        <ModalIcon>{Icons.modalMessage}</ModalIcon>
+                        <ModalIconDesc>Send via Direct Message</ModalIconDesc>
+                      </ModalItem>
+                      {/* <ModalItem
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        <ModalIcon>{Icons.edit}</ModalIcon>
+                        <ModalIconDesc>Edit Tweet</ModalIconDesc>
+                      </ModalItem> */}
+                    </ModalList>
+                  </ModalWrapper>
+                </Dropdown>
+              )}
+              {/* {isModalOpen ? <ActionModal toggleModal={toggleModal} /> : null} */}
+            </TweetActionWrapper>
+          </TweetActions>
+        </TweetContent>
+      </TweetWrapper>
+    </>
+  );
+};

@@ -1,19 +1,36 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Icons from "../../icons";
 import { Colors, TweetBtn } from "../../../utils";
 import profile_src from "../../../images/profile.png";
 //import logo_src from "../../../images/logo.png";
+import AccountSwitcher from "./account";
+import { AuthContext } from "../../../App";
+import NewTweetModal from "../../tweets/new-tweet/modal";
+import useModal from "../../../hooks/useModal";
 
 const HeaderWrapper = styled.header`
-  width: 325px;
-  padding: 20px;
+  width: 335px;
+  padding-left: 20px;
+  padding-right: 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+const HeaderTop = styled.div``;
+
+const HeaderBottom = styled.div``;
+
+const LogoWrapper = styled.h1`
+  padding: 2px 0;
+  font-size: 15px;
 `;
 
 const HeaderLogo = styled.div`
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
 
@@ -24,8 +41,9 @@ const HeaderLogo = styled.div`
     background: ${Colors.hover};
   }
   svg {
-    height: 2rem;
-    fill: ${Colors.primary};
+    width: 2em;
+    height: 2em;
+    /* fill: ${Colors.primary}; */
   }
 `;
 
@@ -39,7 +57,7 @@ const NavItemLink = styled(NavLink)`
 
   &.active li {
     color: ${Colors.primary};
-    svg path {
+    svg {
       fill: ${Colors.primary};
     }
   }
@@ -68,14 +86,14 @@ const NavItem = styled.li`
 `;
 
 const NavIcon = styled.div`
-  width: 24px;
+  /* width: 24px; */
   margin-right: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 
   & svg {
-    width: 100%;
+    height: 1.75rem;
   }
 `;
 
@@ -91,40 +109,76 @@ const PresenceLogo = styled.h1`
 `;
 
 const Header = () => {
+  // let { path } = useRouteMatch();
+  const { state: authState } = useContext(AuthContext);
+  const { displayName, userName, id } = authState.user;
+
+  const { openModal, closeModal, isModalOpen, Modal } = useModal({
+    background: "rgba(0, 0, 0, 0.5)",
+    modalStyle: `
+      position: fixed;
+      left: 50%;
+      top: 5%;
+      transform: translate(-50%,-5%);
+      z-index: 1000;
+    `,
+  });
+
   return (
-    <HeaderWrapper>
-      <NavLink exact to="/home" activeClassName="active">
-        <HeaderLogo>{Icons.logo}</HeaderLogo>
-      </NavLink>
-      <HeaderNav>
-        <NavList>
-          <NavItemLink exact to="/home" activeClassName="active">
-            <NavItem>
-              <NavIcon>{Icons.home}</NavIcon>Home
-            </NavItem>
-          </NavItemLink>
-          <NavItemLink exact to="/explore" activeClassName="active">
-            <NavItem>
-              <NavIcon>{Icons.explore}</NavIcon>Explore
-            </NavItem>
-          </NavItemLink>
-          <NavItemLink exact to="/messages" activeClassName="active">
-            <NavItem>
-              <NavIcon>{Icons.messaging}</NavIcon>Messages
-            </NavItem>
-          </NavItemLink>
-          <NavItemLink exact to="/profile" activeClassName="active">
-            <NavItem>
-              <NavIcon>
-                <ProfileImg src={profile_src} />
-              </NavIcon>
-              Profile
-            </NavItem>
-          </NavItemLink>
-        </NavList>
-      </HeaderNav>
-      <TweetBtn>Tweet</TweetBtn>
-    </HeaderWrapper>
+    <>
+      {isModalOpen && (
+        <Modal>
+          <NewTweetModal closeModal={closeModal} />
+        </Modal>
+      )}
+      <HeaderWrapper>
+        <HeaderTop>
+          <LogoWrapper rol="heading">
+            <NavLink exact to="/home" activeClassName="active">
+              <HeaderLogo>{Icons.presence}</HeaderLogo>
+            </NavLink>
+          </LogoWrapper>
+          <HeaderNav>
+            <NavList>
+              <NavItemLink exact to="/home" activeClassName="active">
+                <NavItem>
+                  <NavIcon>{Icons.home}</NavIcon>Home
+                </NavItem>
+              </NavItemLink>
+              <NavItemLink exact to="/explore" activeClassName="active">
+                <NavItem>
+                  <NavIcon>{Icons.explore}</NavIcon>Explore
+                </NavItem>
+              </NavItemLink>
+              <NavItemLink exact to="/messages" activeClassName="active">
+                <NavItem>
+                  <NavIcon>{Icons.messaging}</NavIcon>Messages
+                </NavItem>
+              </NavItemLink>
+              <NavItemLink
+                to={{ pathname: `/${userName}`, state: { userId: id } }}
+                activeClassName="active"
+              >
+                <NavItem>
+                  <NavIcon>{Icons.profile}</NavIcon>
+                  Profile
+                </NavItem>
+              </NavItemLink>
+            </NavList>
+          </HeaderNav>
+          <TweetBtn
+            onClick={(e) => {
+              openModal(e);
+            }}
+          >
+            Tweet
+          </TweetBtn>
+        </HeaderTop>
+        <HeaderBottom>
+          <AccountSwitcher displayName={displayName} userName={userName} />
+        </HeaderBottom>
+      </HeaderWrapper>
+    </>
   );
 };
 

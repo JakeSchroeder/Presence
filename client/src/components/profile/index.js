@@ -1,56 +1,27 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
-import { withRouter } from "react-router-dom";
+import { withRouter, useParams } from "react-router-dom";
 import TrendsForYou from "../trends-for-you";
 import WhoToFollow from "../who-to-follow";
-import {
-  Colors,
-  FollowBtn,
-  GoBackBtn,
-  StyledTab,
-  StyledTabList,
-} from "../../utils";
+import { Colors, FollowBtn, StyledTab, StyledTabList } from "../../utils";
+import { AuthContext } from "../../App";
 import { Tabs, TabPanel } from "react-tabs";
-
+import {
+  Wrapper,
+  Main,
+  Sidebar,
+  MainTitle,
+  GoBackBtn,
+} from "../../utils/elements";
 import Icons from "../icons";
 import Search from "../search";
 import profile_src from "../../images/default_profile_200x200.png";
-const Wrapper = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-around;
-`;
-
-const Body = styled.div`
-  width: 100%;
-
-  height: 100%;
-  border-left: 1px solid ${Colors.border};
-  border-right: 1px solid ${Colors.border};
-`;
-
-const SidebarWrapper = styled.div`
-  padding: 20px;
-`;
-
-const SidebarFooter = styled.p`
-  margin-top: 15px;
-`;
+import axios from "axios";
+import TweetList from "../tweets";
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
 `;
-
-const HomeTitleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  height: 53px;
-  padding: 0 15px;
-  border-bottom: 1px solid ${Colors.border};
-`;
-
-const HomeTitle = styled.h2``;
 
 const ProfileWrapper = styled.div``;
 
@@ -95,30 +66,57 @@ const Num = styled.span`
   font-weight: bold;
 `;
 
+const TitleText = styled.h2``;
+
 const ProfileTabs = styled.div``;
 
 const Profile = ({ history }) => {
+  console.log(userId);
+  // const { state: authState } = useContext(AuthContext);
+  // const { displayName, userName, id } = authState.user;
+  const [user, setUser] = useState(null);
+  const [userTweets, setUserTweets] = useState(null);
+
+  // const getTweetsByUser = () => {
+
+  // };
+
+  // useEffect(() => {
+  //   console.log(params);
+  //   axios.get(`/api/user/${params.state.userId}`).then((user) => {
+  //     console.log(user);
+  //     setUser(user.data);
+  //   });
+  //   axios
+  //     .get(`/api/tweet/${params.state.userId}/all`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setUserTweets(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+
   return (
     <Wrapper>
-      <Body>
-        <HomeTitleWrapper>
+      <Main>
+        <MainTitle>
           <GoBackBtn
             onClick={() => {
               history.goBack();
             }}
-          >
-            {Icons.arrowLeft}
-          </GoBackBtn>
-          <HomeTitle>Jake Schroeder</HomeTitle>
-        </HomeTitleWrapper>
+          />
+          <TitleText>{user.userName}</TitleText>
+        </MainTitle>
         <ProfileWrapper>
           <ProfileBG></ProfileBG>
           <ProfileContent>
             <ProfileImg src={profile_src} />
 
             <NameWrapper>
-              <DisplayName>Jake Schroeder</DisplayName>
-              <UserName>@JakeSch99392224</UserName>
+              <DisplayName>{user.displayName}</DisplayName>
+              <UserName>@{user.userName}</UserName>
             </NameWrapper>
             <FollowingWrapper>
               <NumFollowers>
@@ -137,21 +135,29 @@ const Profile = ({ history }) => {
               <StyledTab>Tweets & replies</StyledTab>
               <StyledTab>Likes</StyledTab>
             </StyledTabList>
-            <TabPanel></TabPanel>
-            <TabPanel></TabPanel>
+            <TabPanel>
+              {userTweets ? <TweetList tweets={userTweets} /> : null}
+            </TabPanel>
+            <TabPanel>
+              {/* {userTweets > 0 ? (
+                <TweetList
+                  replying
+                  parent={userTweets.author.userName}
+                  tweets={userTweets.comments}
+                />
+              ) : null} */}
+            </TabPanel>
             <TabPanel></TabPanel>
           </Tabs>
         </ProfileTabs>
-      </Body>
-      <SidebarWrapper>
+      </Main>
+      <Sidebar>
         <SearchWrapper>
-          <Search placeHolderText="Search Twitter" />
+          <Search placeHolderText="Search Presence" />
         </SearchWrapper>
         <TrendsForYou />
         <WhoToFollow />
-
-        <SidebarFooter>© 2020 Presence</SidebarFooter>
-      </SidebarWrapper>
+      </Sidebar>
     </Wrapper>
   );
 };

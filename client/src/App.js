@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, createContext } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import {
   BrowserRouter as Router,
@@ -6,12 +6,16 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
+import PivateRoute from "./components/private-route";
 import Layout from "./components/layout";
 import { Colors } from "./utils";
-import Explore from "./components/explore";
-import Home from "./components/home";
-import Messages from "./components/messages";
-import Profile from "./components/profile";
+import isEmpty from "is-empty";
+import Login from "./components/auth/login";
+import Register from "./components/auth/register";
+import NotFound from "./components/404";
+
+import jwt_decode from "jwt-decode";
+import { setAuthToken } from "./utils";
 
 const GlobalStyles = createGlobalStyle`
   *,*::after, *::before {
@@ -68,21 +72,73 @@ const GlobalStyles = createGlobalStyle`
   
 `;
 
-function App() {
+export const AuthContext = createContext();
+
+const initialState = {
+  isAuthenticated: false,
+  user: null,
+  token: null,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      const { token } = action.payload;
+      setAuthToken(token);
+      const decodedUser = jwt_decode(token);
+      // localStorage.setItem("user", JSON.stringify(decodedUser));
+      localStorage.setItem("token", JSON.stringify(token));
+      console.log(decodedUser);
+
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: decodedUser,
+        token: token,
+      };
+    case "LOGOUT":
+      localStorage.clear();
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      };
+    default:
+      return state;
+  }
+};
+
+function App({ history }) {
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+
+  useEffect(() => {
+    const token = JSON.parse(localStorage.getItem("token") || null);
+
+    if (token) {
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          token,
+        },
+      });
+    }
+  }, []);
+
   return (
     <>
       <GlobalStyles />
-      <Router>
-        <Layout>
+      <AuthContext.Provider value={{ state, dispatch }}>
+        <Router>
           <Switch>
-            <Redirect exact from="/" to="explore" />
-            <Route exact path="/home" component={Home} />
-            <Route exact path="/explore" component={Explore} />
-            <Route exact path="/messages" component={Messages} />
-            <Route exact path="/profile" component={Profile} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <PivateRoute path="/" component={Layout} />
+            {/* <Route
+              component={localStorage.jwtTokenPresence ? Layout : NotFound}
+            /> */}
           </Switch>
-        </Layout>
-      </Router>
+        </Router>
+      </AuthContext.Provider>
     </>
   );
 }
