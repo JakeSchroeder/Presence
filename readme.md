@@ -12,4 +12,9 @@ An Alternate Reality Game World For Project XGIS
 + 'npm run full-install'
 + 'npm run dev'
 
+`MVP List`
++ Feed List
++ MongoDB Backup
++ User Roles
+
 
