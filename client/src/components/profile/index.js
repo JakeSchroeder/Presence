@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
-import { withRouter, useParams } from "react-router-dom";
+import { withRouter, useParams, useLocation } from "react-router-dom";
 import TrendsForYou from "../trends-for-you";
 import WhoToFollow from "../who-to-follow";
 import { Colors, FollowBtn, StyledTab, StyledTabList } from "../../utils";
@@ -71,85 +71,97 @@ const TitleText = styled.h2``;
 const ProfileTabs = styled.div``;
 
 const Profile = ({ history }) => {
-  console.log(userId);
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
+  const { state } = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [userTweets, setUserTweets] = useState(null);
+  // const [userTweets, setUserTweets] = useState(null);
 
   // const getTweetsByUser = () => {
 
   // };
 
-  // useEffect(() => {
-  //   console.log(params);
-  //   axios.get(`/api/user/${params.state.userId}`).then((user) => {
-  //     console.log(user);
-  //     setUser(user.data);
-  //   });
-  //   axios
-  //     .get(`/api/tweet/${params.state.userId}/all`)
-  //     .then((res) => {
-  //       console.log(res);
-  //       setUserTweets(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, []);
+  useEffect(() => {
+    axios.get(`/api/user/${state.userId}`).then((user) => {
+      console.log(user);
+      setUser(user.data);
+      setIsLoading(false);
+    });
+
+    // axios
+    //   .get(`/api/tweet/${params.state.userId}/all`)
+    //   .then((res) => {
+    //     console.log(res);
+    //     setUserTweets(res.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  }, []);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <Wrapper>
       <Main>
-        <MainTitle>
-          <GoBackBtn
-            onClick={() => {
-              history.goBack();
-            }}
-          />
-          <TitleText>{user.userName}</TitleText>
-        </MainTitle>
-        <ProfileWrapper>
-          <ProfileBG></ProfileBG>
-          <ProfileContent>
-            <ProfileImg src={profile_src} />
+        {isLoading ? (
+          "...loading"
+        ) : (
+          <>
+            <MainTitle>
+              <GoBackBtn
+                onClick={() => {
+                  history.goBack();
+                }}
+              />
+              <TitleText>{user.userName}</TitleText>
+            </MainTitle>
+            <ProfileWrapper>
+              <ProfileBG></ProfileBG>
+              <ProfileContent>
+                <ProfileImg src={profile_src} />
 
-            <NameWrapper>
-              <DisplayName>{user.displayName}</DisplayName>
-              <UserName>@{user.userName}</UserName>
-            </NameWrapper>
-            <FollowingWrapper>
-              <NumFollowers>
-                <Num>0</Num> Followers
-              </NumFollowers>
-              <NumFollowing>
-                <Num>0</Num> Following
-              </NumFollowing>
-            </FollowingWrapper>
-          </ProfileContent>
-        </ProfileWrapper>
-        <ProfileTabs>
-          <Tabs>
-            <StyledTabList>
-              <StyledTab>Tweets</StyledTab>
-              <StyledTab>Tweets & replies</StyledTab>
-              <StyledTab>Likes</StyledTab>
-            </StyledTabList>
-            <TabPanel>
-              {userTweets ? <TweetList tweets={userTweets} /> : null}
-            </TabPanel>
-            <TabPanel>
-              {/* {userTweets > 0 ? (
-                <TweetList
-                  replying
-                  parent={userTweets.author.userName}
-                  tweets={userTweets.comments}
-                />
-              ) : null} */}
-            </TabPanel>
-            <TabPanel></TabPanel>
-          </Tabs>
-        </ProfileTabs>
+                <NameWrapper>
+                  <DisplayName>{user.displayName}</DisplayName>
+                  <UserName>@{user.userName}</UserName>
+                </NameWrapper>
+                <FollowingWrapper>
+                  <NumFollowers>
+                    <Num>0</Num> Followers
+                  </NumFollowers>
+                  <NumFollowing>
+                    <Num>0</Num> Following
+                  </NumFollowing>
+                </FollowingWrapper>
+              </ProfileContent>
+            </ProfileWrapper>
+            <ProfileTabs>
+              <Tabs>
+                <StyledTabList>
+                  <StyledTab>Tweets</StyledTab>
+                  <StyledTab>Tweets & replies</StyledTab>
+                  <StyledTab>Likes</StyledTab>
+                </StyledTabList>
+                <TabPanel>
+                  {/* {userTweets ? <TweetList tweets={userTweets} /> : null} */}
+                </TabPanel>
+                <TabPanel>
+                  {/* {userTweets > 0 ? (
+                 <TweetList
+                   replying
+                   parent={userTweets.author.userName}
+                   tweets={userTweets.comments}
+                 />
+               ) : null} */}
+                </TabPanel>
+                <TabPanel></TabPanel>
+              </Tabs>
+            </ProfileTabs>
+          </>
+        )}
       </Main>
       <Sidebar>
         <SearchWrapper>
