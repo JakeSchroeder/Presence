@@ -4,11 +4,11 @@ import styled from "styled-components";
 import Icons from "../../icons";
 import { Colors, TweetBtn } from "../../../utils";
 import profile_src from "../../../images/profile.png";
-//import logo_src from "../../../images/logo.png";
 import AccountSwitcher from "./account";
-import { AuthContext } from "../../../App";
 import NewTweetModal from "../../tweets/new-tweet/modal";
 import useModal from "../../../hooks/useModal";
+
+import { useAuth } from "../../../context/authContext";
 
 const HeaderWrapper = styled.header`
   width: 335px;
@@ -110,8 +110,11 @@ const PresenceLogo = styled.h1`
 
 const Header = () => {
   // let { path } = useRouteMatch();
-  const { state: authState } = useContext(AuthContext);
-  const { displayName, userName, id } = authState.user;
+  // const { state: authState } = useContext(AuthContext);
+  // const { displayName, userName, id } = authState.user;
+
+  const { user, logout } = useAuth();
+  console.log(user);
 
   const { openModal, closeModal, isModalOpen, Modal } = useModal({
     background: "rgba(0, 0, 0, 0.5)",
@@ -156,7 +159,8 @@ const Header = () => {
                 </NavItem>
               </NavItemLink>
               <NavItemLink
-                to={{ pathname: `/${userName}`, state: { userId: id } }}
+                // to={{ pathname: `/${userName}`, state: { userId: id } }}
+                to="/profile"
                 activeClassName="active"
               >
                 <NavItem>
@@ -175,7 +179,11 @@ const Header = () => {
           </TweetBtn>
         </HeaderTop>
         <HeaderBottom>
-          <AccountSwitcher displayName={displayName} userName={userName} />
+          <AccountSwitcher
+            displayName={user.displayName}
+            userName={user.userName}
+            logout={logout}
+          />
         </HeaderBottom>
       </HeaderWrapper>
     </>

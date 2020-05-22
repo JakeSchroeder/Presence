@@ -60,6 +60,15 @@ router.post("/register", (req, res) => {
   });
 });
 
+// { user: { ...decodedUser, token } }
+
+router.get("/me", passport.authenticate("jwt", { session: false }), function (
+  req,
+  res
+) {
+  res.json({ user: req.user });
+});
+
 router.get("/:id", (req, res) => {
   User.findById(req.params.id)
     .then((user) => {
@@ -115,7 +124,7 @@ router.post("/login", (req, res) => {
           (err, token) => {
             res.json({
               success: true,
-              token: "Bearer " + token,
+              token: token,
             });
           }
         );

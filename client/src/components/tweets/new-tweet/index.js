@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../../App";
+// import { AuthContext } from "../../../App";
 import { Colors, GenericBtn } from "../../../utils";
 import Icons from "../../icons";
 import styled from "styled-components";
@@ -104,7 +104,7 @@ const MediaPolls = styled.div`
 // `;
 
 const NewTweet = () => {
-  const { state } = useContext(AuthContext);
+  // const { state } = useContext(AuthContext);
   const [tweetValue, setTweetValue] = useState("");
   const [tweetResponse, setTweetResponse] = useState(null);
 
@@ -123,7 +123,7 @@ const NewTweet = () => {
 
     const tweetData = {
       content: tweetValue,
-      userId: state.user.id,
+      userId: "hello",
     };
 
     axios
@@ -147,7 +147,7 @@ const NewTweet = () => {
         <Modal>
           <Toast
             message="Your Tweet was sent"
-            link={`${state.user.userName}/status/${tweetResponse._id}`}
+            // link={`${state.user.userName}/status/${tweetResponse._id}`}
           />
         </Modal>
       ) : null}

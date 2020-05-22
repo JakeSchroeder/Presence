@@ -12,10 +12,11 @@ const StyledInput = styled.input`
   width: 100%;
 `;
 
-const useInput = ({ type }) => {
+const useInput = ({ type, id }) => {
   const [value, setValue] = useState("");
   const input = (
     <StyledInput
+      id={id}
       value={value}
       onChange={(e) => {
         setValue(e.target.value);

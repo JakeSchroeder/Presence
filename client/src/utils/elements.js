@@ -76,3 +76,42 @@ export const Seperator = styled.div`
   background: ${Colors.border};
   width: 100%;
 `;
+
+const Spinner = styled.div`
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(0, 0, 0, 0.33);
+  border-radius: 50%;
+  border-top-color: ${Colors.primary};
+  animation: spin 1s ease-in-out infinite;
+  -webkit-animation: spin 1s ease-in-out infinite;
+
+  @keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  }
+`;
+
+const FullPageWrapper = styled.div`
+  font-size: 4em;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+export function FullPageSpinner() {
+  return (
+    <FullPageWrapper>
+      <Spinner />
+    </FullPageWrapper>
+  );
+}

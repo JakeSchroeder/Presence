@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Link, withRouter } from "react-router-dom";
-import illustration_src from "../../../images/illustration.png";
-import Icons from "../../icons";
-import { Colors } from "../../../utils";
-import useInput from "../../../hooks/useInput";
-import axios from "axios";
-import { setAuthToken } from "../../../utils";
-import jwt_decode from "jwt-decode";
-// import { AuthContext } from "../../../App";
+import { Link } from "react-router-dom";
+import illustration_src from "./images/illustration.png";
+import Icons from "./components/icons";
+import { Colors } from "./utils";
+import useInput from "./hooks/useInput";
+import { useAuth } from "./context/authContext";
+import { useAsync } from "./hooks/useAsync";
 
 const LoginWrapper = styled.div`
   /* @media (max-width: 1092px) {
@@ -35,7 +33,7 @@ const LoginTitle = styled.h2`
   text-align: center;
 `;
 
-const LoginForm = styled.form``;
+const StyledLoginForm = styled.form``;
 
 const InputWrapper = styled.div`
   padding: 10px 15px;
@@ -99,35 +97,30 @@ const StyledButton = styled.button`
   }
 `;
 
-const Login = () => {
-  const [email, emailInput] = useInput({ type: "email" });
-  const [password, passwordInput] = useInput({ type: "password" });
-
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    const userData = {
-      email: email,
-      password: password,
-    };
-
-    axios
-      .post("/api/user/login", userData)
-      .then((res) => {
-        dispatch({
-          type: "LOGIN",
-          payload: res.data,
-        });
+function LoginForm({ onSubmit }) {
+  const [email, emailInput] = useInput({ type: "email", id: "email" });
+  const [password, passwordInput] = useInput({
+    type: "password",
+    id: "password",
+  });
+  const { isLoading, isError, error, run } = useAsync();
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log(event.target.elements);
+    const { email, password } = event.target.elements;
+    run(
+      onSubmit({
+        email: email.value,
+        password: password.value,
       })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+    );
+  }
+
   return (
     <LoginWrapper>
       <LoginLogo>{Icons.presence}</LoginLogo>
       <LoginTitle>Log in to Presence</LoginTitle>
-      <LoginForm onSubmit={(e) => handleFormSubmit(e)}>
+      <StyledLoginForm onSubmit={handleSubmit}>
         <InputWrapper>
           <StyledLabel>
             <StyledLabelText>Email</StyledLabelText>
@@ -142,14 +135,23 @@ const Login = () => {
           </StyledLabel>
         </InputWrapper>
         <StyledButtonWrapper>
-          <StyledButton>Log in</StyledButton>
+          <StyledButton type="submit">Log in</StyledButton>
         </StyledButtonWrapper>
         <SignupWrapper>
           <Signup to="/register">Sign up for Presence</Signup>
         </SignupWrapper>
-      </LoginForm>
+      </StyledLoginForm>
     </LoginWrapper>
   );
-};
+}
 
-export default withRouter(Login);
+function UnauthenticatedApp() {
+  const { login, register } = useAuth();
+  return (
+    <>
+      <LoginForm onSubmit={login} />
+    </>
+  );
+}
+
+export default UnauthenticatedApp;

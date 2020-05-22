@@ -5,7 +5,7 @@ import { Colors, TweetBtn } from "../../../../utils";
 import profile_src from "../../../../images/profile.png";
 import { useDropdown } from "../../../../hooks/useDropdown";
 import { withRouter } from "react-router-dom";
-import { AuthContext } from "../../../../App";
+// import { AuthContext } from "../../../../App";
 const StyledAccountSwitcher = styled.div`
   cursor: pointer;
   margin-top: 20px;
@@ -152,9 +152,7 @@ export const AccountInfo = ({ size, displayName, userName }) => (
   </AccountInfoWrapper>
 );
 
-const AccountSwitcher = ({ history, displayName, userName }) => {
-  const { dispatch } = useContext(AuthContext);
-
+const AccountSwitcher = ({ displayName, userName, logout }) => {
   const { toggleDropdown, isDropdownOpen, Dropdown } = useDropdown({
     openCenter: true,
     openTop: true,
@@ -177,10 +175,7 @@ const AccountSwitcher = ({ history, displayName, userName }) => {
               {/* <AccountItem>Add an existing account</AccountItem> */}
               <AccountItem
                 onClick={() => {
-                  dispatch({
-                    type: "LOGOUT",
-                  });
-                  window.location.href = "/login";
+                  logout();
                 }}
               >
                 Log out @{displayName}

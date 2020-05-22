@@ -30,27 +30,26 @@ const Main = styled.main`
   min-height: 100%;
 `;
 
-const Layout = ({}) => {
+const Layout = ({ children }) => {
   // let { path } = useRouteMatch();
 
   return (
-    <Router>
-      <Wrapper>
-        <Header />
-        <Main>
-          <Switch>
+    <Wrapper>
+      <Header />
+      <Main>
+        {children}
+        {/* <Switch>
             <Redirect exact from="/" to="/explore" />
             <Route exact path="/home" component={Home} />
             <Route exact path="/explore" component={Explore} />
             <Route exact path="/messages" component={Messages} />
-            {/* <Route exact path="/profile" component={Profile} /> */}
+            
 
             <Route path={`/:userName/status/:id`} component={Thread} />
             <Route exact path={`/:userName`} component={Profile} />
-          </Switch>
-        </Main>
-      </Wrapper>
-    </Router>
+          </Switch> */}
+      </Main>
+    </Wrapper>
   );
 };
 
