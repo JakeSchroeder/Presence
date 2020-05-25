@@ -25,7 +25,7 @@ async function client(endpoint, { body, ...customConfig } = {}) {
     config.headers["content-type"] = "application/json";
   }
 
-  return window.fetch(`api/${endpoint}`, config).then(async (r) => {
+  return window.fetch(`/api/${endpoint}`, config).then(async (r) => {
     if (r.status === 401) {
       logout();
       // refresh the page for them

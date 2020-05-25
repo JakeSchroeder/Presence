@@ -2,7 +2,7 @@ import "./bootstrap";
 import React from "react";
 import ReactDOM from "react-dom";
 import { createGlobalStyle } from "styled-components";
-import AppProviders from "./context";
+import { AppProviders } from "./context";
 import { App } from "./App";
 
 import { Colors } from "./utils/index";

@@ -14,11 +14,9 @@ function getUser() {
 }
 
 function login({ email, password }) {
-  return client("user/login", { body: { email, password } }).then((data) => {
-    const { token } = data;
-    const decodedUser = jwt_decode(token);
-    handleUserResponse({ user: { ...decodedUser, token } });
-  });
+  return client("user/login", { body: { email, password } }).then(
+    handleUserResponse
+  );
 }
 
 function register({ email, password }) {

@@ -62,26 +62,41 @@ router.post("/register", (req, res) => {
 
 // { user: { ...decodedUser, token } }
 
-router.get("/me", passport.authenticate("jwt", { session: false }), function (
-  req,
-  res
-) {
-  res.json({ user: req.user });
-});
+router.get(
+  "/me",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.json({
+      success: true,
+      user: {
+        id: req.user._id,
+        displayName: req.user.displayName,
+        userName: req.user.userName,
+        email: req.user.email,
+      },
+    });
+  }
+);
 
 router.get("/:id", (req, res) => {
   User.findById(req.params.id)
-    .then((user) => {
-      res.json(user);
+    .then((data) => {
+      console.log(data);
+      res.json({
+        user: {
+          id: data._id,
+          avatarPath: data.avatarPath,
+          userName: data.userName,
+          displayName: data.displayName,
+          date: data.date,
+        },
+      });
     })
     .catch((err) => {
       res.json(err);
     });
 });
 
-// @route POST api/users/login
-// @desc Login user and return JWT token
-// @access Public
 router.post("/login", (req, res) => {
   // Form validation
   console.log("reaching here");
@@ -123,8 +138,10 @@ router.post("/login", (req, res) => {
           },
           (err, token) => {
             res.json({
-              success: true,
-              token: token,
+              user: {
+                ...payload,
+                token: token,
+              },
             });
           }
         );

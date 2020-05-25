@@ -3,12 +3,13 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-
+// const { v4: uuidv4 } = require("uuid");
 // Load input validation
 const validateTweetInput = require("../../validation/tweet");
 
 // Load User model
 const Tweet = require("../../models/Tweet");
+const User = require("../../models/User");
 
 router.post("/new", (req, res) => {
   // Form validation
@@ -32,13 +33,71 @@ router.post("/new", (req, res) => {
     .catch((err) => console.log(err));
 });
 
-router.get("/all", (req, res) => {
-  Tweet.find()
-    .sort("-date")
-    .populate("author")
-    .then((thing) => res.json(thing))
-    .catch((err) => console.log(err));
+router.get("/", (req, res) => {
+  if (req.query.query === "") {
+    Tweet.find()
+      .sort("-date")
+      .populate("author")
+      .then((data) => {
+        res.json({ tweets: data });
+      })
+      .catch((err) => console.log(err));
+  } else {
+    const searchTerm = req.query.query;
+
+    Tweet.find()
+      .limit(10)
+      .populate("author")
+      .find({ $text: { $search: `${searchTerm}` } })
+      .then((data) => {
+        res.json({ tweets: data });
+      })
+      .catch((err) => console.log(err));
+  }
 });
+
+router.get(
+  "/list-items",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const user = req.user;
+    Tweet.find({ author: user._id })
+      .sort("-date")
+      .populate("author")
+      .then((tweets) => {
+        const listItemsData = tweets.map((tweet) => ({
+          tweet: tweet,
+          tweetId: tweet._id,
+          ownerId: user._id,
+
+          canDelete: true,
+        }));
+        console.log(listItemsData);
+        res.json({ listItems: listItemsData });
+      })
+      .catch((err) => console.log(err));
+  }
+);
+
+// const getToken = req => req.headers.get('Authorization')?.replace('Bearer ', '')
+
+// function getUser(req) {
+//   const token = getToken(req)
+//   if (!token) {
+//     const error = new Error('A token must be provided')
+//     error.status = 401
+//     throw error
+//   }
+//   let userId
+//   try {
+//     userId = atob(token)
+//   } catch (e) {
+//     const error = new Error('Invalid token. Please login again.')
+//     error.status = 401
+//     throw error
+//   }
+//   return usersDB.read(userId)
+// }
 
 router.get("/:userId/all", (req, res) => {
   Tweet.find({ author: req.params.userId })

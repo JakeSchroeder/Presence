@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Icons from "../../icons";
 import { Colors, TweetBtn } from "../../../utils";
@@ -159,8 +159,12 @@ const Header = () => {
                 </NavItem>
               </NavItemLink>
               <NavItemLink
-                // to={{ pathname: `/${userName}`, state: { userId: id } }}
-                to="/profile"
+                to={{
+                  pathname: `/${user.userName}`,
+                  state: { userId: user.id },
+                }}
+                // to={`/profile/${user.userName}`}
+                // to="/profile"
                 activeClassName="active"
               >
                 <NavItem>
@@ -175,7 +179,7 @@ const Header = () => {
               openModal(e);
             }}
           >
-            Tweet
+            Quack
           </TweetBtn>
         </HeaderTop>
         <HeaderBottom>

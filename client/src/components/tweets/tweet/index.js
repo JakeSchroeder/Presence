@@ -318,7 +318,7 @@ const CloseBtn = styled.div`
 
 export const Tweet = ({ tweet, noToolbar, replying, parent }) => {
   const history = useHistory();
-
+  console.log(tweet);
   const [openModal, closeModal, isModalOpen, Modal] = useModal({
     background: "rgba(0, 0, 0, 0.5)",
     modalStyle: `
@@ -383,7 +383,10 @@ export const Tweet = ({ tweet, noToolbar, replying, parent }) => {
         <TweetContent>
           <NameWrapper>
             <StyledLink
-              to={`/${tweet.author.userName}`}
+              to={{
+                pathname: `/${tweet.author.userName}`,
+                state: { userId: tweet.author._id },
+              }}
               onClick={(e) => {
                 e.stopPropagation();
               }}

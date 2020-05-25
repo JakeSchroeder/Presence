@@ -10,19 +10,19 @@ const queryConfig = {
   refetchAllOnWindowFocus: false,
 };
 
-const fullUrl = new URL(homepage);
-const basename = fullUrl.pathname.endsWith("/")
-  ? fullUrl.pathname.slice(0, fullUrl.pathname.length - 1)
-  : fullUrl.pathname;
+// const fullUrl = new URL(homepage);
+// const basename = fullUrl.pathname.endsWith("/")
+//   ? fullUrl.pathname.slice(0, fullUrl.pathname.length - 1)
+//   : fullUrl.pathname;
 
 const AppProviders = ({ children }) => {
   return (
     <ReactQueryConfigProvider config={queryConfig}>
-      <Router basename={basename}>
+      <Router>
         <AuthProvider>{children}</AuthProvider>
       </Router>
     </ReactQueryConfigProvider>
   );
 };
 
-export default AppProviders;
+export { AppProviders };

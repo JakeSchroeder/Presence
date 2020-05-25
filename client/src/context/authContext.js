@@ -3,7 +3,8 @@ import { bootstrapAppData } from "../utils/bootstrap";
 import * as authClient from "../utils/auth-client";
 import { useAsync } from "../hooks/useAsync";
 // import {FullPageSpinner, FullPageErrorFallback} from 'components/lib'
-import { FullPageSpinner } from "../utils/elements";
+
+import { FullPageSpinner, FullPageErrorFallback } from "../utils/elements";
 
 const AuthContext = React.createContext();
 AuthContext.displayName = "AuthContext";
@@ -54,7 +55,7 @@ function AuthProvider(props) {
   }
 
   if (isError) {
-    return `Error: ${error}`;
+    return <FullPageErrorFallback error={error} />;
   }
 
   if (isSuccess) {

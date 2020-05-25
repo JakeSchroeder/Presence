@@ -28,4 +28,6 @@ const TweetSchema = new Schema({
   },
 });
 
+TweetSchema.index({ "$**": "text" });
+
 module.exports = Tweet = mongoose.model("tweet", TweetSchema);

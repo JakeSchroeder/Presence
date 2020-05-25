@@ -14,6 +14,7 @@ import Icons from "../icons";
 import Search from "../search";
 import NewTweet from "../tweets/new-tweet";
 import axios from "axios";
+import { ListItemList } from "../tweets/list-item-list";
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
@@ -21,11 +22,7 @@ const SearchWrapper = styled.div`
 
 const TitleText = styled.h2``;
 
-const Home = () => {
-  // useEffect(() => {
-  //   axios.get("/api/tweet");
-  // }, []);
-
+function Home() {
   return (
     <Wrapper>
       <Main>
@@ -34,6 +31,21 @@ const Home = () => {
         </MainTitle>
         <NewTweet />
         <Seperator />
+
+        <ListItemList
+          filterListItems={(li) => Boolean(li.canDelete)}
+          noListItems={
+            <p>
+              Hey there! Welcome to your bookshelf reading list. Get started by
+              heading over to the Discover page to add books to your list.
+            </p>
+          }
+          noFilteredListItems={
+            <p>
+              Looks like you've finished all your books! Check them out in your{" "}
+            </p>
+          }
+        />
       </Main>
       <Sidebar>
         <SearchWrapper>
@@ -44,6 +56,6 @@ const Home = () => {
       </Sidebar>
     </Wrapper>
   );
-};
+}
 
 export default Home;

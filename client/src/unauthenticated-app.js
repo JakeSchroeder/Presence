@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import illustration_src from "./images/illustration.png";
 import Icons from "./components/icons";
 import { Colors } from "./utils";
+import { Spinner, ErrorMessage } from "./utils/elements";
 import useInput from "./hooks/useInput";
 import { useAuth } from "./context/authContext";
 import { useAsync } from "./hooks/useAsync";
@@ -92,21 +93,37 @@ const StyledButton = styled.button`
   font-family: inherit;
   font-weight: bold;
 
+  &:disabled {
+    background: rgb(253, 233, 95);
+    cursor: not-allowed;
+
+    &:hover {
+      background: rgb(253, 233, 95);
+    }
+  }
+
   &:hover {
     background: #eac428;
   }
 `;
 
+// const ErrorMessage = styled.p`
+//   color: red;
+//   margin: 0;
+// `;
+
 function LoginForm({ onSubmit }) {
   const [email, emailInput] = useInput({ type: "email", id: "email" });
+
   const [password, passwordInput] = useInput({
     type: "password",
     id: "password",
   });
+
   const { isLoading, isError, error, run } = useAsync();
+
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(event.target.elements);
     const { email, password } = event.target.elements;
     run(
       onSubmit({
@@ -135,11 +152,16 @@ function LoginForm({ onSubmit }) {
           </StyledLabel>
         </InputWrapper>
         <StyledButtonWrapper>
-          <StyledButton type="submit">Log in</StyledButton>
+          <StyledButton type="submit" disabled={!email || !password}>
+            {isLoading ? <Spinner width={32} height={32} /> : "Log in"}
+          </StyledButton>
         </StyledButtonWrapper>
         <SignupWrapper>
-          <Signup to="/register">Sign up for Presence</Signup>
+          <Signup to="/">Having trouble Loggin in?</Signup>
         </SignupWrapper>
+        {isError ? (
+          <ErrorMessage css={{ textAlign: "center" }} error={error} />
+        ) : null}
       </StyledLoginForm>
     </LoginWrapper>
   );

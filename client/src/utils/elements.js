@@ -77,10 +77,10 @@ export const Seperator = styled.div`
   width: 100%;
 `;
 
-const Spinner = styled.div`
+export const Spinner = styled.div`
   display: inline-block;
-  width: 50px;
-  height: 50px;
+  width: ${({ width }) => (width ? width : `50`)}px;
+  height: ${({ height }) => (height ? height : `50`)}px;
   border: 3px solid rgba(0, 0, 0, 0.33);
   border-radius: 50%;
   border-top-color: ${Colors.primary};
@@ -106,6 +106,8 @@ const FullPageWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 999;
 `;
 
 export function FullPageSpinner() {
@@ -113,5 +115,40 @@ export function FullPageSpinner() {
     <FullPageWrapper>
       <Spinner />
     </FullPageWrapper>
+  );
+}
+
+const FullPageErrorWrapper = styled.div`
+  color: red;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+export function FullPageErrorFallback({ error }) {
+  return (
+    <FullPageErrorWrapper>
+      <p>Uh oh... There's a problem. Try refreshing the app.</p>
+      <pre>{error.message}</pre>
+    </FullPageErrorWrapper>
+  );
+}
+
+const ErrorWrapper = styled.div`
+  color: red;
+`;
+
+const ErrorText = styled.pre`
+  margin: 0;
+`;
+
+export function ErrorMessage({ error, ...props }) {
+  return (
+    <ErrorWrapper role="alert" {...props}>
+      <span>There was an error: </span>
+      <ErrorText>{error.message}</ErrorText>
+    </ErrorWrapper>
   );
 }
