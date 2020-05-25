@@ -1,20 +1,20 @@
 import React, { useState, useContext } from "react";
 import styled from "styled-components";
-import TrendsForYou from "../trends-for-you";
-import WhoToFollow from "../who-to-follow";
-import { Colors, FollowBtn } from "../../utils";
+import TrendsForYou from "../components/trends-for-you";
+import WhoToFollow from "../components/who-to-follow";
+import { Colors } from "../styles/colors";
 import {
   Wrapper,
   Main,
   MainTitle,
   Sidebar,
   Seperator,
-} from "../../utils/elements";
-import Icons from "../icons";
-import Search from "../search";
-import NewTweet from "../tweets/new-tweet";
-import axios from "axios";
-import { ListItemList } from "../tweets/list-item-list";
+  FollowBtn,
+} from "../components/lib";
+import Icons from "../components/icons";
+import Search from "../components/search";
+import NewTweet from "../components/tweets/new-tweet";
+import { ListItemList } from "../components/tweets/list-item-list";
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
@@ -58,4 +58,4 @@ function Home() {
   );
 }
 
-export default Home;
+export { Home };

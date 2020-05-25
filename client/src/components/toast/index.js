@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import useModal from "../../hooks/useModal";
-import { Colors } from "../../utils";
+import { Colors } from "../../styles/colors";
 
 const StyledToast = styled.div`
   padding: 8px;

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Colors } from "../../utils";
+import { Colors } from "../../styles/colors";
 import Icons from "../icons";
 
 const SearchWrapper = styled.div`

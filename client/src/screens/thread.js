@@ -2,10 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { withRouter, Link, useParams } from "react-router-dom";
 import Icons from "../icons";
-import { Colors } from "../../utils";
 import { TweetThread, Tweet } from "../tweets/tweet";
-import fake_data from "../../data/data.json";
-import axios from "axios";
+
 // import TweetList from "../tweets";
 import {
   Wrapper,
@@ -13,7 +11,7 @@ import {
   Sidebar,
   MainTitle,
   GoBackBtn,
-} from "../../utils/elements";
+} from "../components/lib";
 import Search from "../search";
 import WhoToFollow from "../who-to-follow";
 import TweetList from "../tweets";
@@ -26,9 +24,9 @@ const TitleText = styled.h2``;
 
 const TweetBody = styled.div``;
 
-const Thread = ({ history }) => {
+function Thread({ history }) {
   let params = useParams();
-  const [tweet, setTweet] = useState(null);
+  // const [tweet, setTweet] = useState(null);
 
   // // const findTweetById = () => {
   // //   fake_data.tweets.keys
@@ -53,18 +51,18 @@ const Thread = ({ history }) => {
 
   // let tweet = findByTweetId(fake_data, params._id);
 
-  useEffect(() => {
-    console.log(params);
-    axios
-      .get(`/api/tweet/${params.id}`)
-      .then((res) => {
-        console.log(res);
-        setTweet(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+  // useEffect(() => {
+  //   console.log(params);
+  //   axios
+  //     .get(`/api/tweet/${params.id}`)
+  //     .then((res) => {
+  //       console.log(res);
+  //       setTweet(res.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
 
   return (
     <Wrapper>
@@ -99,6 +97,6 @@ const Thread = ({ history }) => {
       </Sidebar>
     </Wrapper>
   );
-};
+}
 
-export default withRouter(Thread);
+export { Thread };

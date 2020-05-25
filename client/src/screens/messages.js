@@ -1,11 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { Colors, FollowBtn, GenericBtn } from "../../utils";
-import Icons from "../icons";
-import Search from "../search";
-import profile_src from "../../images/profile.png";
-import NewMessage from "./new-message";
-import useModal from "../../hooks/useModal";
+import { Colors } from "../styles/colors";
+import { FollowBtn, GenericBtn } from "../components/lib";
+import Icons from "../components/icons";
+import Search from "../components/search";
+import profile_src from "../images/profile.png";
+import NewMessage from "../components/messages/new-message";
+import useModal from "../hooks/useModal";
 
 const Wrapper = styled.div`
   width: 100%;
@@ -220,7 +221,7 @@ const NewMessageDesc = styled.p``;
 //   </MessageModalWrapper>
 // );
 
-const Messages = () => {
+function Messages() {
   // const doc = document.getElementById("root");
   // const { isOpen, openModal, closeModal, Modal } = useModal({
   //   background: "rgba(0, 0, 0, 0.5)",
@@ -303,6 +304,6 @@ const Messages = () => {
       </Wrapper>
     </>
   );
-};
+}
 
-export default Messages;
+export { Messages };

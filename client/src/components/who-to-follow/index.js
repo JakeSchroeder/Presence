@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Colors, FollowBtn } from "../../utils";
+import { FollowBtn } from "../lib";
+import { Colors } from "../../styles/colors";
 import tb_src from "../../images/tb.jpg";
 import { Link } from "react-router-dom";
 

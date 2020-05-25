@@ -8,8 +8,8 @@ import {
 } from "react-router-dom";
 // import PivateRoute from "./components/private-route";
 // import Layout from "./components/layout";
-import { Colors } from "./utils";
-import { FullPageSpinner } from "./utils/elements";
+import { Colors } from "./styles/colors";
+import { FullPageSpinner } from "./components/lib";
 import { useAuth } from "./context/authContext";
 // import isEmpty from "is-empty";
 // import Login from "./components/auth/login";

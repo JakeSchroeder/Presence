@@ -1,23 +1,26 @@
 import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import { withRouter, useLocation } from "react-router-dom";
-import TrendsForYou from "../trends-for-you";
-import WhoToFollow from "../who-to-follow";
-import { Colors, FollowBtn, StyledTab, StyledTabList } from "../../utils";
+import TrendsForYou from "../components/trends-for-you";
+import WhoToFollow from "../components/who-to-follow";
 import { Tabs, TabPanel } from "react-tabs";
+import { Colors } from "../styles/colors";
 import {
+  FollowBtn,
+  StyledTab,
+  StyledTabList,
   Wrapper,
   Main,
   Sidebar,
   MainTitle,
   GoBackBtn,
-} from "../../utils/elements";
-import Icons from "../icons";
-import Search from "../search";
-import profile_src from "../../images/default_profile_200x200.png";
-import { ListItemList } from "../tweets/list-item-list";
+} from "../components/lib";
+import Icons from "../components/icons";
+import Search from "../components/search";
+import profile_src from "../images/default_profile_200x200.png";
+import { ListItemList } from "../components/tweets/list-item-list";
 
-import { useUser } from "../../utils/users";
+import { useUser } from "../utils/users";
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
@@ -70,7 +73,7 @@ const TitleText = styled.h2``;
 
 const ProfileTabs = styled.div``;
 
-const Profile = () => {
+function Profile({ history }) {
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
   const { state } = useLocation();
@@ -204,7 +207,6 @@ const Profile = () => {
             </Tabs>
           </ProfileTabs>
         </>
-        {/* )} */}
       </Main>
       <Sidebar>
         <SearchWrapper>
@@ -215,6 +217,6 @@ const Profile = () => {
       </Sidebar>
     </Wrapper>
   );
-};
+}
 
-export default withRouter(Profile);
+export { Profile };

@@ -1,30 +1,23 @@
 import React, { useState, useEffect } from "react";
-import Feed from "../feed";
-import Search from "../search";
-import styled from "styled-components";
-import Icons from "../icons";
-import { Colors, FollowBtn, StyledTab, StyledTabList } from "../../utils";
-import { Spinner } from "../../utils/elements";
-import { Wrapper, Main, Sidebar, MainTitle } from "../../utils/elements";
 import { Tabs, TabPanel } from "react-tabs";
-import WhoToFollow from "../who-to-follow";
-//import useFetch from "../../hooks/useFetch";
-// import {useAuthDataContext} from "../auth-provider";
-import TweetList from "../tweets";
-import fake_data from "../../data/data.json";
-// import { Profiler } from "../../utils/profiler";
-import { useTweetSearch, refetchTweetSearchQuery } from "../../utils/tweets";
-import { TweetRow } from "../tweets/tweet-row";
-// const simulatedFeedData = {
-//     "tweets": [{
-//         "_id": "546335",
-//         "displayName": "Chaotic Joe",
-//         "userName": "@chaosjoes",
-//         "userAvatar": "../../../public/img/profile.png",
-//         "tweetDesc": "a big time rush comeback would simply put us one step closer to the ultimate goal: a bts x btr collab. after that: world domination.",
-//         "date": "12:46PM Apr 20, 2020",
-//     }]
-// }
+import Search from "../components/search";
+import styled from "styled-components";
+import Icons from "../components/icons";
+import { Colors } from "../styles/colors";
+import {
+  FollowBtn,
+  StyledTab,
+  StyledTabList,
+  Wrapper,
+  Main,
+  Sidebar,
+  MainTitle,
+  Spinner,
+} from "../components/lib";
+
+import WhoToFollow from "../components/who-to-follow";
+import { useTweetSearch, refetchTweetSearchQuery } from "../utils/tweets";
+import { TweetRow } from "../components/tweets/tweet-row";
 
 const SearchForm = styled.form`
   width: 100%;
@@ -98,7 +91,7 @@ const TweetListUl = styled.ul`
   padding: 0;
 `;
 
-const Explore = () => {
+function Explore() {
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState();
   const { tweets, error, isLoading, isError, isSuccess } = useTweetSearch(
@@ -232,6 +225,6 @@ const Explore = () => {
       </Sidebar>
     </Wrapper>
   );
-};
+}
 
-export default Explore;
+export { Explore };

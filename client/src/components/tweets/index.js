@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../../utils";
+import { Colors } from "../../styles/colors";
 import Icons from "../icons";
 import { Tweet } from "./tweet";
 

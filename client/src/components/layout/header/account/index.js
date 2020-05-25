@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 import Icons from "../../../icons";
-import { Colors, TweetBtn } from "../../../../utils";
+import { Colors } from "../../../../styles/colors";
+import { TweetBtn } from "../../../lib";
 import profile_src from "../../../../images/profile.png";
 import { useDropdown } from "../../../../hooks/useDropdown";
 import { withRouter } from "react-router-dom";
-// import { AuthContext } from "../../../../App";
+
 const StyledAccountSwitcher = styled.div`
   cursor: pointer;
   margin-top: 20px;

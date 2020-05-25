@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Icons from "../icons";
-import { Colors } from "../../utils";
+import { Colors } from "../../styles/colors";
 import { useListItem } from "../../utils/list-items";
 
 import profile_src from "../../images/profile.png";

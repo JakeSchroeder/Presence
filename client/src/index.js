@@ -3,9 +3,9 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createGlobalStyle } from "styled-components";
 import { AppProviders } from "./context";
-import { App } from "./App";
+import { App } from "./app";
 
-import { Colors } from "./utils/index";
+import { Colors } from "./styles/colors";
 
 const GlobalStyles = createGlobalStyle`
   *,*::after, *::before {

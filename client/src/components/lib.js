@@ -1,7 +1,8 @@
 import React from "react";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import styled from "styled-components";
-import { Colors } from "./index";
-import Icons from "../components/icons";
+import { Colors } from "../styles/colors";
+import Icons from "./icons";
 import { withRouter } from "react-router-dom";
 export const Wrapper = styled.div`
   width: 100%;
@@ -152,3 +153,87 @@ export function ErrorMessage({ error, ...props }) {
     </ErrorWrapper>
   );
 }
+
+export const FollowBtn = styled.button`
+  cursor: pointer;
+  min-height: 30px;
+  border-radius: 999px;
+  padding: 0 16px;
+  border: 0;
+  outline: 0;
+  border: 1px solid ${Colors.primary};
+  background: transparent;
+  color: ${Colors.primary};
+  font-size: 16px;
+  font-family: inherit;
+
+  &:hover {
+    background: ${Colors.hover};
+  }
+`;
+
+export const TweetBtn = styled.button`
+  margin-top: 10px;
+  min-height: 50px;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 999px;
+  padding: 0 16px;
+  border: 0;
+  outline: 0;
+  background: ${Colors.primary};
+  color: white;
+  font-size: 16px;
+  font-family: inherit;
+
+  &:hover {
+    background: #eac428;
+  }
+`;
+
+export const NormalBtn = styled.button`
+  min-height: 39px;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 0 16px;
+  border: 0;
+  outline: 0;
+  background: ${Colors.primary};
+  color: white;
+  font-size: 16px;
+  font-family: inherit;
+  line-height: 39px;
+  &:hover {
+    background: #eac428;
+  }
+`;
+
+export const GenericBtn = ({ children, className, onClick }) => (
+  <NormalBtn onClick={onClick} className={className}>
+    {children}
+  </NormalBtn>
+);
+
+export const StyledTabList = styled(TabList)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid ${Colors.border};
+`;
+
+export const StyledTab = styled(Tab)`
+  cursor: pointer;
+  text-align: center;
+  width: calc(100% / 2);
+  padding: 15px;
+  font-weight: bold;
+  border-bottom: 2px solid transparent;
+  &:hover {
+    background: ${Colors.hover};
+  }
+
+  &.react-tabs__tab--selected {
+    color: ${Colors.primary};
+    border-bottom: 2px solid ${Colors.primary};
+  }
+`;

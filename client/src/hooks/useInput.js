@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Colors } from "../utils";
+import { Colors } from "../styles/colors";
 
 const StyledInput = styled.input`
   outline: 0;

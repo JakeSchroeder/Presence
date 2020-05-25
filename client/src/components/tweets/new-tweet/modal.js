@@ -2,7 +2,7 @@ import React from "react";
 import NewTweet from "./index";
 import styled from "styled-components";
 import Icons from "../../icons";
-import { Colors } from "../../../utils";
+import { Colors } from "../../../styles/colors";
 
 const NewTweetModalWrapper = styled.div`
   border-radius: 15px;
