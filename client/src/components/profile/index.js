@@ -15,7 +15,7 @@ import {
 import Icons from "../icons";
 import Search from "../search";
 import profile_src from "../../images/default_profile_200x200.png";
-import TweetList from "../tweets";
+import { ListItemList } from "../tweets/list-item-list";
 
 import { useUser } from "../../utils/users";
 
@@ -148,18 +148,59 @@ const Profile = () => {
                 <StyledTab>Likes</StyledTab>
               </StyledTabList>
               <TabPanel>
-                {/* {userTweets ? <TweetList tweets={userTweets} /> : null} */}
+                <ListItemList
+                  filterListItems={(li) => Boolean(li.canDelete)}
+                  noListItems={
+                    <p>
+                      Hey there! Welcome to your bookshelf reading list. Get
+                      started by heading over to the Discover page to add books
+                      to your list.
+                    </p>
+                  }
+                  noFilteredListItems={
+                    <p>
+                      Looks like you've finished all your books! Check them out
+                      in your{" "}
+                    </p>
+                  }
+                />
               </TabPanel>
               <TabPanel>
-                {/* {userTweets > 0 ? (
-                 <TweetList
-                   replying
-                   parent={userTweets.author.userName}
-                   tweets={userTweets.comments}
-                 />
-               ) : null} */}
+                <ListItemList
+                  filterListItems={(li) => Boolean(li.tweet.replies > 0)}
+                  noListItems={
+                    <p>
+                      Hey there! Welcome to your bookshelf reading list. Get
+                      started by heading over to the Discover page to add books
+                      to your list.
+                    </p>
+                  }
+                  noFilteredListItems={
+                    <p>
+                      Looks like you've finished all your books! Check them out
+                      in your{" "}
+                    </p>
+                  }
+                />
               </TabPanel>
-              <TabPanel></TabPanel>
+              <TabPanel>
+                <ListItemList
+                  filterListItems={(li) => Boolean(li.tweet.likes > 0)}
+                  noListItems={
+                    <p>
+                      Hey there! Welcome to your bookshelf reading list. Get
+                      started by heading over to the Discover page to add books
+                      to your list.
+                    </p>
+                  }
+                  noFilteredListItems={
+                    <p>
+                      Looks like you've finished all your books! Check them out
+                      in your{" "}
+                    </p>
+                  }
+                />
+              </TabPanel>
             </Tabs>
           </ProfileTabs>
         </>
