@@ -2,7 +2,7 @@ import React from "react";
 import NewTweetReply from "./index";
 import styled from "styled-components";
 import Icons from "../../icons";
-import { Colors } from "../../../utils";
+import { Colors } from "../../../styles/colors";
 import { Tweet } from "../tweet";
 import profile_src from "../../../images/profile.png";
 const NewTweetModalWrapper = styled.div`

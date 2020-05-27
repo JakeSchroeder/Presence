@@ -1,11 +1,15 @@
 import { client } from "./api-client";
 
 function search({ query = "" }) {
-  return client(`tweet?query=${encodeURIComponent(query)}`);
+  return client(`tweets/search?query=${encodeURIComponent(query)}`);
 }
 
 function read(tweetId) {
-  return client(`tweet/${tweetId}`);
+  return client(`tweets/getTweetById${tweetId}`);
 }
 
-export { read, search };
+function readChildren(tweetId) {
+  return client(`tweets/getTweetChildrenById/${tweetId}`);
+}
+
+export { read, search, readChildren };

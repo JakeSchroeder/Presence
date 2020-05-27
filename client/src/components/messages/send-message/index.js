@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Icons from "../../icons";
-import { Colors } from "../../../utils";
+import { Colors } from "../../../styles/colors";
 import Search from "../../search";
 
 const MessageModalWrapper = styled.div`

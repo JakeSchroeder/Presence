@@ -5,6 +5,7 @@ import { homepage } from "../package.json";
 import Layout from "./components/layout";
 import { Home } from "./screens/home";
 import { Explore } from "./screens/explore";
+import { Thread } from "./screens/thread";
 import { Messages } from "./screens/messages";
 import { Profile } from "./screens/profile";
 import { NotFound } from "./screens/not-found";
@@ -47,6 +48,7 @@ function AppRoutes() {
       <Route exact path="/home" component={Home} />
       <Route exact path="/explore" component={Explore} />
       <Route exact path="/messages" component={Messages} />
+      <Route exact path="/:userName/status/:tweetId" component={Thread} />
       <Route exact path="/:userName" component={Profile} />
       <Route path="*" component={NotFound} />
     </Switch>

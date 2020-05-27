@@ -6,6 +6,7 @@ import { AuthProvider } from "./authContext";
 // import { UserProvider } from "./userContext";
 
 const queryConfig = {
+  suspense: true,
   useErrorBoundary: true,
   refetchAllOnWindowFocus: false,
 };

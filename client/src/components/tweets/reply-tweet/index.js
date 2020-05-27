@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 // import { AuthContext } from "../../../App";
-import { Colors, GenericBtn } from "../../../utils";
+import { Colors } from "../../../styles/colors";
+import { GenericBtn } from "../../../components/lib";
 import Icons from "../../icons";
 import styled from "styled-components";
 import profile_src from "../../../images/profile.png";

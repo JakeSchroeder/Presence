@@ -32,7 +32,7 @@ function Home() {
         <NewTweet />
         <Seperator />
 
-        <ListItemList
+        {/* <ListItemList
           filterListItems={(li) => Boolean(li.canDelete)}
           noListItems={
             <p>
@@ -45,7 +45,7 @@ function Home() {
               Looks like you've finished all your books! Check them out in your{" "}
             </p>
           }
-        />
+        /> */}
       </Main>
       <Sidebar>
         <SearchWrapper>

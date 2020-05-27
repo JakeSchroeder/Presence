@@ -151,7 +151,7 @@ function Profile({ history }) {
                 <StyledTab>Likes</StyledTab>
               </StyledTabList>
               <TabPanel>
-                <ListItemList
+                {/* <ListItemList
                   filterListItems={(li) => Boolean(li.canDelete)}
                   noListItems={
                     <p>
@@ -166,10 +166,10 @@ function Profile({ history }) {
                       in your{" "}
                     </p>
                   }
-                />
+                /> */}
               </TabPanel>
               <TabPanel>
-                <ListItemList
+                {/* <ListItemList
                   filterListItems={(li) => Boolean(li.tweet.replies > 0)}
                   noListItems={
                     <p>
@@ -184,10 +184,10 @@ function Profile({ history }) {
                       in your{" "}
                     </p>
                   }
-                />
+                /> */}
               </TabPanel>
               <TabPanel>
-                <ListItemList
+                {/* <ListItemList
                   filterListItems={(li) => Boolean(li.tweet.likes > 0)}
                   noListItems={
                     <p>
@@ -202,7 +202,7 @@ function Profile({ history }) {
                       in your{" "}
                     </p>
                   }
-                />
+                /> */}
               </TabPanel>
             </Tabs>
           </ProfileTabs>

@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { withRouter, Link, useParams } from "react-router-dom";
-import Icons from "../icons";
-import { TweetThread, Tweet } from "../tweets/tweet";
-
+import { useTweetThread, refetchTweetThread } from "../utils/tweets";
+import { TweetThread } from "../components/tweets/tweet";
+import { TweetRow } from "../components/tweets/tweet-row";
+import Icons from "../components/icons";
 // import TweetList from "../tweets";
 import {
   Wrapper,
@@ -12,9 +13,9 @@ import {
   MainTitle,
   GoBackBtn,
 } from "../components/lib";
-import Search from "../search";
-import WhoToFollow from "../who-to-follow";
-import TweetList from "../tweets";
+import Search from "../components/search";
+import WhoToFollow from "../components/who-to-follow";
+// import TweetList from "../components/tweets";
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
@@ -24,44 +25,20 @@ const TitleText = styled.h2``;
 
 const TweetBody = styled.div``;
 
+const TweetListUl = styled.ul`
+  margin: 0;
+  padding: 0;
+`;
+
 function Thread({ history }) {
-  let params = useParams();
-  // const [tweet, setTweet] = useState(null);
-
-  // // const findTweetById = () => {
-  // //   fake_data.tweets.keys
-  // // };
-
-  // const findByTweetId = (obj, id) => {
-  //   var result;
-  //   for (var p in obj) {
-  //     if (obj._id === id) {
-  //       return obj;
-  //     } else {
-  //       if (typeof obj[p] === "object") {
-  //         result = findByTweetId(obj[p], id);
-  //         if (result) {
-  //           return result;
-  //         }
-  //       }
-  //     }
-  //   }
-  //   return result;
-  // };
-
-  // let tweet = findByTweetId(fake_data, params._id);
+  const { tweetId } = useParams();
+  // console.log(tweetId);
+  const { tweets, status, error, isLoading, isError } = useTweetThread(
+    `${tweetId}`
+  );
 
   // useEffect(() => {
-  //   console.log(params);
-  //   axios
-  //     .get(`/api/tweet/${params.id}`)
-  //     .then((res) => {
-  //       console.log(res);
-  //       setTweet(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
+  //   return () => refetchTweetThread(tweetId);
   // }, []);
 
   return (
@@ -75,7 +52,24 @@ function Thread({ history }) {
           />
           <TitleText>Tweet</TitleText>
         </MainTitle>
-        {tweet ? (
+
+        {isError ? <p>{error.message}</p> : null}
+        {tweets.length ? (
+          <>
+            <TweetThread tweet={tweets[0]} />
+            <TweetListUl>
+              {tweets.slice(1).map((tweet) => (
+                <li key={tweet._id}>
+                  <TweetRow key={tweet._id} tweet={tweet} />
+                </li>
+              ))}
+            </TweetListUl>
+          </>
+        ) : (
+          "Error"
+        )}
+
+        {/* {tweet ? (
           <>
             <TweetThread tweet={tweet} />
             <TweetList
@@ -84,7 +78,8 @@ function Thread({ history }) {
               tweets={tweet.comments}
             />
           </>
-        ) : null}
+        ) : null} */}
+
         {/* {tweet.replies > 0 ? <Tweet withReply tweet=} */}
         {/* <TweetThread tweet={tweet}></TweetThread> */}
         {/* <Tweet withReply tweet={tweet}></Tweet> */}

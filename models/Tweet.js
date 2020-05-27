@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const MpathPlugin = require("mongoose-mpath");
 const Schema = mongoose.Schema;
 
 const Comment = require("./Comment");
@@ -6,13 +7,9 @@ const Comment = require("./Comment");
 const TweetSchema = new Schema({
   content: {
     type: String,
+    default: "",
     required: true,
   },
-  category: {
-    type: String,
-    required: false,
-  },
-  comments: [Comment.schema],
   author: { type: Schema.Types.ObjectId, ref: "user", required: true },
   replies: {
     type: Number,
@@ -22,12 +19,20 @@ const TweetSchema = new Schema({
     type: Number,
     default: 0,
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-TweetSchema.index({ "$**": "text" });
+TweetSchema.index({ content: "text" });
 
-module.exports = Tweet = mongoose.model("tweet", TweetSchema);
+TweetSchema.plugin(MpathPlugin, [
+  {
+    pathSeparator: "#",
+    onDelete: "REPARENT",
+    idType: Schema.Types.ObjectId,
+  },
+]);
+
+module.exports = Tweet = mongoose.model("Tweet", TweetSchema);

@@ -1,9 +1,10 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Icons from "../icons";
 import { Colors } from "../../styles/colors";
-import { useListItem } from "../../utils/list-items";
+// import { useListItem } from "../../utils/=";
 
 import profile_src from "../../images/profile.png";
 
@@ -139,13 +140,18 @@ const ShowThread = styled.p`
 `;
 
 function TweetRow({ tweet }) {
+  const history = useHistory();
   const { author, date, avatarPath, content, replies, likes } = tweet;
-  const listItem = useListItem(tweet._id);
-  console.log(listItem);
+  // const listItem = useListItem(tweet._id);
+  // console.log(listItem);
   const id = `book-row-book-${tweet._id}`;
 
   return (
-    <TweetWrapper>
+    <TweetWrapper
+      onClick={() => {
+        history.push(`/${tweet.author.userName}/status/${tweet._id}`);
+      }}
+    >
       <TweetImgWrapper>
         <TweetImg src={profile_src} />
       </TweetImgWrapper>

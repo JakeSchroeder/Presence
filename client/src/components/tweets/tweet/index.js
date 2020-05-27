@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, withRouter, useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Colors } from "../../../utils";
+import { Colors } from "../../../styles/colors";
 import profile_src from "../../../images/profile.png";
 import Search from "../../search";
 import Icons from "../../icons";
@@ -356,9 +356,10 @@ export const Tweet = ({ tweet, noToolbar, replying, parent }) => {
   };
 
   const handleLike = () => {
-    axios.post(`/api/tweet/${tweet._id}/like`).then((res) => {
-      console.log(res);
-    });
+    // axios.post(`/api/tweet/${tweet._id}/like`).then((res) => {
+    //   console.log(res);
+    // });
+    console.log("like");
   };
 
   return (

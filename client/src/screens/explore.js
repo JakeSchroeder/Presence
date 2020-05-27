@@ -137,13 +137,12 @@ function Explore() {
             <pre>{error.message}</pre>
           </div>
         ) : null}
+
         <div>
           {hasSearched ? null : (
             <>
               {isLoading ? (
-                <div css={{ width: "100%", margin: "auto" }}>
-                  <Spinner />
-                </div>
+                <Spinner />
               ) : isSuccess && tweets.length ? (
                 <p>Here you go! Find more books with the search bar above.</p>
               ) : isSuccess && !tweets.length ? (
@@ -154,20 +153,14 @@ function Explore() {
             </>
           )}
           {tweets.length ? (
-            // <Profiler
-            //   id="Explore Tweets Screen Tweet List"
-            //   metadata={{ query, tweetCount: tweets.length }}
-            // >
-
             <TweetListUl>
               {tweets.map((tweet) => (
-                <li>
+                <li key={tweet._id}>
                   <TweetRow key={tweet._id} tweet={tweet} />
                 </li>
               ))}
             </TweetListUl>
-          ) : // </Profiler>
-          hasSearched ? (
+          ) : hasSearched ? (
             <div
               css={{ marginTop: 20, fontSize: "1.2em", textAlign: "center" }}
             >
