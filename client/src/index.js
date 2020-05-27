@@ -1,11 +1,10 @@
 import "./bootstrap";
 import React from "react";
 import ReactDOM from "react-dom";
+import App from "./app";
+import { Colors } from "./styles/colors";
 import { createGlobalStyle } from "styled-components";
 import { AppProviders } from "./context";
-import { App } from "./app";
-
-import { Colors } from "./styles/colors";
 
 const GlobalStyles = createGlobalStyle`
   *,*::after, *::before {
