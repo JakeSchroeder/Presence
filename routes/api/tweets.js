@@ -15,8 +15,8 @@ router.post("/new", async (req, res) => {
   try {
     const newTweet = new Tweet({
       parent: req.body.parent ? `${req.body.parent}` : null,
-      content: `${req.body.content}`,
-      author: `${req.body.author}`,
+      content: `${req.body.tweetData.content}`,
+      author: `${req.body.tweetData.author}`,
     });
     const saveResponse = await newTweet.save();
     res.json(saveResponse);
@@ -122,16 +122,11 @@ router.get("/getTweetChildrenById/:id", async (req, res) => {
 
 router.get("/getTweetsByUser/:id", async (req, res) => {
   try {
-    const tweets = await Tweet.find({ author: req.params.id });
-    res.json(tweets);
-    //const tweetParent = await Tweet.findById(req.params.id);
-    // const tweetChildren = await tweetParent.getImmediateChildren({
-    //   // options: {
-    //   //   lean: true,
-    //   // },
-    //   // minLevel: -1,
-    // });
-    // res.json(tweetChildren);
+    const tweets = await Tweet.find({ author: req.params.id }).populate(
+      "author",
+      "-password"
+    );
+    res.json({ tweets: tweets });
   } catch (err) {
     res.json(err);
   }

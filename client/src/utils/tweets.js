@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery, queryCache } from "react-query";
+import { useQuery, queryCache, useMutation } from "react-query";
 import * as tweetsClient from "./tweets-client";
 import { loadingTweet } from "./tweet-placeholder";
 import { Spinner } from "../components/lib";
@@ -78,6 +78,33 @@ function useTweetThread(tweetId) {
   console.log(result);
   return { ...result, tweets: result.data };
 }
+
+function getTweetsByUser(queryKey, { userId }) {
+  return tweetsClient.readByUser(userId).then((data) => data.tweets);
+}
+
+const getTweetsByUserConfig = (userId) => ({
+  queryKey: ["thread", { userId }],
+  queryFn: getTweetsByUser,
+  config: {
+    onSuccess(tweets) {
+      for (const tweet of tweets) {
+        queryCache.setQueryData(
+          ["tweet", { tweetId: tweet._id }],
+          tweet,
+          tweetQueryConfig
+        );
+      }
+      return tweets;
+    },
+  },
+});
+
+function useTweetsByUser(userId) {
+  const result = useQuery(getTweetsByUserConfig(userId));
+  return { ...result, tweets: result.data };
+}
+
 async function refetchTweetSearchQuery() {
   queryCache.removeQueries("tweetSearch");
   await queryCache.prefetchQuery(getTweetSearchConfig(""));
@@ -96,11 +123,42 @@ function setQueryDataForTweet(tweet) {
   });
 }
 
+const defaultMutationOptions = {
+  onError: (err, variables, recover) =>
+    typeof recover === "function" ? recover() : null,
+  onSettled: () => queryCache.refetchQueries("tweet"),
+  suspense: true,
+  useErrorBoundary: false,
+  throwOnError: true,
+};
+
+function onUpdateMutation(newTweet) {
+  const previousTweets = queryCache.getQueryData("tweet");
+
+  queryCache.setQueryData("tweet", (old) => {
+    return old.map((tweet) => {
+      return tweet.id === newTweet.id ? { ...tweet, ...newTweet } : tweet;
+    });
+  });
+
+  return () => queryCache.setQueryData("tweet", previousTweets);
+}
+
+function useCreateTweet(options) {
+  return useMutation(({ tweetData }) => tweetsClient.create({ tweetData }), {
+    ...defaultMutationOptions,
+    ...options,
+  });
+}
+
 export {
   useTweet,
   useTweetSearch,
   useTweetThread,
+  useTweetsByUser,
+  useCreateTweet,
   setQueryDataForTweet,
   refetchTweetSearchQuery,
+
   // refetchTweetThread,
 };

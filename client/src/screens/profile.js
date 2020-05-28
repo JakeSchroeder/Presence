@@ -14,11 +14,13 @@ import {
   Sidebar,
   MainTitle,
   GoBackBtn,
+  Spinner,
 } from "../components/lib";
 import Icons from "../components/icons";
 import Search from "../components/search";
+import { TweetRow } from "../components/tweets/tweet-row";
 import profile_src from "../images/default_profile_200x200.png";
-import { ListItemList } from "../components/tweets/list-item-list";
+import { useTweetsByUser } from "../utils/tweets";
 
 import { useUser } from "../utils/users";
 
@@ -73,13 +75,20 @@ const TitleText = styled.h2``;
 
 const ProfileTabs = styled.div``;
 
+const TweetListUl = styled.ul`
+  margin: 0;
+  padding: 0;
+`;
+
 function Profile({ history }) {
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
   const { state } = useLocation();
   const user = useUser(state.userId);
   const { userName, displayName, id } = user;
-
+  const { tweets, status, error, isLoading, isError } = useTweetsByUser(
+    `${id}`
+  );
   // const [user, setUser] = useState(null);
   // const [userTweets, setUserTweets] = useState(null);
 
@@ -115,98 +124,100 @@ function Profile({ history }) {
         {/* {isLoading ? (
           "...loading"
         ) : ( */}
-        <>
-          <MainTitle>
-            <GoBackBtn
-            // onClick={() => {
-            //   history.goBack();
-            // }}
-            />
-            <TitleText>{displayName}</TitleText>
-          </MainTitle>
-          <ProfileWrapper>
-            <ProfileBG></ProfileBG>
-            <ProfileContent>
-              <ProfileImg src={profile_src} />
+        {user ? (
+          <>
+            <MainTitle>
+              <GoBackBtn
+              // onClick={() => {
+              //   history.goBack();
+              // }}
+              />
+              <TitleText>{displayName}</TitleText>
+            </MainTitle>
+            <ProfileWrapper>
+              <ProfileBG></ProfileBG>
+              <ProfileContent>
+                <ProfileImg src={profile_src} />
 
-              <NameWrapper>
-                <DisplayName>{displayName}</DisplayName>
-                <UserName>@{userName}</UserName>
-              </NameWrapper>
-              <FollowingWrapper>
-                <NumFollowers>
-                  <Num>0</Num> Followers
-                </NumFollowers>
-                <NumFollowing>
-                  <Num>0</Num> Following
-                </NumFollowing>
-              </FollowingWrapper>
-            </ProfileContent>
-          </ProfileWrapper>
-          <ProfileTabs>
-            <Tabs>
-              <StyledTabList>
-                <StyledTab>Tweets</StyledTab>
-                <StyledTab>Tweets & replies</StyledTab>
-                <StyledTab>Likes</StyledTab>
-              </StyledTabList>
-              <TabPanel>
-                {/* <ListItemList
-                  filterListItems={(li) => Boolean(li.canDelete)}
-                  noListItems={
-                    <p>
-                      Hey there! Welcome to your bookshelf reading list. Get
-                      started by heading over to the Discover page to add books
-                      to your list.
-                    </p>
-                  }
-                  noFilteredListItems={
-                    <p>
-                      Looks like you've finished all your books! Check them out
-                      in your{" "}
-                    </p>
-                  }
-                /> */}
-              </TabPanel>
-              <TabPanel>
-                {/* <ListItemList
-                  filterListItems={(li) => Boolean(li.tweet.replies > 0)}
-                  noListItems={
-                    <p>
-                      Hey there! Welcome to your bookshelf reading list. Get
-                      started by heading over to the Discover page to add books
-                      to your list.
-                    </p>
-                  }
-                  noFilteredListItems={
-                    <p>
-                      Looks like you've finished all your books! Check them out
-                      in your{" "}
-                    </p>
-                  }
-                /> */}
-              </TabPanel>
-              <TabPanel>
-                {/* <ListItemList
-                  filterListItems={(li) => Boolean(li.tweet.likes > 0)}
-                  noListItems={
-                    <p>
-                      Hey there! Welcome to your bookshelf reading list. Get
-                      started by heading over to the Discover page to add books
-                      to your list.
-                    </p>
-                  }
-                  noFilteredListItems={
-                    <p>
-                      Looks like you've finished all your books! Check them out
-                      in your{" "}
-                    </p>
-                  }
-                /> */}
-              </TabPanel>
-            </Tabs>
-          </ProfileTabs>
-        </>
+                <NameWrapper>
+                  <DisplayName>{displayName}</DisplayName>
+                  <UserName>@{userName}</UserName>
+                </NameWrapper>
+                <FollowingWrapper>
+                  <NumFollowers>
+                    <Num>0</Num> Followers
+                  </NumFollowers>
+                  <NumFollowing>
+                    <Num>0</Num> Following
+                  </NumFollowing>
+                </FollowingWrapper>
+              </ProfileContent>
+            </ProfileWrapper>
+            <ProfileTabs>
+              <Tabs>
+                <StyledTabList>
+                  <StyledTab>Tweets</StyledTab>
+                  <StyledTab>Tweets & replies</StyledTab>
+                  <StyledTab>Likes</StyledTab>
+                </StyledTabList>
+                <TabPanel>
+                  {isError ? <p>{error.message}</p> : null}
+                  {tweets.length ? (
+                    <>
+                      <TweetListUl>
+                        {tweets.map((tweet) => (
+                          <li key={tweet._id}>
+                            <TweetRow key={tweet._id} tweet={tweet} />
+                          </li>
+                        ))}
+                      </TweetListUl>
+                    </>
+                  ) : (
+                    "Error"
+                  )}
+                </TabPanel>
+                <TabPanel>
+                  {/* <ListItemList
+                          filterListItems={(li) => Boolean(li.tweet.replies > 0)}
+                          noListItems={
+                            <p>
+                              Hey there! Welcome to your bookshelf reading list. Get
+                              started by heading over to the Discover page to add books
+                              to your list.
+                            </p>
+                          }
+                          noFilteredListItems={
+                            <p>
+                              Looks like you've finished all your books! Check them out
+                              in your{" "}
+                            </p>
+                          }
+                        /> */}
+                </TabPanel>
+                <TabPanel>
+                  {/* <ListItemList
+                          filterListItems={(li) => Boolean(li.tweet.likes > 0)}
+                          noListItems={
+                            <p>
+                              Hey there! Welcome to your bookshelf reading list. Get
+                              started by heading over to the Discover page to add books
+                              to your list.
+                            </p>
+                          }
+                          noFilteredListItems={
+                            <p>
+                              Looks like you've finished all your books! Check them out
+                              in your{" "}
+                            </p>
+                          }
+                        /> */}
+                </TabPanel>
+              </Tabs>
+            </ProfileTabs>
+          </>
+        ) : (
+          <Spinner />
+        )}
       </Main>
       <Sidebar>
         <SearchWrapper>

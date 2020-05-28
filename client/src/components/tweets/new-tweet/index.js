@@ -5,9 +5,11 @@ import { Colors } from "../../../styles/colors";
 import Icons from "../../icons";
 import styled from "styled-components";
 import profile_src from "../../../images/profile.png";
-import axios from "axios";
+import { useAsync } from "../../../hooks/useAsync";
+import { useCreateTweet } from "../../../utils/tweets";
 import useModal from "../../../hooks/useModal";
 import Toast from "../../toast";
+import { useAuth } from "../../../context/authContext";
 
 const TweetWrapper = styled.div`
   display: flex;
@@ -106,6 +108,10 @@ const MediaPolls = styled.div`
 
 const NewTweet = () => {
   // const { state } = useContext(AuthContext);
+  const { user } = useAuth();
+  const { id } = user;
+  const { isLoading, isError, error, run, reset } = useAsync();
+  const [handleAddClick] = useCreateTweet();
   const [tweetValue, setTweetValue] = useState("");
   const [tweetResponse, setTweetResponse] = useState(null);
 
@@ -119,28 +125,19 @@ const NewTweet = () => {
     z-index: 1000;`,
   });
 
-  const handleSubmit = (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-
     const tweetData = {
-      content: tweetValue,
-      userId: "hello",
+      author: `${user.id}`,
+      content: `${tweetValue}`,
     };
-
-    axios
-      .post("/api/tweet/new", tweetData)
-      .then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          setTweetResponse(res.data);
-        }
-        setTweetValue("");
-        openModal();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+    handleAddClick({ tweetData: tweetData });
+    // if (isError) {
+    //   reset();
+    // } else {
+    //   run();
+    // }
+  }
 
   return (
     <>

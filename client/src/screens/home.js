@@ -14,7 +14,14 @@ import {
 import Icons from "../components/icons";
 import Search from "../components/search";
 import NewTweet from "../components/tweets/new-tweet";
-import { ListItemList } from "../components/tweets/list-item-list";
+import { TweetRow } from "../components/tweets/tweet-row";
+import { useTweetsByUser } from "../utils/tweets";
+import { useAuth } from "../context/authContext";
+
+const TweetListUl = styled.ul`
+  margin: 0;
+  padding: 0;
+`;
 
 const SearchWrapper = styled.div`
   padding-bottom: 20px;
@@ -23,6 +30,11 @@ const SearchWrapper = styled.div`
 const TitleText = styled.h2``;
 
 function Home() {
+  const { user } = useAuth();
+  const { tweets, status, error, isLoading, isError } = useTweetsByUser(
+    `${user.id}`
+  );
+
   return (
     <Wrapper>
       <Main>
@@ -31,21 +43,20 @@ function Home() {
         </MainTitle>
         <NewTweet />
         <Seperator />
-
-        {/* <ListItemList
-          filterListItems={(li) => Boolean(li.canDelete)}
-          noListItems={
-            <p>
-              Hey there! Welcome to your bookshelf reading list. Get started by
-              heading over to the Discover page to add books to your list.
-            </p>
-          }
-          noFilteredListItems={
-            <p>
-              Looks like you've finished all your books! Check them out in your{" "}
-            </p>
-          }
-        /> */}
+        {isError ? <p>{error.message}</p> : null}
+        {tweets.length ? (
+          <>
+            <TweetListUl>
+              {tweets.map((tweet) => (
+                <li key={tweet._id}>
+                  <TweetRow key={tweet._id} tweet={tweet} />
+                </li>
+              ))}
+            </TweetListUl>
+          </>
+        ) : (
+          "Error"
+        )}
       </Main>
       <Sidebar>
         <SearchWrapper>
