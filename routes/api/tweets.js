@@ -44,16 +44,17 @@ router.get("/search", async (req, res) => {
     const query = searchParams.get("query");
     let matchedTweets = [];
     if (!query) {
-      const allParentTweets = await Tweet.find({ parent: null }).populate(
-        "author",
-        "-password"
-      );
+      const allParentTweets = await Tweet.find({ parent: null })
+        .populate("author", "-password")
+        .sort("-createdAt");
 
       matchedTweets = allParentTweets;
     } else {
       const searchResults = await Tweet.find({
         $text: { $search: query },
-      }).populate("author", "-password");
+      })
+        .populate("author", "-password")
+        .sort("-createdAt");
       matchedTweets = searchResults;
     }
 
@@ -124,13 +125,22 @@ router.get("/getTweetById/:id", async (req, res) => {
       "author",
       "-password"
     );
-    res.json(tweet);
+
+    const loggedInUser = searchParams.get("id");
+
+    if (tweet.author._id == loggedInUser) {
+      tweet.canDelete = true;
+    }
+
+    res.json(result);
   } catch (err) {
     res.json(err);
   }
 });
 
 router.get("/getTweetChildrenById/:id", async (req, res) => {
+  const loggedInUser = req.query.userId;
+
   try {
     const tweetParent = await Tweet.findById(req.params.id).populate(
       "author",
@@ -138,21 +148,44 @@ router.get("/getTweetChildrenById/:id", async (req, res) => {
     );
     const tweetChildren = await tweetParent
       .getImmediateChildren({})
-      .populate("author", "-password");
+      .populate("author", "-password")
+      .sort("-createdAt");
 
-    res.json({ tweets: [tweetParent, ...tweetChildren] });
+    const tweets = [tweetParent, ...tweetChildren];
+
+    const result = tweets.map((tweet) => {
+      if (tweet.author._id == loggedInUser) {
+        tweet.canDelete = true;
+      }
+      return tweet;
+    });
+
+    console.log(result);
+
+    res.json({ tweets: result });
   } catch (err) {
     res.json(err);
   }
 });
 
 router.get("/getTweetsByUser/:id", async (req, res) => {
+  const loggedInUser = req.query.userId;
+
   try {
-    const tweets = await Tweet.find({ author: req.params.id }).populate(
-      "author",
-      "-password"
-    );
-    res.json({ tweets: tweets });
+    const tweets = await Tweet.find({ author: req.params.id })
+      .populate("author", "-password")
+      .sort("-createdAt");
+
+    const result = tweets.map((tweet) => {
+      if (tweet.author._id == loggedInUser) {
+        tweet.canDelete = true;
+      }
+      return tweet;
+    });
+
+    // console.log(result);
+
+    res.json({ tweets: result });
   } catch (err) {
     res.json(err);
   }

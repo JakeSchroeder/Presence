@@ -66,11 +66,13 @@ const TweetImg = styled.img`
 `;
 
 const TweetContent = styled.div`
+  width: 100%;
   margin: 0 5px;
   padding-bottom: 10px;
 `;
 
 const NameWrapper = styled.div`
+  justify-content: space-between;
   display: flex;
   align-items: center;
 `;
@@ -200,6 +202,12 @@ const ModalIcon = styled.div`
     fill: rgb(101, 119, 134);
     width: 1.25rem;
   }
+
+  &.delete {
+    & svg {
+      fill: ${Colors.red};
+    }
+  }
 `;
 
 const ModalIconDesc = styled.span`
@@ -208,6 +216,9 @@ const ModalIconDesc = styled.span`
   width: 100%;
 
   color: ${Colors.title};
+  &.delete {
+    color: ${Colors.red};
+  }
 `;
 
 // const ModalBG = styled.div`
@@ -545,9 +556,17 @@ export const TweetThread = ({ tweet }) => {
     `,
   });
 
-  const { toggleDropdown, isDropdownOpen, Dropdown } = useDropdown({
+  const [toggleDropdown, isDropdownOpen, Dropdown] = useDropdown({
     openLeft: true,
     openBottom: true,
+  });
+
+  const [
+    toggleDeleteDropdown,
+    isDeleteDropdownOpen,
+    DeleteDropdown,
+  ] = useDropdown({
+    openDelete: true,
   });
 
   const handleLike = () => {
@@ -583,6 +602,33 @@ export const TweetThread = ({ tweet }) => {
 
               <UserName>@{tweet.author.userName}</UserName>
             </StyledLink>
+            {tweet.canDelete ? (
+              <TweetActionItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleDeleteDropdown(e);
+                }}
+              >
+                <TweetAction>{Icons.dropDown}</TweetAction>
+              </TweetActionItem>
+            ) : null}
+            {isDeleteDropdownOpen && (
+              <DeleteDropdown>
+                <ModalWrapper>
+                  <ModalList>
+                    <ModalItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDeleteDropdown(e);
+                      }}
+                    >
+                      <ModalIcon className="delete">{Icons.delete}</ModalIcon>
+                      <ModalIconDesc className="delete">Delete</ModalIconDesc>
+                    </ModalItem>
+                  </ModalList>
+                </ModalWrapper>
+              </DeleteDropdown>
+            )}
           </NameWrapper>
           <LargeDesc>{tweet.content}</LargeDesc>
           <NumLikes>

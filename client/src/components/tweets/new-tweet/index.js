@@ -106,7 +106,7 @@ const MediaPolls = styled.div`
 //   }
 // `;
 
-const NewTweet = () => {
+const NewTweet = ({ parent }) => {
   // const { state } = useContext(AuthContext);
   const { user } = useAuth();
   const { id } = user;
@@ -127,11 +127,20 @@ const NewTweet = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
+
     const tweetData = {
       author: `${user.id}`,
       content: `${tweetValue}`,
+      parent: parent ? `${parent}` : null,
     };
-    handleAddClick({ tweetData: tweetData });
+
+    if (isError) {
+      reset();
+    } else {
+      run(handleAddClick({ tweetData: tweetData }));
+    }
+
+    // handleAddClick({ tweetData: tweetData });
     // if (isError) {
     //   reset();
     // } else {
