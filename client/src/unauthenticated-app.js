@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, Router, Route } from "react-router-dom";
 import illustration_src from "./images/illustration.png";
 import Icons from "./components/icons";
 import { Colors } from "./styles/colors";

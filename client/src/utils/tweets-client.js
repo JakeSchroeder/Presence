@@ -1,4 +1,5 @@
 import { client } from "./api-client";
+import { useAuth } from "../context/authContext";
 
 function create(tweetData) {
   console.log(tweetData);
@@ -6,7 +7,11 @@ function create(tweetData) {
 }
 
 function search({ query = "" }) {
-  return client(`tweets/search?query=${encodeURIComponent(query)}`);
+  return client(
+    `tweets/search?query=${encodeURIComponent(
+      query
+    )}&id=${window.localStorage.getItem("userId")}`
+  );
 }
 
 function read(tweetId) {

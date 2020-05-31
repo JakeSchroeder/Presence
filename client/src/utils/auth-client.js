@@ -1,7 +1,9 @@
 import { client, localStorageKey } from "./api-client";
 import * as jwt_decode from "jwt-decode";
+
 function handleUserResponse({ user: { token, ...user } }) {
   window.localStorage.setItem(localStorageKey, token);
+  window.localStorage.setItem("userId", user.id);
   return user;
 }
 

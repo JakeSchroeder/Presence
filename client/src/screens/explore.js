@@ -98,8 +98,6 @@ function Explore() {
     query
   );
 
-  console.log(tweets);
-
   useEffect(() => {
     return () => refetchTweetSearchQuery();
   }, []);
@@ -144,11 +142,9 @@ function Explore() {
               {isLoading ? (
                 <Spinner />
               ) : isSuccess && tweets.length ? (
-                <p>Here you go! Find more books with the search bar above.</p>
+                <p>Here you go! Find more tweets with the search bar above.</p>
               ) : isSuccess && !tweets.length ? (
-                <p>
-                  Hmmm... I couldn't find any books to suggest for you. Sorry.
-                </p>
+                <p>Hmmm... I couldn't find any tweets for you. Sorry.</p>
               ) : null}
             </>
           )}

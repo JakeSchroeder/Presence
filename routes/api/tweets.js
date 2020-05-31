@@ -12,13 +12,24 @@ const Tweet = require("../../models/Tweet");
 const User = require("../../models/User");
 
 router.post("/new", async (req, res) => {
+  console.log(req.body.parent);
   try {
     const newTweet = new Tweet({
-      parent: req.body.parent ? `${req.body.parent}` : null,
+      parent: req.body.tweetData.parent ? `${req.body.tweetData.parent}` : null,
       content: `${req.body.tweetData.content}`,
       author: `${req.body.tweetData.author}`,
     });
+
+    // console.log(newTweet);
+
+    if (newTweet.parent != null) {
+      const tweet = await Tweet.findOne({ _id: newTweet.parent });
+      tweet.replies++;
+      await tweet.save();
+    }
+
     const saveResponse = await newTweet.save();
+
     res.json(saveResponse);
   } catch (err) {
     res.json(err);
@@ -33,11 +44,11 @@ router.get("/search", async (req, res) => {
     const query = searchParams.get("query");
     let matchedTweets = [];
     if (!query) {
-      console.log("none");
       const allParentTweets = await Tweet.find({ parent: null }).populate(
         "author",
         "-password"
       );
+
       matchedTweets = allParentTweets;
     } else {
       const searchResults = await Tweet.find({
@@ -45,7 +56,21 @@ router.get("/search", async (req, res) => {
       }).populate("author", "-password");
       matchedTweets = searchResults;
     }
-    res.json({ tweets: matchedTweets });
+
+    // const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+
+    const loggedInUser = searchParams.get("id");
+
+    const result = matchedTweets.map((tweet) => {
+      if (tweet.author._id == loggedInUser) {
+        tweet.canDelete = true;
+      }
+      return tweet;
+    });
+
+    console.log(result);
+
+    res.json({ tweets: result });
   } catch (err) {
     res.json(err);
   }
@@ -114,6 +139,7 @@ router.get("/getTweetChildrenById/:id", async (req, res) => {
     const tweetChildren = await tweetParent
       .getImmediateChildren({})
       .populate("author", "-password");
+
     res.json({ tweets: [tweetParent, ...tweetChildren] });
   } catch (err) {
     res.json(err);

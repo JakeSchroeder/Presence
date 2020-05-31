@@ -19,6 +19,10 @@ const TweetSchema = new Schema({
     type: Number,
     default: 0,
   },
+  canDelete: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

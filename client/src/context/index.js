@@ -2,6 +2,7 @@ import React from "react";
 import { homepage } from "../../package.json";
 import { BrowserRouter as Router } from "react-router-dom";
 import { ReactQueryConfigProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 import { AuthProvider } from "./authContext";
 // import { UserProvider } from "./userContext";
 
@@ -22,6 +23,7 @@ const AppProviders = ({ children }) => {
       <Router>
         <AuthProvider>{children}</AuthProvider>
       </Router>
+      <ReactQueryDevtools initialIsOpen={false} />
     </ReactQueryConfigProvider>
   );
 };

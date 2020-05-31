@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import usePortal from "react-useportal";
 
-const Dropdown = styled.div`
+const StyledDropdown = styled.div`
   /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
   padding: 20px;
   display: flex;
@@ -21,9 +21,11 @@ const Background = styled.div`
 
 export const useDropdown = ({
   onOpen,
+  // onClose,
   openTop,
   openLeft,
   openRight,
+  openDelete,
   openCenter,
   openBottom,
   ...config
@@ -34,6 +36,7 @@ export const useDropdown = ({
       onOpen(args) {
         root.style = "pointer-events: none";
         const { portal, targetEl } = args;
+        console.log(portalRef.current);
         const clickedEl = targetEl.current;
         const {
           top,
@@ -43,7 +46,7 @@ export const useDropdown = ({
           height,
           width,
         } = clickedEl.getBoundingClientRect();
-        console.log(top);
+
         let t = 0;
         let b = 0;
         let r = 0;
@@ -57,6 +60,18 @@ export const useDropdown = ({
           position: absolute;
           top: ${t - 30}px;
           left: ${l - 200}px;
+          background: #ffff;
+              `;
+        }
+
+        if (openDelete) {
+          t = top + clickedEl.clientHeight;
+          l = left;
+          portal.current.style.cssText = `
+        
+          position: absolute;
+          top: ${t - 30}px;
+          left: ${l - 80}px;
           background: #ffff;
               `;
         }
@@ -98,7 +113,7 @@ export const useDropdown = ({
         if (onOpen) onOpen(args);
       },
       onScroll({ portal }) {
-        console.log("SCROLLING");
+        // console.log("SCROLLING");
         // TODO: add logic so when scrolling, the portal doesn't get displaced
       },
       onResize() {
@@ -117,13 +132,15 @@ export const useDropdown = ({
   //   portalRef.current.style.left = `${l}px`
   // }
 
-  return {
-    Dropdown: (props) => (
-      <Portal>
-        <Dropdown {...props} />
-      </Portal>
-    ),
+  const Dropdown = (props) => (
+    <Portal>
+      <StyledDropdown {...props} />
+    </Portal>
+  );
+
+  return Object.assign([togglePortal, isOpen, Dropdown], {
+    Dropdown,
     toggleDropdown: togglePortal,
     isDropdownOpen: isOpen,
-  };
+  });
 };
