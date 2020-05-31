@@ -1,5 +1,11 @@
 import React from "react";
-import { Switch, Route, Link as RouterLink, useMatch } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Link as RouterLink,
+  useMatch,
+  Redirect,
+} from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import { homepage } from "../package.json";
 import Layout from "./components/layout";
@@ -45,6 +51,7 @@ function AuthenticatedApp() {
 function AppRoutes() {
   return (
     <Switch>
+      <Redirect exact from="/" to="/home" />
       <Route exact path="/home" component={Home} />
       <Route exact path="/explore" component={Explore} />
       <Route exact path="/messages" component={Messages} />
