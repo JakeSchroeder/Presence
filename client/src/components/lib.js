@@ -29,6 +29,10 @@ const SidebarWrapper = styled.div`
   @media (max-width: 1092px) {
     width: 290px;
   }
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 `;
 
 const SidebarInner = styled.div`

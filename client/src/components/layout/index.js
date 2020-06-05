@@ -36,6 +36,14 @@ const MainInner = styled.div`
   @media (max-width: 1092px) {
     width: 920px;
   }
+
+  @media (max-width: 1021px) {
+    width: 600px;
+  }
+
+  @media (max-width: 720px) {
+    width: 100%;
+  }
 `;
 
 const MainPositioner = styled.div`

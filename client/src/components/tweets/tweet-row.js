@@ -60,6 +60,7 @@ const TweetContent = styled.div`
 `;
 
 const NameWrapper = styled.div`
+  height: 36px;
   justify-content: space-between;
   display: flex;
   align-items: center;
