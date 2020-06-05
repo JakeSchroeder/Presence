@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 // import { AuthContext } from "../../../App";
 import { GenericBtn } from "../../lib";
 import { Colors } from "../../../styles/colors";
@@ -106,16 +106,71 @@ const MediaPolls = styled.div`
 //   }
 // `;
 
-const NewTweet = ({ parent }) => {
-  // const { state } = useContext(AuthContext);
+function CreateTweetForm({
+  isModal,
+  closeModal,
+  onSubmit,
+  placeholder = "What's happening?",
+}) {
+  const [value, setValue] = useState("");
   const { user } = useAuth();
   const { id } = user;
-  const { isLoading, isError, error, run, reset } = useAsync();
-  const [handleAddClick] = useCreateTweet();
-  const [tweetValue, setTweetValue] = useState("");
-  const [tweetResponse, setTweetResponse] = useState(null);
 
-  const { openModal, closeModal, isModalOpen, Modal } = useModal({
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const tweetData = {
+      author: id,
+      content: value,
+    };
+
+    onSubmit(tweetData);
+    setValue("");
+    if (isModal) {
+      closeModal();
+    }
+  };
+
+  return (
+    <TweetForm onSubmit={handleFormSubmit}>
+      <TweetInputWrapper>
+        <UserImg src={profile_src} alt="User Image" />
+        <TweetInput
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+          type="text"
+          placeholder={placeholder}
+        />
+      </TweetInputWrapper>
+      <MediaInputWrapper>
+        <MediaInnerWrapper>
+          <MediaImg>{Icons.img}</MediaImg>
+          <MediaPolls>{Icons.polls}</MediaPolls>
+        </MediaInnerWrapper>
+        <GenericBtn type="submit" disabled={!value}>
+          Tweet
+        </GenericBtn>
+      </MediaInputWrapper>
+    </TweetForm>
+  );
+}
+
+const NewTweet = ({ parent, isModal, closeModal }) => {
+  // const { state } = useContext(AuthContext);
+  const [shouldToast, setShouldToast] = useState(false);
+  // const { isLoading, isError, error, run, reset } = useAsync();
+  const [createTweet, { status, data, error }] = useCreateTweet();
+
+  // const [tweetValue, setTweetValue] = useState("");
+  // const [tweetResponse, setTweetResponse] = useState(null);
+
+  const [
+    openToastModal,
+    closeToastModal,
+    isToastModalOpen,
+    ToastModal,
+  ] = useModal({
     background: "rgba(0, 0, 0, 0.5)",
     modalStyle: `
     position: fixed;
@@ -125,64 +180,43 @@ const NewTweet = ({ parent }) => {
     z-index: 1000;`,
   });
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  // function handleSubmit(e) {
+  //   e.preventDefault();
 
-    const tweetData = {
-      author: `${user.id}`,
-      content: `${tweetValue}`,
-      parent: parent ? `${parent}` : null,
-    };
+  //   const tweetData = {
+  //     author: `${user.id}`,
+  //     content: `${tweetValue}`,
+  //     parent: parent ? `${parent}` : null,
+  //   };
 
-    if (isError) {
-      reset();
-    } else {
-      run(handleAddClick({ tweetData: tweetData }));
-    }
+  //   // if (isError) {
+  //   //   reset();
+  //   // } else {
+  //   //   run(handleAddClick({ tweetData: tweetData }));
+  //   // }
 
-    // handleAddClick({ tweetData: tweetData });
-    // if (isError) {
-    //   reset();
-    // } else {
-    //   run();
-    // }
-  }
+  //   // handleAddClick({ tweetData: tweetData });
+  //   // if (isError) {
+  //   //   reset();
+  //   // } else {
+  //   //   run();
+  //   // }
+  // }
 
   return (
     <>
-      {isModalOpen ? (
-        <Modal>
+      {status === "success" ? (
+        <ToastModal>
           <Toast
             message="Your Tweet was sent"
-            // link={`${state.user.userName}/status/${tweetResponse._id}`}
+            link={`${data.author.userName}/status/${data._id}`}
           />
-        </Modal>
+        </ToastModal>
+      ) : status === "error" ? (
+        <Toast error message="There was an error" />
       ) : null}
       <TweetWrapper>
-        <TweetForm
-          onSubmit={(e) => {
-            handleSubmit(e);
-          }}
-        >
-          <TweetInputWrapper>
-            <UserImg src={profile_src} alt="User Image" />
-            <TweetInput
-              value={tweetValue}
-              onChange={(e) => {
-                setTweetValue(e.target.value);
-              }}
-              type="text"
-              placeholder="What's happening?"
-            />
-          </TweetInputWrapper>
-          <MediaInputWrapper>
-            <MediaInnerWrapper>
-              <MediaImg>{Icons.img}</MediaImg>
-              <MediaPolls>{Icons.polls}</MediaPolls>
-            </MediaInnerWrapper>
-            <GenericBtn type="submit">Tweet</GenericBtn>
-          </MediaInputWrapper>
-        </TweetForm>
+        <CreateTweetForm onSubmit={createTweet} />
       </TweetWrapper>
     </>
   );

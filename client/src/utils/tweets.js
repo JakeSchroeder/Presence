@@ -30,6 +30,7 @@ const getTweetSearchConfig = (query) => ({
           tweetQueryConfig
         );
       }
+      // queryCache.setQueryData("tweets", tweets);
     },
   },
 });
@@ -39,28 +40,76 @@ function useTweetSearch(query) {
   return { ...result, tweets: result.data ?? <Spinner /> };
 }
 
-function getTweet(queryKey, { tweetId }) {
-  return tweetsClient.read(tweetId).then((data) => data.tweet);
-}
+// function getTweet(queryKey, { tweetId }) {
+//   return tweetsClient.read(tweetId).then((data) => data.tweet);
+// }
 
-function useTweet(tweetId) {
-  const { data } = useQuery({
-    queryKey: ["tweet", { tweetId }],
-    queryFn: getTweet,
-    ...tweetQueryConfig,
-  });
-  return data ?? <Spinner />;
-}
+// function useTweet(tweetId) {
+//   const { data } = useQuery({
+//     queryKey: ["tweet", { tweetId }],
+//     queryFn: getTweet,
+//     ...tweetQueryConfig,
+//   });
+//   return data ?? <Spinner />;
+// }
 
-function getTweetThread(queryKey, { tweetId }) {
+async function getTweetThread(queryKey, { tweetId }) {
+  // console.log(tweetId);
+  // const data = await tweetsClient.readChildren(tweetId);
+  // console.log(data);
+  // return data.tweets;
   return tweetsClient.readChildren(tweetId).then((data) => data.tweets);
 }
 
-const getTweetThreadConfig = (tweetId) => ({
-  queryKey: ["thread", { tweetId }],
-  queryFn: getTweetThread,
-  config: {
-    onSuccess(tweets) {
+// const getTweetThread = async (tweetId) => {
+//   console.log(tweetId);
+//   const data = await tweetsClient.readChildren(tweetId);
+//   console.log(data);
+//   return data.tweets;
+// };
+
+// const getTweetThreadConfig = (tweetId) => ({
+//   queryKey: ["thread", { tweetId }],
+//   queryFn: getTweetThread,
+//   config: {
+//     onSuccess(tweets) {
+//       console.log(tweets);
+
+//       // if (tweets != undefined) {
+//       //   for (const tweet of tweets) {
+//       //     queryCache.setQueryData(
+//       //       ["tweet", { tweetId: tweet._id }],
+//       //       tweet,
+//       //       tweetQueryConfig
+//       //     );
+//       //   }
+//       //   return tweets;
+//       // }
+
+//       for (const tweet of tweets) {
+//         queryCache.setQueryData(
+//           ["tweet", { tweetId: tweet._id }],
+//           tweet,
+//           tweetQueryConfig
+//         );
+//       }
+//       return tweets ?? [];
+
+//       // queryCache.setQueryData("tweets", tweets);
+//     },
+//     onError(err) {
+//       console.log(err);
+//     },
+//     useErrorBoundary: true,
+//   },
+// });
+
+function useTweetThread(tweetId) {
+  const result = useQuery({
+    queryKey: ["thread", { tweetId }],
+    queryFn: getTweetThread,
+    onSuccess: async (tweets) => {
+      // await onSuccess?.(tweets);
       for (const tweet of tweets) {
         queryCache.setQueryData(
           ["tweet", { tweetId: tweet._id }],
@@ -68,15 +117,9 @@ const getTweetThreadConfig = (tweetId) => ({
           tweetQueryConfig
         );
       }
-      return tweets;
     },
-  },
-});
-
-function useTweetThread(tweetId) {
-  const result = useQuery(getTweetThreadConfig(tweetId));
-  console.log(result);
-  return { ...result, tweets: result.data };
+  });
+  return { ...result, tweets: result.data ?? [] };
 }
 
 function getTweetsByUser(queryKey, { userId }) {
@@ -84,10 +127,11 @@ function getTweetsByUser(queryKey, { userId }) {
 }
 
 const getTweetsByUserConfig = (userId) => ({
-  queryKey: ["thread", { userId }],
+  queryKey: ["tweetsByUser", { userId }],
   queryFn: getTweetsByUser,
   config: {
     onSuccess(tweets) {
+      // console.log(tweets);
       for (const tweet of tweets) {
         queryCache.setQueryData(
           ["tweet", { tweetId: tweet._id }],
@@ -115,49 +159,88 @@ async function refetchTweetSearchQuery() {
 //   await queryCache.prefetchQuery(getTweetThread({ tweetId }));
 // }
 
-function setQueryDataForTweet(tweet) {
-  queryCache.setQueryData({
-    queryKey: ["tweet", { tweetId: tweet.id }],
-    queryFn: tweet,
-    ...tweetQueryConfig,
-  });
-}
+// function setQueryDataForTweet(tweet) {
+//   queryCache.setQueryData({
+//     queryKey: ["tweet", { tweetId: tweet.id }],
+//     queryFn: tweet,
+//     ...tweetQueryConfig,
+//   });
+// }
 
-const defaultMutationOptions = {
-  onError: (err, variables, recover) =>
-    typeof recover === "function" ? recover() : null,
-  onSettled: () => queryCache.refetchQueries("tweet"),
-  suspense: true,
-  useErrorBoundary: false,
-  throwOnError: true,
-};
+// const defaultMutationOptions = {
+//   onError: (err, variables, recover) =>
+//     typeof recover === "function" ? recover() : null,
+//   onSettled: () => {queryCache.refetchQueries(["tweet", ])},
 
-function onUpdateMutation(newTweet) {
-  const previousTweets = queryCache.getQueryData("tweet");
+//   useErrorBoundary: false,
+//   throwOnError: true,
+// };
 
-  queryCache.setQueryData("tweet", (old) => {
-    return old.map((tweet) => {
-      return tweet.id === newTweet.id ? { ...tweet, ...newTweet } : tweet;
-    });
-  });
+// function onUpdateMutation(newTweet) {
+//   const previousTweets = queryCache.getQueryData("tweet");
 
-  return () => queryCache.setQueryData("tweet", previousTweets);
-}
+//   queryCache.setQueryData("tweet", (old) => {
+//     return old.map((tweet) => {
+//       return tweet.id === newTweet.id ? { ...tweet, ...newTweet } : tweet;
+//     });
+//   });
+
+//   return () => queryCache.setQueryData("tweet", previousTweets);
+// }
 
 function useCreateTweet(options) {
-  return useMutation(({ tweetData }) => tweetsClient.create({ tweetData }), {
-    ...defaultMutationOptions,
+  // console.log({ tweetData });
+  return useMutation((tweetData) => tweetsClient.create(tweetData), {
+    onSettled: () => {
+      queryCache.refetchQueries("tweetSearch");
+      queryCache.refetchQueries("tweetsByUser");
+      queryCache.refetchQueries("thread");
+    },
     ...options,
   });
 }
 
+function useCreateReply(options) {
+  return useMutation((tweetData) => tweetsClient.create(tweetData), {
+    onSettled: () => {
+      queryCache.refetchQueries("tweetSearch");
+      queryCache.refetchQueries("tweetsByUser");
+      queryCache.refetchQueries("thread");
+    },
+    ...options,
+  });
+}
+
+async function removeTweet(queryKey, { tweetId }) {
+  return tweetsClient.remove(tweetId).then((data) => data);
+}
+
+function useRemoveTweet(options) {
+  return useMutation((tweetId) => tweetsClient.remove(tweetId), {
+    // onMutate: (removedItem) => {
+    //   // const previousItems = queryCache.getQueryData("tweet");
+    //   // queryCache.setQueryData("tweets", (old) => {
+    //   //   return old.filter((tweet) => tweet._id !== removedItem._id);
+    //   // });
+    //   // return () => queryCache.setQueryData("tweets", previousItems);
+    // },
+    onSettled: () => {
+      queryCache.refetchQueries("thread");
+      queryCache.refetchQueries("tweetSearch");
+      queryCache.refetchQueries("tweetsByUser");
+    },
+  });
+}
+
 export {
-  useTweet,
+  // useTweet,
   useTweetSearch,
   useTweetThread,
   useTweetsByUser,
   useCreateTweet,
-  setQueryDataForTweet,
+  useCreateReply,
+  useRemoveTweet,
+  // setQueryDataForTweet,
   refetchTweetSearchQuery,
 
   // refetchTweetThread,

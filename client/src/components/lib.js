@@ -8,19 +8,33 @@ export const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
 `;
 
 const StyledMain = styled.main`
   width: 100%;
-
+  max-width: 600px;
   height: 100%;
   border-left: 1px solid ${Colors.border};
   border-right: 1px solid ${Colors.border};
+  flex-shrink: 0;
+  /* justify-content: space-between; */
+  min-height: 100%;
 `;
 
 const SidebarWrapper = styled.div`
-  padding: 10px 20px;
+  margin-right: 10px;
+  width: 350px;
+  min-height: 100%;
+  @media (max-width: 1092px) {
+    width: 290px;
+  }
+`;
+
+const SidebarInner = styled.div`
+  /* width: 350px; */
+  position: sticky;
+  top: ${({ top }) => (top ? `10px` : `0`)};
 `;
 
 const SidebarFooter = styled.p`
@@ -28,11 +42,20 @@ const SidebarFooter = styled.p`
 `;
 
 const HomeTitleWrapper = styled.div`
+  background: white;
+  z-index: 10;
+  position: sticky;
+  top: 0;
   display: flex;
   align-items: center;
   height: 53px;
   padding: 0 15px;
   border-bottom: 1px solid ${Colors.border};
+`;
+
+export const MainInner = styled.div`
+  display: flex;
+  justify-content: space-around;
 `;
 
 export const Main = ({ children }) => <StyledMain>{children}</StyledMain>;
@@ -61,10 +84,12 @@ export const GoBackBtn = ({ onClick }) => (
   <StyledArrow onClick={onClick}>{Icons.arrowLeft}</StyledArrow>
 );
 
-export const Sidebar = ({ children }) => (
+export const Sidebar = ({ children, top }) => (
   <SidebarWrapper>
-    {children}
-    <SidebarFooter>© 2020 Presence</SidebarFooter>
+    <SidebarInner top={top}>
+      {children}
+      <SidebarFooter>© 2020 Presence</SidebarFooter>
+    </SidebarInner>
   </SidebarWrapper>
 );
 
@@ -101,13 +126,18 @@ export const Spinner = styled.div`
 `;
 
 const FullPageWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
   font-size: 4em;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative;
   z-index: 999;
 `;
 
@@ -120,6 +150,12 @@ export function FullPageSpinner() {
 }
 
 const FullPageErrorWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
   color: red;
   height: 100vh;
   display: flex;
@@ -176,7 +212,7 @@ export const TweetBtn = styled.button`
   margin-top: 10px;
   min-height: 50px;
   cursor: pointer;
-  width: 100%;
+  width: 90%;
   border-radius: 999px;
   padding: 0 16px;
   border: 0;
@@ -188,28 +224,31 @@ export const TweetBtn = styled.button`
 
   &:hover {
     background: #eac428;
+  }
+  @media (max-width: 1280px) {
+    display: none;
   }
 `;
 
 export const NormalBtn = styled.button`
   min-height: 39px;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? `default` : `pointer`)};
   border-radius: 999px;
   padding: 0 16px;
   border: 0;
   outline: 0;
-  background: ${Colors.primary};
+  background: ${({ disabled }) => (disabled ? `#ffe876` : `${Colors.primary}`)};
   color: white;
   font-size: 16px;
   font-family: inherit;
   line-height: 39px;
   &:hover {
-    background: #eac428;
+    background: ${({ disabled }) => (disabled ? `#ffe876` : `#eac428`)};
   }
 `;
 
-export const GenericBtn = ({ children, className, onClick }) => (
-  <NormalBtn onClick={onClick} className={className}>
+export const GenericBtn = ({ children, className, onClick, disabled }) => (
+  <NormalBtn onClick={onClick} className={className} disabled={disabled}>
     {children}
   </NormalBtn>
 );

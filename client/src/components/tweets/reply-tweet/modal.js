@@ -3,7 +3,7 @@ import NewTweetReply from "./index";
 import styled from "styled-components";
 import Icons from "../../icons";
 import { Colors } from "../../../styles/colors";
-import { Tweet } from "../tweet";
+
 import profile_src from "../../../images/profile.png";
 const NewTweetModalWrapper = styled.div`
   border-radius: 15px;
@@ -196,7 +196,7 @@ const NewTweetReplyModal = ({ closeModal, tweet }) => {
             <TweetDescription>{tweet.content}</TweetDescription>
           </TweetContent>
         </TweetWrapper>
-        <NewTweetReply placeholder="Add another Tweet" tweet={tweet} />
+        <NewTweetReply tweet={tweet} />
       </NewTweetContent>
       {/* <NewTweetFooter>
           <NewTweetComment type="text" placeholder="Add a comment" />

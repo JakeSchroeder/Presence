@@ -9,7 +9,7 @@ import { useDropdown } from "../../hooks/useDropdown";
 import SendMessage from "../messages/send-message";
 import NewTweetReplyModal from "./reply-tweet/modal";
 // import { useListItem } from "../../utils/=";
-
+import { useRemoveTweet } from "../../utils/tweets";
 import profile_src from "../../images/profile.png";
 // import {Dialog} from "@reach/dialog"l
 
@@ -253,6 +253,8 @@ function TweetRow({ tweet }) {
     openDelete: true,
   });
 
+  const [removeTweet] = useRemoveTweet();
+
   return (
     <>
       {isModalOpen && (
@@ -305,7 +307,8 @@ function TweetRow({ tweet }) {
                     <ModalItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleDeleteDropdown(e);
+                        removeTweet(tweet._id);
+                        toggleDeleteDropdown();
                       }}
                     >
                       <ModalIcon className="delete">{Icons.delete}</ModalIcon>

@@ -16,7 +16,7 @@ import { Messages } from "./screens/messages";
 import { Profile } from "./screens/profile";
 import { NotFound } from "./screens/not-found";
 
-import { ErrorMessage, FullPageErrorFallback } from "./components/lib";
+import { ErrorMessage, FullPageErrorFallback, Spinner } from "./components/lib";
 
 import { useAuth } from "./context/authContext";
 
@@ -50,15 +50,17 @@ function AuthenticatedApp() {
 
 function AppRoutes() {
   return (
-    <Switch>
-      <Redirect exact from="/" to="/home" />
-      <Route exact path="/home" component={Home} />
-      <Route exact path="/explore" component={Explore} />
-      <Route exact path="/messages" component={Messages} />
-      <Route exact path="/:userName/status/:tweetId" component={Thread} />
-      <Route exact path="/:userName" component={Profile} />
-      <Route path="*" component={NotFound} />
-    </Switch>
+    <>
+      <Switch>
+        <Redirect exact from="/" to="/home" />
+        <Route exact path="/home" component={Home} />
+        <Route exact path="/explore" component={Explore} />
+        <Route exact path="/:userName/status/:tweetId" component={Thread} />
+        <Route exact path="/messages" component={Messages} />
+        <Route exact path="/:userName" component={Profile} />
+        <Route path="*" component={NotFound} />
+      </Switch>
+    </>
   );
 }
 

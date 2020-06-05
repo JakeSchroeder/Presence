@@ -6,13 +6,17 @@ import tb_src from "../../images/tb.jpg";
 import { Link } from "react-router-dom";
 
 const FollowWrapper = styled.div`
+  /* padding-top: 15px; */
+  /* padding-top: 15px; */
   border-radius: 16px;
-  width: 350px;
-  background: ${Colors.light};
-
-  @media (max-width: 1092px) {
+  /* width: 350px; */
+  /* background: ${Colors.light};
+  position: sticky;
+  top: 0; */
+  /* @media (max-width: 1092px) {
     width: 290px;
-  }
+  } */
+  background: ${Colors.light}
 `;
 
 const FollowHeader = styled.div`
@@ -55,7 +59,7 @@ const FollowImage = styled.img`
 `;
 
 const FollowName = styled.p`
-  white-space: nowrap;
+  white-space: pre-wrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 700;
@@ -76,7 +80,7 @@ const WhoToFollow = () => {
   return (
     <FollowWrapper>
       <FollowHeader>
-        <FollowTitle>Who to follow</FollowTitle>
+        <FollowTitle>Student Check In</FollowTitle>
       </FollowHeader>
       <FollowBody>
         <FollowList>

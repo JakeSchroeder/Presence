@@ -12,15 +12,18 @@ const Tweet = require("../../models/Tweet");
 const User = require("../../models/User");
 
 router.post("/new", async (req, res) => {
-  console.log(req.body.parent);
+  // console.log(req.body);
+  console.log(req.body);
   try {
     const newTweet = new Tweet({
-      parent: req.body.tweetData.parent ? `${req.body.tweetData.parent}` : null,
-      content: `${req.body.tweetData.content}`,
-      author: `${req.body.tweetData.author}`,
+      parent: req.body.parent ? `${req.body.parent}` : null,
+      content: `${req.body.content}`,
+      author: `${req.body.author}`,
     });
 
     // console.log(newTweet);
+
+    const saveResponse = await newTweet.save();
 
     if (newTweet.parent != null) {
       const tweet = await Tweet.findOne({ _id: newTweet.parent });
@@ -28,11 +31,33 @@ router.post("/new", async (req, res) => {
       await tweet.save();
     }
 
-    const saveResponse = await newTweet.save();
-
     res.json(saveResponse);
   } catch (err) {
     res.json(err);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  // console.log(req);
+  const tweetId = req.params.id;
+  try {
+    const tweetForDelete = await Tweet.findOne({ _id: tweetId });
+
+    if (tweetForDelete.parent != null) {
+      const parentTweet = await Tweet.findOne({ _id: tweetForDelete.parent });
+      if (parentTweet.replies > 0) {
+        parentTweet.replies -= 1;
+      }
+      await parentTweet.save();
+    }
+
+    const result = await tweetForDelete.remove();
+
+    console.log(result);
+    res.json(result);
+    // tweetForDelete.remove().then(tweet =>)
+  } catch (err) {
+    console.log(err);
   }
 });
 
@@ -140,16 +165,17 @@ router.get("/getTweetById/:id", async (req, res) => {
 
 router.get("/getTweetChildrenById/:id", async (req, res) => {
   const loggedInUser = req.query.userId;
-
+  const tweetId = req.params.id;
+  console.log("tweet id" + tweetId);
   try {
-    const tweetParent = await Tweet.findById(req.params.id).populate(
+    const tweetParent = await Tweet.findById(tweetId).populate(
       "author",
       "-password"
     );
     const tweetChildren = await tweetParent
       .getImmediateChildren({})
       .populate("author", "-password")
-      .sort("-createdAt");
+      .sort("createdAt");
 
     const tweets = [tweetParent, ...tweetChildren];
 
@@ -170,9 +196,9 @@ router.get("/getTweetChildrenById/:id", async (req, res) => {
 
 router.get("/getTweetsByUser/:id", async (req, res) => {
   const loggedInUser = req.query.userId;
-
+  const authorId = req.params.id;
   try {
-    const tweets = await Tweet.find({ author: req.params.id })
+    const tweets = await Tweet.find({ author: authorId })
       .populate("author", "-password")
       .sort("-createdAt");
 

@@ -9,7 +9,7 @@ import {
   FollowBtn,
   StyledTab,
   StyledTabList,
-  Wrapper,
+  // Wrapper,
   Main,
   Sidebar,
   MainTitle,
@@ -25,7 +25,10 @@ import { useTweetsByUser } from "../utils/tweets";
 import { useUser } from "../utils/users";
 
 const SearchWrapper = styled.div`
-  padding-bottom: 20px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 `;
 
 const ProfileWrapper = styled.div``;
@@ -80,15 +83,23 @@ const TweetListUl = styled.ul`
   padding: 0;
 `;
 
+const SpinnerWrapper = styled.div`
+  padding-top: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
 function Profile({ history }) {
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
   const { state } = useLocation();
-  const user = useUser(state.userId);
-  const { userName, displayName, id } = user;
-  const { tweets, status, error, isLoading, isError } = useTweetsByUser(
-    `${id}`
+  const { tweets, error, status, isFetching } = useTweetsByUser(
+    `${state.userId}`
   );
+  const { user } = useUser(state.userId);
+
+  // const { userName, displayName, id } = user.author;
   // const [user, setUser] = useState(null);
   // const [userTweets, setUserTweets] = useState(null);
 
@@ -119,7 +130,8 @@ function Profile({ history }) {
   // }, [user]);
 
   return (
-    <Wrapper>
+    // <Wrapper>
+    <>
       <Main>
         {/* {isLoading ? (
           "...loading"
@@ -128,11 +140,11 @@ function Profile({ history }) {
           <>
             <MainTitle>
               <GoBackBtn
-              // onClick={() => {
-              //   history.goBack();
-              // }}
+                onClick={() => {
+                  history.goBack();
+                }}
               />
-              <TitleText>{displayName}</TitleText>
+              <TitleText>{user.displayName}</TitleText>
             </MainTitle>
             <ProfileWrapper>
               <ProfileBG></ProfileBG>
@@ -140,8 +152,8 @@ function Profile({ history }) {
                 <ProfileImg src={profile_src} />
 
                 <NameWrapper>
-                  <DisplayName>{displayName}</DisplayName>
-                  <UserName>@{userName}</UserName>
+                  <DisplayName>{user.displayName}</DisplayName>
+                  <UserName>@{user.userName}</UserName>
                 </NameWrapper>
                 <FollowingWrapper>
                   <NumFollowers>
@@ -161,19 +173,20 @@ function Profile({ history }) {
                   <StyledTab>Likes</StyledTab>
                 </StyledTabList>
                 <TabPanel>
-                  {isError ? <p>{error.message}</p> : null}
-                  {tweets.length ? (
-                    <>
-                      <TweetListUl>
-                        {tweets.map((tweet) => (
-                          <li key={tweet._id}>
-                            <TweetRow key={tweet._id} tweet={tweet} />
-                          </li>
-                        ))}
-                      </TweetListUl>
-                    </>
+                  {status === "loading" ? (
+                    <SpinnerWrapper>
+                      <Spinner width={25} height={25} />
+                    </SpinnerWrapper>
+                  ) : status === "error" ? (
+                    <p>error: {error.message}</p>
                   ) : (
-                    "Error"
+                    <TweetListUl>
+                      {tweets.map((tweet) => (
+                        <li key={tweet._id}>
+                          <TweetRow key={tweet._id} tweet={tweet} />
+                        </li>
+                      ))}
+                    </TweetListUl>
                   )}
                 </TabPanel>
                 <TabPanel>
@@ -216,7 +229,7 @@ function Profile({ history }) {
             </ProfileTabs>
           </>
         ) : (
-          <Spinner />
+          "NO USer"
         )}
       </Main>
       <Sidebar>
@@ -226,7 +239,7 @@ function Profile({ history }) {
         <TrendsForYou />
         <WhoToFollow />
       </Sidebar>
-    </Wrapper>
+    </>
   );
 }
 

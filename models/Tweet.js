@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 const MpathPlugin = require("mongoose-mpath");
 const Schema = mongoose.Schema;
 
-const Comment = require("./Comment");
-
 const TweetSchema = new Schema({
   content: {
     type: String,
@@ -34,7 +32,7 @@ TweetSchema.index({ content: "text" });
 TweetSchema.plugin(MpathPlugin, [
   {
     pathSeparator: "#",
-    onDelete: "REPARENT",
+    onDelete: "DELETE",
     idType: Schema.Types.ObjectId,
   },
 ]);

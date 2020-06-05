@@ -4,12 +4,13 @@ import TrendsForYou from "../components/trends-for-you";
 import WhoToFollow from "../components/who-to-follow";
 import { Colors } from "../styles/colors";
 import {
-  Wrapper,
+  // Wrapper,
   Main,
   MainTitle,
   Sidebar,
   Seperator,
   FollowBtn,
+  Spinner,
 } from "../components/lib";
 import Icons from "../components/icons";
 import Search from "../components/search";
@@ -24,27 +25,41 @@ const TweetListUl = styled.ul`
 `;
 
 const SearchWrapper = styled.div`
-  padding-bottom: 20px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 `;
 
 const TitleText = styled.h2``;
 
+const SpinnerWrapper = styled.div`
+  padding-top: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
 function Home() {
   const { user } = useAuth();
-  const { tweets, status, error, isLoading, isError } = useTweetsByUser(
-    `${user.id}`
-  );
+  const { tweets, error, status, isFetching } = useTweetsByUser(`${user.id}`);
 
   return (
-    <Wrapper>
+    // <Wrapper>
+    <>
       <Main>
         <MainTitle>
           <TitleText>Home</TitleText>
         </MainTitle>
         <NewTweet />
         <Seperator />
-        {isError ? <p>{error.message}</p> : null}
-        {tweets.length ? (
+        {status === "loading" ? (
+          <SpinnerWrapper>
+            <Spinner width={25} height={25} />
+          </SpinnerWrapper>
+        ) : status === "error" ? (
+          <p>Error: {error.message}</p>
+        ) : (
           <>
             <TweetListUl>
               {tweets.map((tweet) => (
@@ -54,8 +69,6 @@ function Home() {
               ))}
             </TweetListUl>
           </>
-        ) : (
-          "Error"
         )}
       </Main>
       <Sidebar>
@@ -65,7 +78,8 @@ function Home() {
         <TrendsForYou />
         <WhoToFollow />
       </Sidebar>
-    </Wrapper>
+    </>
+    // </Wrapper>
   );
 }
 

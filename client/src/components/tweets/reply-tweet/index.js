@@ -8,6 +8,8 @@ import profile_src from "../../../images/profile.png";
 import axios from "axios";
 import useModal from "../../../hooks/useModal";
 import Toast from "../../toast";
+import { useCreateReply } from "../../../utils/tweets";
+import { useAuth } from "../../../context/authContext";
 
 const TweetWrapper = styled.div`
   display: flex;
@@ -104,10 +106,56 @@ const MediaPolls = styled.div`
 //   }
 // `;
 
-const NewTweetReply = ({ tweet, placeholder }) => {
+function CreateTweetReplyForm({
+  tweet,
+  onSubmit,
+  placeholder = "Add another quack",
+}) {
+  const [value, setValue] = useState("");
+  const { user } = useAuth();
+  const { id } = user;
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    const tweetData = {
+      author: id,
+      content: value,
+      parent: tweet._id,
+    };
+
+    onSubmit(tweetData);
+    setValue("");
+  };
+
+  return (
+    <TweetForm onSubmit={handleFormSubmit}>
+      <TweetInputWrapper>
+        <UserImg src={profile_src} alt="User Image" />
+        <TweetInput
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value);
+          }}
+          type="text"
+          placeholder={placeholder}
+        />
+      </TweetInputWrapper>
+      <MediaInputWrapper>
+        <MediaInnerWrapper>
+          <MediaImg>{Icons.img}</MediaImg>
+          <MediaPolls>{Icons.polls}</MediaPolls>
+        </MediaInnerWrapper>
+        <GenericBtn type="submit" disabled={!value}>
+          Tweet
+        </GenericBtn>
+      </MediaInputWrapper>
+    </TweetForm>
+  );
+}
+
+const NewTweetReply = ({ tweet }) => {
   // const { state } = useContext(AuthContext);
-  const [tweetValue, setTweetValue] = useState("");
-  const [tweetResponse, setTweetResponse] = useState(null);
 
   const { openModal, closeModal, isModalOpen, Modal } = useModal({
     background: "rgba(0, 0, 0, 0.5)",
@@ -119,65 +167,20 @@ const NewTweetReply = ({ tweet, placeholder }) => {
     z-index: 1000;`,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(tweet);
-    const tweetReplyData = {
-      content: tweetValue,
-      userId: "hello",
-      tweetId: tweet._id,
-    };
-
-    axios
-      .post(`/api/tweet/${tweet._id}/comment/new`, tweetReplyData)
-      .then((res) => {
-        console.log(res);
-        if (res.status == 200) {
-          setTweetResponse(res.data);
-        }
-        setTweetValue("");
-        openModal();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [createReply, { status, error, data }] = useCreateReply();
 
   return (
     <>
-      {isModalOpen ? (
+      {status === "success" ? (
         <Modal>
           <Toast
             message="Your Tweet was sent"
-            // link={`${state.user.userName}/status/${tweetResponse._id}`}
+            link={`${data.author.userName}/status/${data._id}`}
           />
         </Modal>
       ) : null}
       <TweetWrapper>
-        <TweetForm
-          onSubmit={(e) => {
-            handleSubmit(e);
-          }}
-        >
-          <TweetInputWrapper>
-            <UserImg src={profile_src} alt="User Image" />
-            <TweetInput
-              value={tweetValue}
-              onChange={(e) => {
-                setTweetValue(e.target.value);
-              }}
-              type="text"
-              placeholder={placeholder ? placeholder : `What's happening?`}
-            />
-          </TweetInputWrapper>
-          <MediaInputWrapper>
-            <MediaInnerWrapper>
-              <MediaImg>{Icons.img}</MediaImg>
-              <MediaPolls>{Icons.polls}</MediaPolls>
-            </MediaInnerWrapper>
-            <GenericBtn type="submit">Tweet</GenericBtn>
-          </MediaInputWrapper>
-        </TweetForm>
+        <CreateTweetReplyForm tweet={tweet} onSubmit={createReply} />
       </TweetWrapper>
     </>
   );

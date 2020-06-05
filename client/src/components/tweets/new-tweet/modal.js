@@ -121,7 +121,7 @@ const NewTweetModal = ({ closeModal }) => {
         </TitleWrapper>
       </NewTweetModalHeader>
       <NewTweetContent>
-        <NewTweet />
+        <NewTweet isModal closeModal={closeModal} />
       </NewTweetContent>
       {/* <NewTweetFooter>
           <NewTweetComment type="text" placeholder="Add a comment" />

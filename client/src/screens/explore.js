@@ -4,11 +4,12 @@ import Search from "../components/search";
 import styled from "styled-components";
 import Icons from "../components/icons";
 import { Colors } from "../styles/colors";
+import { Link } from "react-router-dom";
 import {
   FollowBtn,
   StyledTab,
   StyledTabList,
-  Wrapper,
+  // Wrapper,
   Main,
   Sidebar,
   MainTitle,
@@ -29,6 +30,11 @@ const SearchOuter = styled.div`
   padding-right: 15px;
   display: flex;
   align-items: center;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid ${Colors.border};
 `;
 
 const SearchInner = styled.div`
@@ -91,12 +97,35 @@ const TweetListUl = styled.ul`
   padding: 0;
 `;
 
+const SpinnerWrapper = styled.div`
+  padding-top: 25px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const ErrorWrapper = styled.div`
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+`;
+
+const ExistText = styled.h1`
+  font-size: 23px;
+  margin-bottom: 20px;
+`;
+
+const SidebarInner = styled.div`
+  margin-top: 10px;
+`;
+
 function Explore() {
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState();
-  const { tweets, error, isLoading, isError, isSuccess } = useTweetSearch(
-    query
-  );
+  const { tweets, error, status, isFetching } = useTweetSearch(query);
 
   useEffect(() => {
     return () => refetchTweetSearchQuery();
@@ -115,7 +144,8 @@ function Explore() {
   }
 
   return (
-    <Wrapper>
+    // <Wrapper>
+    <>
       <Main>
         <SearchOuter>
           <SearchForm onSubmit={handleSearchClick}>
@@ -129,90 +159,43 @@ function Explore() {
             </SearchWrapper>
           </SearchForm>
         </SearchOuter>
-        {isError ? (
-          <div css={{ color: "red" }}>
-            <p>There was an error:</p>
-            <pre>{error.message}</pre>
-          </div>
-        ) : null}
-
-        <div>
-          {hasSearched ? null : (
-            <>
-              {isLoading ? (
-                <Spinner />
-              ) : isSuccess && tweets.length ? (
-                <p>Here you go! Find more tweets with the search bar above.</p>
-              ) : isSuccess && !tweets.length ? (
-                <p>Hmmm... I couldn't find any tweets for you. Sorry.</p>
-              ) : null}
-            </>
-          )}
-          {tweets.length ? (
-            <TweetListUl>
-              {tweets.map((tweet) => (
-                <li key={tweet._id}>
-                  <TweetRow key={tweet._id} tweet={tweet} />
-                </li>
-              ))}
-            </TweetListUl>
-          ) : hasSearched ? (
-            <div
-              css={{ marginTop: 20, fontSize: "1.2em", textAlign: "center" }}
-            >
-              {isLoading ? (
-                <div css={{ width: "100%", margin: "auto" }}>
-                  <Spinner />
-                </div>
-              ) : (
-                <p>
-                  Hmmm... I couldn't find any books with the query "{query}."
-                  Please try another.
-                </p>
-              )}
-            </div>
-          ) : null}
-        </div>
-
-        {/* <TweetList tweets={tweets} /> */}
         {/* {isError ? (
           <div css={{ color: "red" }}>
             <p>There was an error:</p>
             <pre>{error.message}</pre>
           </div>
-        ) : null}
-        {tweets.length ? (
-          <TweetList tweets={tweets} />
-        ) : hasSearched ? (
-          <p>
-            Hmmm... I couldn't find any books with the query "{query}." Please
-            try another.
-          </p>
         ) : null} */}
-        {/* <Tabs
-          selectedIndex={tabIndex}
-          onSelect={(index) => {
-            handleTabSwitch(index);
-          }}
-        >
-          <StyledTabList>
-            <StyledTab>Trending</StyledTab>
-            <StyledTab>News</StyledTab>
-          </StyledTabList>
-
-          <TabPanel>
-            <MainTitle>
-              <TitleText>United States trends</TitleText>
-            </MainTitle>
-            
-          </TabPanel>
-          <TabPanel>{tweets ? <TweetList tweets={tweets} /> : null}</TabPanel>
-        </Tabs> */}
+        {status === "loading" ? (
+          <SpinnerWrapper>
+            <Spinner width={25} height={25} />
+          </SpinnerWrapper>
+        ) : status === "error" ? (
+          <p>Error: {error.message}</p>
+        ) : tweets.length ? (
+          <TweetListUl>
+            {tweets.map((tweet) => (
+              <li key={tweet._id}>
+                <TweetRow key={tweet._id} tweet={tweet} />
+              </li>
+            ))}
+          </TweetListUl>
+        ) : hasSearched ? (
+          <ErrorWrapper>
+            <ExistText>No results for "{query}"</ExistText>
+            <p>
+              The term you entered did not bring up any results. You may have
+              mistyped your term, try researching.
+            </p>
+          </ErrorWrapper>
+        ) : null}
       </Main>
-      <Sidebar>
-        <WhoToFollow />
+      <Sidebar top>
+        <SidebarInner>
+          <WhoToFollow />
+        </SidebarInner>
       </Sidebar>
-    </Wrapper>
+    </>
+    // </Wrapper>
   );
 }
 

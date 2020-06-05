@@ -18,12 +18,16 @@ function read(tweetId) {
   return client(`tweets/getTweetById/${tweetId}?id=${userId}`);
 }
 
-function readByUser(userId) {
-  return client(`tweets/getTweetsByUser/${userId}?userId=${userId}`);
+function readByUser(authorId) {
+  return client(`tweets/getTweetsByUser/${authorId}?userId=${userId}`);
 }
 
 function readChildren(tweetId) {
   return client(`tweets/getTweetChildrenById/${tweetId}?userId=${userId}`);
 }
 
-export { create, read, search, readChildren, readByUser };
+function remove(tweetId) {
+  return client(`tweets/${tweetId}`, { method: "DELETE" });
+}
+
+export { create, read, remove, search, readChildren, readByUser };

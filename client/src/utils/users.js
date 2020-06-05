@@ -1,4 +1,6 @@
+import React from "react";
 import { useQuery, queryCache } from "react-query";
+import { Spinner } from "../components/lib";
 import * as usersClient from "./users-client";
 // import {loadingBook} from './book-placeholder'
 
@@ -7,23 +9,24 @@ const userQueryConfig = {
   cacheTime: 1000 * 60 * 60,
 };
 
-function getUser(queryKey, { userId }) {
+async function getUser(queryKey, { userId }) {
   return usersClient.read(userId).then((data) => data.user);
 }
 
 function useUser(userId) {
-  const { data } = useQuery({
+  const result = useQuery({
     queryKey: ["user", { userId }],
     queryFn: getUser,
     ...userQueryConfig,
   });
-  return (
-    data ?? {
-      userName: "Loading...",
+  return {
+    ...result,
+    user: result.data ?? {
       displayName: "Loading...",
-      loadingUser: true,
-    }
-  );
+      userName: "loading...",
+      id: "loading",
+    },
+  };
 }
 
 function setQueryDataForUser(user) {

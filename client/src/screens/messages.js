@@ -18,7 +18,8 @@ const Wrapper = styled.div`
 const Body = styled.div`
   height: 100%;
   min-width: 375px;
-  width: 50%;
+  width: 100%;
+  max-width: 600px;
   border-left: 1px solid ${Colors.border};
   border-right: 1px solid ${Colors.border};
 `;
@@ -29,7 +30,7 @@ const SidebarWrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 `;
 
@@ -250,58 +251,56 @@ function Messages() {
           <NewMessage closeModal={closeModal} />
         </Modal>
       )}
-      <Wrapper>
-        <Body>
-          <HomeTitleWrapper>
-            <HomeTitle>Messages</HomeTitle>
-            <NewMessageIcon
-              onClick={(e) => {
-                openModal(e);
-              }}
-            >
-              {Icons.newMessage}
-            </NewMessageIcon>
-          </HomeTitleWrapper>
-          <SearchWrapper>
-            <Search placeHolderText="Search for people and groups" />
-          </SearchWrapper>
-          <SendMessageWrapper>
-            <NewMessageTitle>Send a message, get a message</NewMessageTitle>
+      {/* <Wrapper> */}
+      <Body>
+        <HomeTitleWrapper>
+          <HomeTitle>Messages</HomeTitle>
+          <NewMessageIcon
+            onClick={(e) => {
+              openModal(e);
+            }}
+          >
+            {Icons.newMessage}
+          </NewMessageIcon>
+        </HomeTitleWrapper>
+        <SearchWrapper>
+          <Search placeHolderText="Search for people and groups" />
+        </SearchWrapper>
+        <SendMessageWrapper>
+          <NewMessageTitle>Send a message, get a message</NewMessageTitle>
+          <NewMessageDesc>
+            Direct Messages are private conversations between you and other
+            people on Twitter. Share Tweets, media, and more!
+          </NewMessageDesc>
+          <NewMessageBtn
+            onClick={(e) => {
+              openModal(e);
+            }}
+          >
+            Start a conversation
+          </NewMessageBtn>
+        </SendMessageWrapper>
+      </Body>
+      <SidebarWrapper>
+        {messageExists ? (
+          "Feed Here"
+        ) : (
+          <NewMessageWrapper>
+            <NewMessageTitle>You don’t have a message selected</NewMessageTitle>
             <NewMessageDesc>
-              Direct Messages are private conversations between you and other
-              people on Twitter. Share Tweets, media, and more!
+              Choose one from your existing messages, or start a new one.
             </NewMessageDesc>
             <NewMessageBtn
               onClick={(e) => {
                 openModal(e);
               }}
             >
-              Start a conversation
+              New Message
             </NewMessageBtn>
-          </SendMessageWrapper>
-        </Body>
-        <SidebarWrapper>
-          {messageExists ? (
-            "Feed Here"
-          ) : (
-            <NewMessageWrapper>
-              <NewMessageTitle>
-                You don’t have a message selected
-              </NewMessageTitle>
-              <NewMessageDesc>
-                Choose one from your existing messages, or start a new one.
-              </NewMessageDesc>
-              <NewMessageBtn
-                onClick={(e) => {
-                  openModal(e);
-                }}
-              >
-                New Message
-              </NewMessageBtn>
-            </NewMessageWrapper>
-          )}
-        </SidebarWrapper>
-      </Wrapper>
+          </NewMessageWrapper>
+        )}
+      </SidebarWrapper>
+      {/* </Wrapper> */}
     </>
   );
 }

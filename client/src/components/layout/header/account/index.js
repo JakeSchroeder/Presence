@@ -46,6 +46,10 @@ const NameWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  @media (max-width: 1280px) {
+    display: none;
+  }
 `;
 const DisplayName = styled.p`
   font-weight: bold;
@@ -64,6 +68,10 @@ const DropDownButton = styled.div`
   height: 32px;
   & svg {
     width: 18.75px;
+  }
+
+  @media (max-width: 1280px) {
+    display: none;
   }
 `;
 
@@ -176,6 +184,7 @@ const AccountSwitcher = ({ displayName, userName, logout }) => {
               {/* <AccountItem>Add an existing account</AccountItem> */}
               <AccountItem
                 onClick={() => {
+                  toggleDropdown();
                   logout();
                 }}
               >

@@ -8,7 +8,7 @@ const StyledToast = styled.div`
   padding: 8px;
   display: flex;
   align-items: center;
-  background: ${Colors.primary};
+  background: ${({ error }) => (error ? `${Colors.red}` : `${Colors.primary}`)};
   border-radius: 6px;
 `;
 
@@ -22,9 +22,9 @@ const ToastLink = styled(Link)`
   color: white;
 `;
 
-const Toast = ({ message, link }) => {
+const Toast = ({ message, link, error }) => {
   return (
-    <StyledToast>
+    <StyledToast error={error}>
       <ToastMsg>{message}</ToastMsg>
       <ToastLink to={link ? `${link}` : `/`}>View</ToastLink>
     </StyledToast>

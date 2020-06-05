@@ -7,7 +7,7 @@ import { createGlobalStyle } from "styled-components";
 import { AppProviders } from "./context";
 
 const GlobalStyles = createGlobalStyle`
-  *,*::after, *::before {
+  *,*:after, *:before {
     box-sizing: border-box;
   }
   html {
@@ -24,10 +24,13 @@ const GlobalStyles = createGlobalStyle`
     font-size: 1rem;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
     line-height: 1.3125;
+    overflow-y: scroll;
+    overscroll-behavior-y: none;
   }
   #root {
+    display: flex;
     width: 100%;
-    height: 100%;
+    height: 100vmax;
   }
   ul {
     margin: 0;

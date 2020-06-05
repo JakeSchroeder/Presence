@@ -7,7 +7,11 @@ import { AuthProvider } from "./authContext";
 // import { UserProvider } from "./userContext";
 
 const queryConfig = {
-  suspense: true,
+  retry(failureCount, error) {
+    if (error.status === 404) return false;
+    else if (failureCount < 2) return true;
+    else return false;
+  },
   useErrorBoundary: true,
   refetchAllOnWindowFocus: false,
 };
