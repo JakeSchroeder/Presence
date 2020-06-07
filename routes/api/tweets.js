@@ -75,11 +75,93 @@ router.get("/search", async (req, res) => {
 
       matchedTweets = allParentTweets;
     } else {
+      // const searchResults = await Tweet.aggregate(
+      //   { $match: { $text: { $search: query } } },
+      //   (err,
+      //   (tweetData) => {
+      //     if (err) {
+      //       return err;
+      //     }
+
+      //     if (tweetData.length) {
+      //       let authorIds = tweetData.map((tweet) =>
+      //         mongoose.Types.ObjectId(tweet.author)
+      //       );
+      //       console.log(authorId);
+      //       User.aggregate(
+      //         {
+      //           $match: { $text: { $search: query, _id: { $in: authorIds } } },
+      //         },
+      //         (err, authorData) => {
+      //           console.log(authorData);
+      //         }
+      //       );
+      //     }
+      //   })
+      // );
+
+      //       db.collection("users").aggregate({$match:{$text: {$search: "pink"}}},
+      //       (err, userData: any)=>{
+      //          if(err){
+      //              return err;
+      //          }
+
+      //  if(userdata.length){
+
+      //          let vehicleIds = userData.map((user) => mongoose.Types.ObjectId(user.vehicleId));
+
+      //          db.collection("vehicles").aggregate({$match:{$text:{$search:"pink", _id: {$in: vehicleIds}}}}, (err, vehicleData)=>{
+
+      //                   //this will be your vehicle details
+      //          })
+      //      })
+
+      // }else{
+      //     console.log("no Data found");
+      // }
+
+      // const searchResults = await allResults.find({
+      //   // $text: { $search: query },
+      // });
+
+      // const filteredResults = searchResults.map((result) => {
+      //   console.log(result.author.userName);
+      //   if (result.author.userName.contains(query)) {
+      //     return result;
+      //   }
+      // });
+
+      // const searchResults = await Tweet.aggregate([{
+      //   $match: {
+
+      //   }
+      // }])
+
+      //.findById("x", {following: 1}).populate({ path: 'following',match: {$text: {$search: "john"}}})
+
+      // .populate("author", "-password");
+
+      // const searchResults = Tweet.aggregate([
+      //   {
+      //     $match: {
+      //       $text: { $search: query },
+      //     },
+      //     $lookup: {
+      //       from: "users",
+      //       localField: "author",
+      //       foreignField: "userName",
+      //       as: "names",
+      //     },
+      //   },
+      // ]);
       const searchResults = await Tweet.find({
         $text: { $search: query },
       })
         .populate("author", "-password")
         .sort("-createdAt");
+
+      // console.log("searchShit" + filteredResults);
+      // .sort("-createdAt");
       matchedTweets = searchResults;
     }
 
@@ -94,7 +176,7 @@ router.get("/search", async (req, res) => {
       return tweet;
     });
 
-    console.log(result);
+    // console.log(result);
 
     res.json({ tweets: result });
   } catch (err) {

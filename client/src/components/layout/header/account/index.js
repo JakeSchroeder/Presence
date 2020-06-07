@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useRef, forwardRef } from "react";
 import styled from "styled-components";
 import Icons from "../../../icons";
 import { Colors } from "../../../../styles/colors";
@@ -6,6 +6,7 @@ import { TweetBtn } from "../../../lib";
 import profile_src from "../../../../images/profile.png";
 import { useDropdown } from "../../../../hooks/useDropdown";
 import { withRouter } from "react-router-dom";
+import Popover, { ArrowContainer } from "react-tiny-popover";
 
 const StyledAccountSwitcher = styled.div`
   cursor: pointer;
@@ -16,6 +17,10 @@ const StyledAccountSwitcher = styled.div`
   border-radius: 99px;
 
   padding: 10px;
+
+  @media (max-width: 1280px) {
+    flex-direction: column;
+  }
 
   &:hover {
     background: ${Colors.hover};
@@ -29,10 +34,14 @@ const AccountInfoWrapper = styled.div`
   text-overflow: ellipsis;
 `;
 const AccountImg = styled.img`
-  border-radius: 999px;
+  border-radius: 50%;
   width: ${({ size }) => (size === "lg" ? `49px` : `39px`)};
   height: ${({ size }) => (size === "lg" ? `49px` : `39px`)};
   margin-right: 10px;
+
+  @media (max-width: 1280px) {
+    margin-right: 0;
+  }
 `;
 const NameWrapper = styled.div`
   flex: 1;
@@ -46,10 +55,12 @@ const NameWrapper = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  @media (max-width: 1280px) {
+  ${({ shouldHide }) =>
+    shouldHide
+      ? ` @media (max-width: 1280px) {
     display: none;
-  }
+  }`
+      : null}
 `;
 const DisplayName = styled.p`
   font-weight: bold;
@@ -76,6 +87,7 @@ const DropDownButton = styled.div`
 `;
 
 const AccountPopup = styled.div`
+  background: white;
   border-radius: 14px;
   padding: 10px 0;
   border: 1px solid ${Colors.border};
@@ -86,22 +98,9 @@ const AccountPopup = styled.div`
   max-height: 480px;
   box-shadow: rgba(101, 119, 134, 0.2) 0px 0px 15px,
     rgba(101, 119, 134, 0.15) 0px 0px 3px 1px;
-  position: relative;
-  /* &::before {
-    content: "";
-    z-index: 0;
-    transform: rotate(45deg);
-    background: white;
-    width: 16px;
-    height: 8px;
-    position: absolute;
-    left: calc(50% - 8px);
-    bottom: -4px;
-    filter: drop-shadow(rgb(204, 214, 221) 1px -1px 1px);
-    overflow: hidden;
-  } */
+  /* position: relative; */
 
-  & svg {
+  /* & svg {
     fill: white;
     max-width: 100%;
     height: 1.25em;
@@ -111,7 +110,7 @@ const AccountPopup = styled.div`
     transform: rotate(180deg);
     bottom: -11px;
     filter: drop-shadow(rgb(204, 214, 221) 1px -1px 1px);
-  }
+  } */
 `;
 
 const AccountHeader = styled.div`
@@ -151,6 +150,23 @@ const AccountVerify = styled.div`
   }
 `;
 
+const StyledPopover = styled(Popover)`
+  &.react-tiny-popover-container {
+    border-radius: 14px;
+  }
+`;
+
+const AccountImgWrapper = styled.div`
+  width: 49px;
+  height: 49px;
+`;
+
+// const StyledAccountSwitcherMobile = styled.div`
+//  @media (max-width: 1280px) {
+//     display: none;
+//   }
+// `;
+
 export const AccountInfo = ({ size, displayName, userName }) => (
   <AccountInfoWrapper>
     <AccountImg size={size} alt="User Pofile Image" src={profile_src} />
@@ -161,24 +177,88 @@ export const AccountInfo = ({ size, displayName, userName }) => (
   </AccountInfoWrapper>
 );
 
+const AccountImgSwitcher = forwardRef((props, ref) => (
+  <AccountImgWrapper ref={ref} onClick={props.onClick}>
+    {props.children}
+  </AccountImgWrapper>
+));
+
 const AccountSwitcher = ({ displayName, userName, logout }) => {
   const { toggleDropdown, isDropdownOpen, Dropdown } = useDropdown({
     openCenter: true,
     openTop: true,
   });
 
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
+  // const ref = useRef();
+
   return (
-    <>
-      {isDropdownOpen && (
-        <Dropdown>
+    // <>
+    //   {isDropdownOpen && (
+    //     <Dropdown>
+    //       <AccountPopup>
+    //         <AccountHeader>
+    //           <AccountInfo
+    //             size="lg"
+    //             displayName={displayName}
+    //             userName={userName}
+    //           />
+    //           <span>{Icons.checkmark}</span>
+    //         </AccountHeader>
+    //         <AccountList>
+    //           {/* <AccountItem>Add an existing account</AccountItem> */}
+    //           <AccountItem
+    //             onClick={() => {
+    //               toggleDropdown();
+    //               logout();
+    //             }}
+    //           >
+    //             Log out @{displayName}
+    //           </AccountItem>
+    //         </AccountList>
+    //         {Icons.chevron}
+    //       </AccountPopup>
+    //     </Dropdown>
+    //   )}
+
+    //   <StyledAccountSwitcher
+    //     onClick={(e) => {
+    //       toggleDropdown(e);
+    //     }}
+    //   >
+    //     <AccountInfo size="sm" displayName={displayName} userName={userName} />
+    //     <DropDownButton>{Icons.dropDown}</DropDownButton>
+    //   </StyledAccountSwitcher>
+    //   {/* <StyledAccountSwitcherMobile>
+    //     <AccountImg size={size} alt="User Pofile Image" src={profile_src} />
+    //   </StyledAccountSwitcherMobile> */}
+    // </>
+
+    <Popover
+      isOpen={isPopoverOpen}
+      position={"top"}
+      onClickOutside={() => setIsPopoverOpen(false)}
+      containerStyle={{ "border-radius": "14px" }}
+      content={({ position, targetRect, popoverRect }) => (
+        <ArrowContainer // if you'd like an arrow, you can import the ArrowContainer!
+          position={position}
+          targetRect={targetRect}
+          popoverRect={popoverRect}
+          arrowColor={"white"}
+          arrowSize={10}
+          arrowStyle={{
+            opacity: 1,
+          }}
+        >
           <AccountPopup>
             <AccountHeader>
-              <AccountInfo
-                size="lg"
-                displayName={displayName}
-                userName={userName}
-              />
-              <span>{Icons.checkmark}</span>
+              <AccountImg size="lg" alt="User Pofile Image" src={profile_src} />
+              <NameWrapper>
+                <DisplayName>{displayName}</DisplayName>
+                <UserName>@{userName}</UserName>
+              </NameWrapper>
+              {/* <span>{Icons.checkmark}</span> */}
             </AccountHeader>
             <AccountList>
               {/* <AccountItem>Add an existing account</AccountItem> */}
@@ -191,20 +271,26 @@ const AccountSwitcher = ({ displayName, userName, logout }) => {
                 Log out @{displayName}
               </AccountItem>
             </AccountList>
-            {Icons.chevron}
           </AccountPopup>
-        </Dropdown>
+        </ArrowContainer>
       )}
-      <StyledAccountSwitcher
-        onClick={(e) => {
-          toggleDropdown(e);
-        }}
-      >
-        <AccountInfo size="sm" displayName={displayName} userName={userName} />
-        <DropDownButton>{Icons.dropDown}</DropDownButton>
-      </StyledAccountSwitcher>
-    </>
+    >
+      {(ref) => (
+        <StyledAccountSwitcher
+          ref={ref}
+          onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+          size="sm"
+        >
+          <AccountImg size="sm" alt="User Pofile Image" src={profile_src} />
+          <NameWrapper shouldHide>
+            <DisplayName>{displayName}</DisplayName>
+            <UserName>@{userName}</UserName>
+          </NameWrapper>
+          <DropDownButton>{Icons.dropDown}</DropDownButton>
+        </StyledAccountSwitcher>
+      )}
+    </Popover>
   );
 };
 
-export default withRouter(AccountSwitcher);
+export default AccountSwitcher;

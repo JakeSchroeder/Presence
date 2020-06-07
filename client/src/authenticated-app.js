@@ -55,9 +55,10 @@ function AppRoutes() {
         <Redirect exact from="/" to="/home" />
         <Route exact path="/home" component={Home} />
         <Route exact path="/explore" component={Explore} />
-        <Route exact path="/:userName/status/:tweetId" component={Thread} />
+
         <Route exact path="/messages" component={Messages} />
         <Route exact path="/:userName" component={Profile} />
+        <Route exact path="/:userName/status/:tweetId" component={Thread} />
         <Route path="*" component={NotFound} />
       </Switch>
     </>

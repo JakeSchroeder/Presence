@@ -26,6 +26,9 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  /* @media (max-width: 720px) {
+    flex-grow: 2;
+  } */
 `;
 
 const MainInner = styled.div`
@@ -33,6 +36,7 @@ const MainInner = styled.div`
   flex-shrink: 1;
   height: 100%;
   width: 990px;
+
   @media (max-width: 1092px) {
     width: 920px;
   }
@@ -40,10 +44,10 @@ const MainInner = styled.div`
   @media (max-width: 1021px) {
     width: 600px;
   }
-
+  /* 
   @media (max-width: 720px) {
     width: 100%;
-  }
+  } */
 `;
 
 const MainPositioner = styled.div`

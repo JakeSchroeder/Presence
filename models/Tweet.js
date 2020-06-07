@@ -27,7 +27,7 @@ const TweetSchema = new Schema({
   },
 });
 
-TweetSchema.index({ content: "text" });
+TweetSchema.index({ "$**": "text" });
 
 TweetSchema.plugin(MpathPlugin, [
   {

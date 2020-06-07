@@ -22,7 +22,6 @@ const HeaderWrapper = styled.header`
 
 const HeaderInner = styled.div`
   width: 275px;
-
   @media (max-width: 1280px) {
     width: 88px;
   }
@@ -44,6 +43,11 @@ const HeaderPositonerInner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 275px;
+
+  @media (max-width: 1280px) {
+    width: 88px;
+  }
 `;
 
 const HeaderTop = styled.div``;
