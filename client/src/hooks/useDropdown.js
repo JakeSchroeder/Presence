@@ -116,9 +116,7 @@ export const useDropdown = ({
         // console.log("SCROLLING");
         // TODO: add logic so when scrolling, the portal doesn't get displaced
       },
-      onResize() {
-        // TODO: need to implement for when it's outside of viewport
-      },
+      onResize() {},
       onClose() {
         root.removeAttribute("style");
       },

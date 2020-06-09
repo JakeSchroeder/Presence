@@ -11,7 +11,20 @@ import { useRemoveTweet } from "../../utils/tweets";
 import SendMessage from "../messages/send-message";
 // import RelpyTweetModal from "../reply-tweet";
 import NewTweetReplyModal from "./reply-tweet/modal";
-import axios from "axios";
+
+import {
+  Menu,
+  MenuList,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  MenuPopover,
+  MenuLink,
+} from "@reach/menu-button";
+import "@reach/menu-button/styles.css";
+
+import { positionRight, getCollisions } from "@reach/popover";
+
 const TweetWrapper = styled.div`
   position: relative;
   display: flex;
@@ -331,6 +344,17 @@ const LikeCount = styled.span`
   margin-right: 5px;
 `;
 
+const StyledMenuButton = styled(MenuButton)`
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  outline: 0;
+  &:focus {
+    outline: 0;
+  }
+`;
+
 function TweetThread({ tweet }) {
   const history = useHistory();
   const [openModal, closeModal, isModalOpen, Modal] = useModal({
@@ -414,15 +438,73 @@ function TweetThread({ tweet }) {
               <UserName>@{tweet.author.userName}</UserName>
             </StyledLink>
             {tweet.canDelete ? (
-              <TweetActionItem
-                onClick={(e) => {
-                  toggleDeleteDropdown(e);
-                }}
-              >
-                <TweetAction>{Icons.dropDown}</TweetAction>
-              </TweetActionItem>
+              <Menu>
+                <StyledMenuButton>
+                  <TweetActionItem
+                    onClick={(e) => {
+                      toggleDeleteDropdown(e);
+                    }}
+                  >
+                    <TweetAction>{Icons.dropDown}</TweetAction>
+                  </TweetActionItem>
+                </StyledMenuButton>
+                <MenuPopover
+                  position={(targetRect, popoverRect) => {
+                    function getTopPosition(targetRect, popoverRect) {
+                      const { directionUp } = getCollisions(
+                        targetRect,
+                        popoverRect
+                      );
+                      return {
+                        top: directionUp
+                          ? `${
+                              targetRect.top -
+                              popoverRect.height +
+                              window.pageYOffset
+                            }px`
+                          : `${
+                              targetRect.top +
+                              // targetRect.height +
+                              window.pageYOffset
+                            }px`,
+                      };
+                    }
+                    if (!targetRect || !popoverRect) {
+                      return {};
+                    }
+
+                    const { directionLeft } = getCollisions(
+                      targetRect,
+                      popoverRect
+                    );
+                    return {
+                      left: directionLeft
+                        ? `${targetRect.left + window.pageXOffset}px`
+                        : `${
+                            targetRect.right -
+                            popoverRect.width +
+                            window.pageXOffset
+                          }px`,
+                      ...getTopPosition(targetRect, popoverRect),
+                    };
+                  }}
+                >
+                  <ModalWrapper>
+                    <ModalList>
+                      <ModalItem
+                        onClick={(e) => {
+                          removeTweet(tweet._id);
+                        }}
+                      >
+                        <ModalIcon className="delete">{Icons.delete}</ModalIcon>
+                        <ModalIconDesc className="delete">Delete</ModalIconDesc>
+                      </ModalItem>
+                    </ModalList>
+                  </ModalWrapper>
+                </MenuPopover>
+              </Menu>
             ) : null}
-            {isDeleteDropdownOpen && (
+            {/* {isDeleteDropdownOpen && (
               <DeleteDropdown>
                 <ModalWrapper>
                   <ModalList>
@@ -439,11 +521,11 @@ function TweetThread({ tweet }) {
                   </ModalList>
                 </ModalWrapper>
               </DeleteDropdown>
-            )}
+            )} */}
           </NameWrapper>
           <LargeDesc>{tweet.content}</LargeDesc>
           <NumLikes>
-            <LikeCount>{tweet.likes}</LikeCount> Likes
+            <LikeCount>{tweet.likesCount}</LikeCount> Likes
           </NumLikes>
           <TweetActions
             style={{
@@ -470,18 +552,78 @@ function TweetThread({ tweet }) {
                 }}
               >
                 <LargeTweetAction>{Icons.heart}</LargeTweetAction>
-                {tweet.likes}
+                {tweet.likesCount}
               </TweetActionItem>
             </TweetActionWrapper>
             <TweetActionWrapper>
-              <TweetActionItem
-                className="share"
-                onClick={(e) => {
-                  toggleDropdown(e);
-                }}
-              >
-                <LargeTweetAction>{Icons.share}</LargeTweetAction>
-              </TweetActionItem>
+              <Menu>
+                <StyledMenuButton>
+                  <TweetActionItem
+                    className="share"
+                    onClick={(e) => {
+                      toggleDropdown(e);
+                    }}
+                  >
+                    <LargeTweetAction>{Icons.share}</LargeTweetAction>
+                  </TweetActionItem>
+                </StyledMenuButton>
+                <MenuPopover
+                  position={(targetRect, popoverRect) => {
+                    function getTopPosition(targetRect, popoverRect) {
+                      const { directionUp } = getCollisions(
+                        targetRect,
+                        popoverRect
+                      );
+                      return {
+                        top: directionUp
+                          ? `${
+                              targetRect.top -
+                              popoverRect.height +
+                              window.pageYOffset
+                            }px`
+                          : `${
+                              targetRect.top +
+                              // targetRect.height +
+                              window.pageYOffset
+                            }px`,
+                      };
+                    }
+                    if (!targetRect || !popoverRect) {
+                      return {};
+                    }
+
+                    const { directionLeft } = getCollisions(
+                      targetRect,
+                      popoverRect
+                    );
+                    return {
+                      left: directionLeft
+                        ? `${targetRect.left + window.pageXOffset}px`
+                        : `${
+                            targetRect.right -
+                            popoverRect.width +
+                            window.pageXOffset
+                          }px`,
+                      ...getTopPosition(targetRect, popoverRect),
+                    };
+                  }}
+                >
+                  <ModalWrapper>
+                    <ModalList>
+                      <ModalItem
+                        onClick={(e) => {
+                          toggleDropdown();
+                          openModal(e);
+                        }}
+                      >
+                        <ModalIcon>{Icons.modalMessage}</ModalIcon>
+                        <ModalIconDesc>Send via Direct Message</ModalIconDesc>
+                      </ModalItem>
+                    </ModalList>
+                  </ModalWrapper>
+                </MenuPopover>
+              </Menu>
+              {/*              
               {isDropdownOpen && (
                 <Dropdown>
                   <ModalWrapper>
@@ -495,18 +637,11 @@ function TweetThread({ tweet }) {
                         <ModalIcon>{Icons.modalMessage}</ModalIcon>
                         <ModalIconDesc>Send via Direct Message</ModalIconDesc>
                       </ModalItem>
-                      {/* <ModalItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <ModalIcon>{Icons.edit}</ModalIcon>
-                          <ModalIconDesc>Edit Tweet</ModalIconDesc>
-                        </ModalItem> */}
+                     
                     </ModalList>
                   </ModalWrapper>
                 </Dropdown>
-              )}
+              )} */}
               {/* {isModalOpen ? <ActionModal toggleModal={toggleModal} /> : null} */}
             </TweetActionWrapper>
           </TweetActions>

@@ -9,7 +9,7 @@ export const useModal = ({
   ...config
 } = {}) => {
   const backgroundStyle = `
-    position: absolute;
+    position: fixed;
     background: ${background || "transparent"};
     width: 100vw;
     height: 100vh;

@@ -27,7 +27,7 @@ const AppProviders = ({ children }) => {
       <Router>
         <AuthProvider>{children}</AuthProvider>
       </Router>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </ReactQueryConfigProvider>
   );
 };

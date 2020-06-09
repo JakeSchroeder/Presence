@@ -238,6 +238,7 @@ const AccountSwitcher = ({ displayName, userName, logout }) => {
     <Popover
       isOpen={isPopoverOpen}
       position={"top"}
+      align={"center"}
       onClickOutside={() => setIsPopoverOpen(false)}
       containerStyle={{ "border-radius": "14px" }}
       content={({ position, targetRect, popoverRect }) => (
@@ -263,8 +264,8 @@ const AccountSwitcher = ({ displayName, userName, logout }) => {
             <AccountList>
               {/* <AccountItem>Add an existing account</AccountItem> */}
               <AccountItem
-                onClick={() => {
-                  toggleDropdown();
+                onClick={(e) => {
+                  setIsPopoverOpen(false);
                   logout();
                 }}
               >

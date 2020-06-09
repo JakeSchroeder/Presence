@@ -16,6 +16,7 @@ import {
   Spinner,
 } from "../components/lib";
 import Search from "../components/search";
+
 import WhoToFollow from "../components/who-to-follow";
 // import TweetList from "../components/tweets";
 

@@ -19,7 +19,8 @@ const GlobalStyles = createGlobalStyle`
     color: ${Colors.body};
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 100vw;
+    overflow-x: hidden;
     height: 100%;
     font-size: 1rem;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
@@ -30,7 +31,8 @@ const GlobalStyles = createGlobalStyle`
   #root {
     display: flex;
     width: 100%;
-    height: 100vmax;
+    min-height: 100vmax;
+    height: 100%;
   }
   ul {
     margin: 0;

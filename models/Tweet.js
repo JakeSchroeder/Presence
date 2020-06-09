@@ -13,9 +13,19 @@ const TweetSchema = new Schema({
     type: Number,
     default: 0,
   },
-  likes: {
+  likesCount: {
     type: Number,
     default: 0,
+  },
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+  hasLiked: {
+    type: Boolean,
+    default: false,
   },
   canDelete: {
     type: Boolean,

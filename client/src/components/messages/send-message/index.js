@@ -5,14 +5,13 @@ import { Colors } from "../../../styles/colors";
 import Search from "../../search";
 
 const MessageModalWrapper = styled.div`
-  border-radius: 15px;
   position: relative;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-
+  outline: none;
   min-height: 400px;
-
+  border-radius: 15px;
   height: 650px;
 
   max-width: 80vw;

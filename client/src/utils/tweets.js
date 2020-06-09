@@ -211,6 +211,28 @@ function useCreateReply(options) {
   });
 }
 
+function useTweetLike(options) {
+  return useMutation((tweetId) => tweetsClient.like(tweetId), {
+    onSettled: () => {
+      queryCache.refetchQueries("tweetSearch");
+      queryCache.refetchQueries("tweetsByUser");
+      queryCache.refetchQueries("thread");
+    },
+    ...options,
+  });
+}
+
+function useTweetUnLike(options) {
+  return useMutation((tweetId) => tweetsClient.unlike(tweetId), {
+    onSettled: () => {
+      queryCache.refetchQueries("tweetSearch");
+      queryCache.refetchQueries("tweetsByUser");
+      queryCache.refetchQueries("thread");
+    },
+    ...options,
+  });
+}
+
 async function removeTweet(queryKey, { tweetId }) {
   return tweetsClient.remove(tweetId).then((data) => data);
 }
@@ -235,6 +257,8 @@ function useRemoveTweet(options) {
 export {
   // useTweet,
   useTweetSearch,
+  useTweetLike,
+  useTweetUnLike,
   useTweetThread,
   useTweetsByUser,
   useCreateTweet,

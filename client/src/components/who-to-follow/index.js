@@ -80,7 +80,7 @@ const WhoToFollow = () => {
   return (
     <FollowWrapper>
       <FollowHeader>
-        <FollowTitle>Student Check In</FollowTitle>
+        <FollowTitle>Rules of XGIS</FollowTitle>
       </FollowHeader>
       <FollowBody>
         <FollowList>

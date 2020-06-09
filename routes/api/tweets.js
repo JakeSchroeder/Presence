@@ -53,9 +53,48 @@ router.delete("/:id", async (req, res) => {
 
     const result = await tweetForDelete.remove();
 
-    console.log(result);
     res.json(result);
     // tweetForDelete.remove().then(tweet =>)
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+router.patch("/like/:id", async (req, res) => {
+  const loggedInUser = req.query.userId;
+  const tweetId = req.params.id;
+
+  try {
+    const tweetRes = await Tweet.update(
+      { _id: tweetId, likes: { $ne: loggedInUser } },
+      {
+        $inc: { likesCount: 1 },
+        $push: { likes: loggedInUser },
+      }
+    );
+    res.json(tweetRes);
+  } catch (err) {
+    console.log(err);
+  }
+
+  // const tweetToLike = await Tweet.findById(tweetId);
+});
+
+router.patch("/unlike/:id", async (req, res) => {
+  const loggedInUser = req.query.userId;
+  const tweetId = req.params.id;
+
+  console.log(tweetId);
+
+  try {
+    const tweetRes = await Tweet.update(
+      { _id: tweetId, likes: { $eq: loggedInUser } },
+      {
+        $inc: { likesCount: -1 },
+        $pull: { likes: loggedInUser },
+      }
+    );
+    res.json(tweetRes);
   } catch (err) {
     console.log(err);
   }
@@ -75,93 +114,12 @@ router.get("/search", async (req, res) => {
 
       matchedTweets = allParentTweets;
     } else {
-      // const searchResults = await Tweet.aggregate(
-      //   { $match: { $text: { $search: query } } },
-      //   (err,
-      //   (tweetData) => {
-      //     if (err) {
-      //       return err;
-      //     }
-
-      //     if (tweetData.length) {
-      //       let authorIds = tweetData.map((tweet) =>
-      //         mongoose.Types.ObjectId(tweet.author)
-      //       );
-      //       console.log(authorId);
-      //       User.aggregate(
-      //         {
-      //           $match: { $text: { $search: query, _id: { $in: authorIds } } },
-      //         },
-      //         (err, authorData) => {
-      //           console.log(authorData);
-      //         }
-      //       );
-      //     }
-      //   })
-      // );
-
-      //       db.collection("users").aggregate({$match:{$text: {$search: "pink"}}},
-      //       (err, userData: any)=>{
-      //          if(err){
-      //              return err;
-      //          }
-
-      //  if(userdata.length){
-
-      //          let vehicleIds = userData.map((user) => mongoose.Types.ObjectId(user.vehicleId));
-
-      //          db.collection("vehicles").aggregate({$match:{$text:{$search:"pink", _id: {$in: vehicleIds}}}}, (err, vehicleData)=>{
-
-      //                   //this will be your vehicle details
-      //          })
-      //      })
-
-      // }else{
-      //     console.log("no Data found");
-      // }
-
-      // const searchResults = await allResults.find({
-      //   // $text: { $search: query },
-      // });
-
-      // const filteredResults = searchResults.map((result) => {
-      //   console.log(result.author.userName);
-      //   if (result.author.userName.contains(query)) {
-      //     return result;
-      //   }
-      // });
-
-      // const searchResults = await Tweet.aggregate([{
-      //   $match: {
-
-      //   }
-      // }])
-
-      //.findById("x", {following: 1}).populate({ path: 'following',match: {$text: {$search: "john"}}})
-
-      // .populate("author", "-password");
-
-      // const searchResults = Tweet.aggregate([
-      //   {
-      //     $match: {
-      //       $text: { $search: query },
-      //     },
-      //     $lookup: {
-      //       from: "users",
-      //       localField: "author",
-      //       foreignField: "userName",
-      //       as: "names",
-      //     },
-      //   },
-      // ]);
       const searchResults = await Tweet.find({
         $text: { $search: query },
       })
         .populate("author", "-password")
         .sort("-createdAt");
 
-      // console.log("searchShit" + filteredResults);
-      // .sort("-createdAt");
       matchedTweets = searchResults;
     }
 
@@ -176,31 +134,21 @@ router.get("/search", async (req, res) => {
       return tweet;
     });
 
+    const likedResults = result.map((tweet) => {
+      tweet.likes.map((like) => {
+        if (loggedInUser == like) {
+          tweet.hasLiked = true;
+        }
+      });
+      return tweet;
+    });
+
     // console.log(result);
 
-    res.json({ tweets: result });
+    res.json({ tweets: likedResults });
   } catch (err) {
     res.json(err);
   }
-  // try {
-  // const searchResults = await Tweet.find({
-  //   $text: { $search: req.query.query },
-  // }).populate("author", "-password");
-  //   console.log(searchResults);
-  //   res.json({ tweets: searchResults });
-  // } catch (err) {
-  //   res.json(err);
-  // }
-  // try {
-  //   if (!req.query.query) {
-  //     return;
-  //   }
-
-  //   Tweet.find()
-
-  // } catch (err) {
-  //   res.json(err);
-  // }
 });
 
 // router.get("/", (req, res) => {
@@ -245,21 +193,32 @@ router.get("/getTweetById/:id", async (req, res) => {
   }
 });
 
+// { _id: tweetId },
+// { likes: { $elemMatch: { $eq: loggedInUser } } }
+
 router.get("/getTweetChildrenById/:id", async (req, res) => {
   const loggedInUser = req.query.userId;
   const tweetId = req.params.id;
-  console.log("tweet id" + tweetId);
+  // console.log("tweet id" + tweetId);
   try {
     const tweetParent = await Tweet.findById(tweetId).populate(
       "author",
       "-password"
     );
     const tweetChildren = await tweetParent
-      .getImmediateChildren({})
+      .getImmediateChildren()
       .populate("author", "-password")
       .sort("createdAt");
 
     const tweets = [tweetParent, ...tweetChildren];
+
+    // const userLikedTweets = tweets.find({
+    //   likes: { $elemMatch: { $eq: loggedInUser } },
+    // });
+
+    // userLikedTweets.map((tweets) => {
+    //   tweets.hasLiked = true;
+    // });
 
     const result = tweets.map((tweet) => {
       if (tweet.author._id == loggedInUser) {
@@ -268,9 +227,16 @@ router.get("/getTweetChildrenById/:id", async (req, res) => {
       return tweet;
     });
 
-    console.log(result);
+    const likedResults = result.map((tweet) => {
+      tweet.likes.map((like) => {
+        if (loggedInUser == like) {
+          tweet.hasLiked = true;
+        }
+      });
+      return tweet;
+    });
 
-    res.json({ tweets: result });
+    res.json({ tweets: likedResults });
   } catch (err) {
     res.json(err);
   }
@@ -291,9 +257,18 @@ router.get("/getTweetsByUser/:id", async (req, res) => {
       return tweet;
     });
 
+    const likedResults = result.map((tweet) => {
+      tweet.likes.map((like) => {
+        if (loggedInUser == like) {
+          tweet.hasLiked = true;
+        }
+      });
+      return tweet;
+    });
+
     // console.log(result);
 
-    res.json({ tweets: result });
+    res.json({ tweets: likedResults });
   } catch (err) {
     res.json(err);
   }

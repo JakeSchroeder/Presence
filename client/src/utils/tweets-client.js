@@ -14,6 +14,16 @@ function search({ query = "" }) {
   );
 }
 
+function like(tweetId) {
+  return client(`tweets/like/${tweetId}?userId=${userId}`, { method: "PATCH" });
+}
+
+function unlike(tweetId) {
+  return client(`tweets/unlike/${tweetId}?userId=${userId}`, {
+    method: "PATCH",
+  });
+}
+
 function read(tweetId) {
   return client(`tweets/getTweetById/${tweetId}?id=${userId}`);
 }
@@ -30,4 +40,4 @@ function remove(tweetId) {
   return client(`tweets/${tweetId}`, { method: "DELETE" });
 }
 
-export { create, read, remove, search, readChildren, readByUser };
+export { create, read, remove, search, like, unlike, readChildren, readByUser };
