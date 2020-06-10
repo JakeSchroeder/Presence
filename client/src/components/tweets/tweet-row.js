@@ -89,6 +89,20 @@ const NameWrapper = styled.div`
 
 const StyledLink = styled(Link)`
   display: flex;
+
+  &:hover > p:first-child {
+    text-decoration: underline;
+  }
+  overflow-wrap: break-word;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  & > p {
+    overflow-wrap: break-word;
+  }
 `;
 
 const DisplayName = styled.p`
@@ -293,7 +307,6 @@ const StyledDialogContent = styled(DialogContent)`
 function TweetRow({ tweet }) {
   const history = useHistory();
   const { author, date, avatarPath, content, replies, likes } = tweet;
-  const id = `tweet-row-tweet-${tweet._id}`;
 
   const [removeTweet] = useRemoveTweet();
   const [likeTweet] = useTweetLike();
@@ -308,10 +321,6 @@ function TweetRow({ tweet }) {
   const [isNewReplyOpen, setNewReplyOpen] = useState(false);
   const openNewReply = () => setNewReplyOpen(true);
   const closeNewReply = () => setNewReplyOpen(false);
-
-  // useEffect(() => {
-  //   console.log(isPopoverOpen);
-  // }, [isPopoverOpen]);
 
   return (
     <>

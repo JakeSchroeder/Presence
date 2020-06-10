@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import Icons from "../../icons";
@@ -10,6 +10,9 @@ import NewTweetModal from "../../tweets/new-tweet/modal";
 import useModal from "../../../hooks/useModal";
 
 import { useAuth } from "../../../context/authContext";
+
+import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
+import "@reach/dialog/styles.css";
 
 const HeaderWrapper = styled.header`
   flex-grow: 1;
@@ -173,10 +176,44 @@ const MobileTweetBtn = styled.button`
   }
 `;
 
+const StyledDialogOverlay = styled(DialogOverlay)`
+  background: hsla(0, 0%, 0%, 0.33);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.reply {
+    align-items: flex-start;
+    padding-top: 5%;
+  }
+`;
+
+const StyledDialogContent = styled(DialogContent)`
+  &[data-reach-dialog-content] {
+    padding: 0;
+    width: auto;
+    margin: 0;
+    background: white;
+    padding: 0;
+    border-radius: 15px;
+  }
+`;
+
 const Header = () => {
   // let { path } = useRouteMatch();
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
+
+  const [isNewTweetOpen, setNewTweetOpen] = useState(false);
+  const openNewTweet = () => setNewTweetOpen(true);
+  const closeNewTweet = () => setNewTweetOpen(false);
 
   const { user, logout } = useAuth();
   console.log(user);
@@ -194,11 +231,18 @@ const Header = () => {
 
   return (
     <>
-      {isModalOpen && (
+      {isNewTweetOpen && (
+        <StyledDialogOverlay className="reply" onDismiss={closeNewTweet}>
+          <StyledDialogContent>
+            <NewTweetModal closeModal={closeNewTweet} />
+          </StyledDialogContent>
+        </StyledDialogOverlay>
+      )}
+      {/* {isModalOpen && (
         <Modal>
           <NewTweetModal closeModal={closeModal} />
         </Modal>
-      )}
+      )} */}
       <HeaderWrapper>
         <HeaderInner>
           <HeaderPositoner>
@@ -247,7 +291,7 @@ const Header = () => {
                 </HeaderNav>
                 <MobileTweetBtn
                   onClick={(e) => {
-                    openModal(e);
+                    openNewTweet();
                   }}
                 >
                   <svg
@@ -264,7 +308,7 @@ const Header = () => {
                 </MobileTweetBtn>
                 <TweetBtn
                   onClick={(e) => {
-                    openModal(e);
+                    openNewTweet();
                   }}
                 >
                   Quack

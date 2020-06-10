@@ -20,6 +20,14 @@ const StyledMain = styled.main`
   flex-shrink: 0;
   /* justify-content: space-between; */
   min-height: 100%;
+
+  @media (max-width: 702px) {
+    width: 100%;
+  }
+
+  @media (max-width: 600px) {
+    max-width: none;
+  }
 `;
 
 const SidebarWrapper = styled.div`
@@ -30,7 +38,7 @@ const SidebarWrapper = styled.div`
     width: 290px;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1021px) {
     display: none;
   }
 `;

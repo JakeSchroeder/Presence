@@ -26,9 +26,16 @@ const Main = styled.main`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  /* @media (max-width: 720px) {
+
+  @media (max-width: 1021px) {
     flex-grow: 2;
-  } */
+  }
+
+  @media (max-width: 702px) {
+    flex-grow: 1;
+    width: 100%;
+    align-items: stretch;
+  }
 `;
 
 const MainInner = styled.div`
@@ -44,6 +51,10 @@ const MainInner = styled.div`
   @media (max-width: 1021px) {
     width: 600px;
   }
+
+  @media (max-width: 702px) {
+    width: 100%;
+  }
   /* 
   @media (max-width: 720px) {
     width: 100%;
@@ -56,6 +67,9 @@ const MainPositioner = styled.div`
   display: flex;
   justify-content: flex-start;
   height: 100%;
+  @media (max-width: 702px) {
+    width: 100%;
+  }
 `;
 
 const MainPositionerInner = styled.div`
@@ -64,6 +78,9 @@ const MainPositionerInner = styled.div`
   display: flex;
   justify-content: space-between;
   height: 100%;
+  @media (max-width: 702px) {
+    width: 100%;
+  }
 `;
 
 const MainWrapper = styled.div`

@@ -7,7 +7,11 @@ import Search from "../search";
 import Icons from "../icons";
 import useModal from "../../hooks/useModal";
 import { useDropdown } from "../../hooks/useDropdown";
-import { useRemoveTweet } from "../../utils/tweets";
+import {
+  useRemoveTweet,
+  useTweetLike,
+  useTweetUnLike,
+} from "../../utils/tweets";
 import SendMessage from "../messages/send-message";
 // import RelpyTweetModal from "../reply-tweet";
 import NewTweetReplyModal from "./reply-tweet/modal";
@@ -20,8 +24,12 @@ import {
   MenuItems,
   MenuPopover,
   MenuLink,
+  useMenuButtonContext,
 } from "@reach/menu-button";
 import "@reach/menu-button/styles.css";
+
+import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
+import "@reach/dialog/styles.css";
 
 import { positionRight, getCollisions } from "@reach/popover";
 
@@ -329,6 +337,10 @@ const LargeTweetAction = styled(TweetAction)`
   & svg {
     width: 22.5px;
   }
+
+  &.hasLiked svg {
+    fill: ${Colors.red};
+  }
 `;
 
 const NumLikes = styled.div`
@@ -355,49 +367,50 @@ const StyledMenuButton = styled(MenuButton)`
   }
 `;
 
+const StyledDialogOverlay = styled(DialogOverlay)`
+  background: hsla(0, 0%, 0%, 0.33);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.reply {
+    align-items: flex-start;
+    padding-top: 5%;
+  }
+`;
+
+const StyledDialogContent = styled(DialogContent)`
+  &[data-reach-dialog-content] {
+    padding: 0;
+    width: auto;
+    margin: 0;
+    background: white;
+    padding: 0;
+    border-radius: 15px;
+  }
+`;
+
 function TweetThread({ tweet }) {
   const history = useHistory();
-  const [openModal, closeModal, isModalOpen, Modal] = useModal({
-    background: "rgba(0, 0, 0, 0.5)",
-    modalStyle: `
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%,-50%);
-        z-index: 1000;
-      `,
-  });
-
-  const [
-    openReplyModal,
-    closeReplyModal,
-    isReplyModalOpen,
-    ReplyModal,
-  ] = useModal({
-    background: "rgba(0, 0, 0, 0.5)",
-    modalStyle: `
-        position: fixed;
-        left: 50%;
-        top: 5%;
-        transform: translate(-50%,-5%);
-        z-index: 1000;
-      `,
-  });
-
-  const [toggleDropdown, isDropdownOpen, Dropdown] = useDropdown({
-    openLeft: true,
-    openBottom: true,
-  });
-
-  const [
-    toggleDeleteDropdown,
-    isDeleteDropdownOpen,
-    DeleteDropdown,
-  ] = useDropdown({
-    openDelete: true,
-  });
 
   const [removeTweet, { status, error, data }] = useRemoveTweet();
+  const [likeTweet] = useTweetLike();
+  const [unlikeTweet] = useTweetUnLike();
+
+  const [isNewMessageOpen, setNewMessageOpen] = useState(false);
+  const openNewMessage = () => setNewMessageOpen(true);
+  const closeNewMessage = () => setNewMessageOpen(false);
+
+  const [isNewReplyOpen, setNewReplyOpen] = useState(false);
+  const openNewReply = () => setNewReplyOpen(true);
+  const closeNewReply = () => setNewReplyOpen(false);
 
   useEffect(() => {
     console.log(status);
@@ -408,15 +421,19 @@ function TweetThread({ tweet }) {
 
   return (
     <>
-      {isModalOpen && (
-        <Modal>
-          <SendMessage closeModal={closeModal} />
-        </Modal>
+      {isNewMessageOpen && (
+        <StyledDialogOverlay onDismiss={closeNewMessage}>
+          <StyledDialogContent>
+            <SendMessage closeModal={closeNewMessage} />
+          </StyledDialogContent>
+        </StyledDialogOverlay>
       )}
-      {isReplyModalOpen && (
-        <ReplyModal>
-          <NewTweetReplyModal tweet={tweet} closeModal={closeReplyModal} />
-        </ReplyModal>
+      {isNewReplyOpen && (
+        <StyledDialogOverlay className="reply" onDismiss={closeNewReply}>
+          <StyledDialogContent>
+            <NewTweetReplyModal tweet={tweet} closeModal={closeNewReply} />
+          </StyledDialogContent>
+        </StyledDialogOverlay>
       )}
       <TweetWrapper>
         <TweetImgWrapper>
@@ -442,7 +459,7 @@ function TweetThread({ tweet }) {
                 <StyledMenuButton>
                   <TweetActionItem
                     onClick={(e) => {
-                      toggleDeleteDropdown(e);
+                      e.stopPropagation();
                     }}
                   >
                     <TweetAction>{Icons.dropDown}</TweetAction>
@@ -537,7 +554,8 @@ function TweetThread({ tweet }) {
               <TweetActionItem
                 className="reply"
                 onClick={(e) => {
-                  openReplyModal(e);
+                  e.stopPropagation();
+                  openNewReply();
                 }}
               >
                 <LargeTweetAction>{Icons.reply}</LargeTweetAction>
@@ -549,9 +567,16 @@ function TweetThread({ tweet }) {
                 className="like"
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (tweet.hasLiked) {
+                    unlikeTweet(tweet._id);
+                  } else {
+                    likeTweet(tweet._id);
+                  }
                 }}
               >
-                <LargeTweetAction>{Icons.heart}</LargeTweetAction>
+                <LargeTweetAction className={tweet.hasLiked ? `hasLiked` : ``}>
+                  {tweet.hasLiked ? Icons.heartFilled : Icons.heart}
+                </LargeTweetAction>
                 {tweet.likesCount}
               </TweetActionItem>
             </TweetActionWrapper>
@@ -561,7 +586,7 @@ function TweetThread({ tweet }) {
                   <TweetActionItem
                     className="share"
                     onClick={(e) => {
-                      toggleDropdown(e);
+                      e.stopPropagation();
                     }}
                   >
                     <LargeTweetAction>{Icons.share}</LargeTweetAction>
@@ -612,8 +637,7 @@ function TweetThread({ tweet }) {
                     <ModalList>
                       <ModalItem
                         onClick={(e) => {
-                          toggleDropdown();
-                          openModal(e);
+                          openNewMessage();
                         }}
                       >
                         <ModalIcon>{Icons.modalMessage}</ModalIcon>
