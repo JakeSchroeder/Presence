@@ -94,10 +94,18 @@ function Profile({ history }) {
   // const { state: authState } = useContext(AuthContext);
   // const { displayName, userName, id } = authState.user;
   const { state } = useLocation();
-  const { tweets, error, status, isFetching } = useTweetsByUser(
-    `${state.userId}`
-  );
-  const { user } = useUser(state.userId);
+  const {
+    user,
+    status: userStatus,
+    error: userError,
+    isFetching: userIsFetching,
+  } = useUser(state.userId);
+  const {
+    tweets,
+    error: tweetsError,
+    status: tweetsStatus,
+    isFetching: tweetsIsFetching,
+  } = useTweetsByUser(`${state.userId}`);
 
   // const { userName, displayName, id } = user.author;
   // const [user, setUser] = useState(null);
@@ -133,64 +141,68 @@ function Profile({ history }) {
     // <Wrapper>
     <>
       <Main>
-        {/* {isLoading ? (
-          "...loading"
-        ) : ( */}
-        {user ? (
-          <>
-            <MainTitle>
-              <GoBackBtn
-                onClick={() => {
-                  history.goBack();
-                }}
-              />
-              <TitleText>{user.displayName}</TitleText>
-            </MainTitle>
-            <ProfileWrapper>
-              <ProfileBG></ProfileBG>
-              <ProfileContent>
-                <ProfileImg src={profile_src} />
+        <>
+          <MainTitle>
+            <GoBackBtn
+              onClick={() => {
+                history.goBack();
+              }}
+            />
+            <TitleText>{user.displayName}</TitleText>
+          </MainTitle>
+          {userStatus === "loading" ? (
+            <SpinnerWrapper>
+              <Spinner width={25} height={25} />
+            </SpinnerWrapper>
+          ) : userStatus === "error" ? (
+            <p>error: {userError.message}</p>
+          ) : (
+            <>
+              <ProfileWrapper>
+                <ProfileBG></ProfileBG>
+                <ProfileContent>
+                  <ProfileImg src={profile_src} />
 
-                <NameWrapper>
-                  <DisplayName>{user.displayName}</DisplayName>
-                  <UserName>@{user.userName}</UserName>
-                </NameWrapper>
-                <FollowingWrapper>
-                  <NumFollowers>
-                    <Num>0</Num> Followers
-                  </NumFollowers>
-                  <NumFollowing>
-                    <Num>0</Num> Following
-                  </NumFollowing>
-                </FollowingWrapper>
-              </ProfileContent>
-            </ProfileWrapper>
-            <ProfileTabs>
-              <Tabs>
-                <StyledTabList>
-                  <StyledTab>Tweets</StyledTab>
-                  <StyledTab>Tweets & replies</StyledTab>
-                  <StyledTab>Likes</StyledTab>
-                </StyledTabList>
-                <TabPanel>
-                  {status === "loading" ? (
-                    <SpinnerWrapper>
-                      <Spinner width={25} height={25} />
-                    </SpinnerWrapper>
-                  ) : status === "error" ? (
-                    <p>error: {error.message}</p>
-                  ) : (
-                    <TweetListUl>
-                      {tweets.map((tweet) => (
-                        <li key={tweet._id}>
-                          <TweetRow key={tweet._id} tweet={tweet} />
-                        </li>
-                      ))}
-                    </TweetListUl>
-                  )}
-                </TabPanel>
-                <TabPanel>
-                  {/* <ListItemList
+                  <NameWrapper>
+                    <DisplayName>{user.displayName}</DisplayName>
+                    <UserName>@{user.userName}</UserName>
+                  </NameWrapper>
+                  <FollowingWrapper>
+                    <NumFollowers>
+                      <Num>0</Num> Followers
+                    </NumFollowers>
+                    <NumFollowing>
+                      <Num>0</Num> Following
+                    </NumFollowing>
+                  </FollowingWrapper>
+                </ProfileContent>
+              </ProfileWrapper>
+              <ProfileTabs>
+                <Tabs>
+                  <StyledTabList>
+                    <StyledTab>Tweets</StyledTab>
+                    <StyledTab>Tweets & replies</StyledTab>
+                    <StyledTab>Likes</StyledTab>
+                  </StyledTabList>
+                  <TabPanel>
+                    {tweetsStatus === "loading" ? (
+                      <SpinnerWrapper>
+                        <Spinner width={25} height={25} />
+                      </SpinnerWrapper>
+                    ) : tweetsStatus === "error" ? (
+                      <p>error: {tweetsError.message}</p>
+                    ) : (
+                      <TweetListUl>
+                        {tweets.map((tweet) => (
+                          <li key={tweet._id}>
+                            <TweetRow key={tweet._id} tweet={tweet} />
+                          </li>
+                        ))}
+                      </TweetListUl>
+                    )}
+                  </TabPanel>
+                  <TabPanel>
+                    {/* <ListItemList
                           filterListItems={(li) => Boolean(li.tweet.replies > 0)}
                           noListItems={
                             <p>
@@ -206,9 +218,9 @@ function Profile({ history }) {
                             </p>
                           }
                         /> */}
-                </TabPanel>
-                <TabPanel>
-                  {/* <ListItemList
+                  </TabPanel>
+                  <TabPanel>
+                    {/* <ListItemList
                           filterListItems={(li) => Boolean(li.tweet.likes > 0)}
                           noListItems={
                             <p>
@@ -224,13 +236,12 @@ function Profile({ history }) {
                             </p>
                           }
                         /> */}
-                </TabPanel>
-              </Tabs>
-            </ProfileTabs>
-          </>
-        ) : (
-          "NO USer"
-        )}
+                  </TabPanel>
+                </Tabs>
+              </ProfileTabs>
+            </>
+          )}
+        </>
       </Main>
       <Sidebar>
         <SearchWrapper>

@@ -137,8 +137,33 @@ export const Spinner = styled.div`
   }
 `;
 
+const PresenceLogo = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 125px;
+  height: 125px;
+  /* transform: scale(1);
+
+  @keyframes spin {
+    to {
+      -webkit-transform: scale();
+    }
+  }
+  @-webkit-keyframes spin {
+    to {
+      -webkit-transform: rotate(360deg);
+    }
+  } */
+
+  & svg {
+    width: 125px;
+    height: 125px;
+  }
+`;
+
 const FullPageWrapper = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -151,12 +176,13 @@ const FullPageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
+  overflow: hidden;
 `;
 
 export function FullPageSpinner() {
   return (
     <FullPageWrapper>
-      <Spinner />
+      <PresenceLogo>{Icons.presence}</PresenceLogo>
     </FullPageWrapper>
   );
 }
