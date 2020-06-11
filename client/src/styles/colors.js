@@ -3,7 +3,7 @@ export const Colors = {
   primary: "#f9d623",
   red: "#e02460",
   redHover: "rgba(224,36,94,.1)",
-  hover: "rgba(249, 214, 35, .1)",
+  hover: "rgba(249, 214, 35, .15)",
   border: "#e0e0e0",
   light: "#f5f8fa",
   body: "#657786",

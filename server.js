@@ -7,6 +7,7 @@ const path = require("path");
 
 const user = require("./routes/api/user");
 const tweets = require("./routes/api/tweets");
+const messages = require("./routes/api/messages");
 
 const app = express();
 
@@ -42,6 +43,7 @@ require("./config/passport")(passport);
 // Routes
 app.use("/api/user", user);
 app.use("/api/tweets", tweets);
+app.use("/api/messages", messages);
 
 // Serve static assets (build folder) if in production
 if (process.env.NODE_ENV === "production") {

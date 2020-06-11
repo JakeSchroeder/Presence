@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Icons from "../../icons";
 import { Colors } from "../../../styles/colors";
@@ -115,25 +115,103 @@ const TitleWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
-const NewMessage = ({ closeModal }) => (
-  <MessageModalWrapper>
-    <MessageModalHeader>
-      <TitleWrapper>
-        <CloseBtn onClick={closeModal}>{Icons.close}</CloseBtn>
-        <MessageTitle>New Message</MessageTitle>
-      </TitleWrapper>
-      <NextButton>Next</NextButton>
-    </MessageModalHeader>
-    <MessageContent>
-      <SearchWrapperModal>
-        <Search placeHolderText="Serch people" />
-      </SearchWrapperModal>
-    </MessageContent>
-    {/* <MessageFooter>
+
+const SearchInner = styled.div`
+  margin: 10px 5px;
+  width: 100%;
+`;
+
+const SearchForm = styled.form`
+  width: 100%;
+`;
+
+const SearchWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  position: relative;
+
+  &:focus > input {
+    border: 1px solid ${Colors.primary};
+    background: white;
+  }
+  &:focus svg {
+    background: black;
+    fill: ${Colors.primary};
+  }
+`;
+
+const SearchInput = styled.input`
+  height: 38px;
+  width: 100%;
+  border-radius: 999px;
+  font-size: 15px;
+  background: #e6ecf0;
+  border: 1px solid transparent;
+  padding: 10px 10px 10px 50px;
+  outline: none;
+  color: ${Colors.body};
+
+  &:focus {
+    background: white;
+    color: ${Colors.title};
+    border-color: ${Colors.primary};
+  }
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
+  min-width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    fill: ${Colors.body};
+    height: 18.75px;
+  }
+`;
+
+function NewMessage({ closeModal }) {
+  const [query, setQuery] = useState("");
+  const [hasSearched, setHasSearched] = useState();
+
+  function handleSearchClick(event) {
+    event.preventDefault();
+    setHasSearched(true);
+    setQuery(event.target.elements.searchUserNew.value);
+  }
+
+  useEffect(() => {
+    console.log(query);
+  }, [query]);
+
+  return (
+    <MessageModalWrapper>
+      <MessageModalHeader>
+        <TitleWrapper>
+          <CloseBtn onClick={closeModal}>{Icons.close}</CloseBtn>
+          <MessageTitle>New Message</MessageTitle>
+        </TitleWrapper>
+        <NextButton>Next</NextButton>
+      </MessageModalHeader>
+      <MessageContent>
+        <SearchWrapperModal>
+          <SearchForm onSubmit={handleSearchClick}>
+            <SearchWrapper>
+              <SearchIcon>{Icons.search}</SearchIcon>
+              <SearchInput id="searchUserNew" placeholder="Search people" />
+            </SearchWrapper>
+          </SearchForm>
+        </SearchWrapperModal>
+      </MessageContent>
+      {/* <MessageFooter>
       <MessageComment type="text" placeholder="Add a comment" />
       <MessageSend>{Icons.sendMessage}</MessageSend>
     </MessageFooter> */}
-  </MessageModalWrapper>
-);
+    </MessageModalWrapper>
+  );
+}
 
 export default NewMessage;

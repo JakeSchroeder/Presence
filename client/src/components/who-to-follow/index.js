@@ -116,7 +116,7 @@ const StyledAccordionButton = styled(AccordionButton)`
 `;
 
 const IconWrapper = styled.div`
- cursor: pointer;
+  cursor: pointer;
   width: 36px;
   height: 36px;
   display: flex;
@@ -138,10 +138,10 @@ const IconWrapper = styled.div`
   } 
 
   &:hover {
-    color: ${Colors.primary};
-    & div {
+    
+   
       background: ${Colors.hover};
-    }
+    
     & svg {
       fill: ${Colors.primary};
     }

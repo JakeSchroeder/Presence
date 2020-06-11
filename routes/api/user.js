@@ -12,6 +12,30 @@ const validateLoginInput = require("../../validation/login");
 // Load User model
 const User = require("../../models/User");
 
+//must go before passport middleware endpoints such as me
+router.get("/search", async (req, res) => {
+  const searchParams = new URLSearchParams(req.query);
+  const query = searchParams.get("query");
+  console.log(query);
+
+  try {
+    let matchedUsers = [];
+    if (!query) {
+      matchedUsers = [];
+    } else {
+      const searchResults = await User.find({
+        $text: { $search: query },
+      });
+
+      matchedUsers = searchResults;
+    }
+
+    res.json({ users: matchedUsers });
+  } catch (err) {
+    console.log(err);
+    res.json(err);
+  }
+});
 // @route POST api/users/register
 // @desc Register user
 // @access Public

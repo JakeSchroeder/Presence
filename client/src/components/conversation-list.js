@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useRouteMatch, Switch, Route, useHistory } from "react-router-dom";
-import { Colors } from "../styles/colors";
-import { FollowBtn, GenericBtn, Spinner } from "../components/lib";
+import { Spinner, GenericBtn } from "../components/lib";
 import Icons from "../components/icons";
 import Search from "../components/search";
-import profile_src from "../images/profile.png";
-import NewMessage from "../components/messages/new-message";
-import useModal from "../hooks/useModal";
-import { useConversationsByUser } from "../utils/messages";
+import { Colors } from "../styles/colors";
 import { useAuth } from "../context/authContext";
-// import { ConversationList } from "../components/conversation-list";
-import { MessageThread } from "../components/message-thread";
+import { useModal } from "../hooks/useModal";
+import NewMessage from "../components/messages/new-message";
+import { useConversationsByUser } from "../utils/messages";
+import profile_src from "../images/profile.png";
+import { useHistory } from "react-router-dom";
 
-import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
-import "@reach/dialog/styles.css";
-import { ConversationList } from "../components/conversation-list";
+const Wrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+`;
 
 const Body = styled.div`
   height: 100%;
@@ -32,8 +33,8 @@ const SidebarWrapper = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  /* align-items: flex-start;
+  justify-content: center; */
   border-right: 1px solid ${Colors.border};
 `;
 
@@ -186,36 +187,6 @@ const NewMessageTitle = styled.h2`
 
 const NewMessageDesc = styled.p``;
 
-const StyledDialogOverlay = styled(DialogOverlay)`
-  background: hsla(0, 0%, 0%, 0.33);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: auto;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &.reply {
-    align-items: flex-start;
-    padding-top: 5%;
-  }
-`;
-
-const StyledDialogContent = styled(DialogContent)`
-  &[data-reach-dialog-content] {
-    padding: 0;
-    width: auto;
-    margin: 0;
-    background: white;
-    padding: 0;
-    border-radius: 15px;
-  }
-`;
-
 const TweetWrapper = styled.div`
   cursor: pointer;
   position: relative;
@@ -274,64 +245,58 @@ const SpinnerWrapper = styled.div`
 
 const StyledConversationList = styled.ul``;
 
-function Messages() {
-  let history = useHistory();
-  let { path, url } = useRouteMatch();
+export const ConversationList = ({ url }) => {
+  const history = useHistory();
 
   const { user } = useAuth();
 
-  const [isNewMessageOpen, setNewMessageOpen] = useState(false);
-  const openNewMessage = () => setNewMessageOpen(true);
-  const closeNewMessage = () => setNewMessageOpen(false);
+  const {
+    conversations,
+    status: convoStatus,
+    error: convoError,
+    isFetching: convoIsFetching,
+  } = useConversationsByUser();
 
   return (
     <>
-      <Switch>
-        <Route exact path={path}>
-          {isNewMessageOpen && (
-            <StyledDialogOverlay>
-              <StyledDialogContent>
-                <NewMessage closeModal={closeNewMessage} />
-              </StyledDialogContent>
-            </StyledDialogOverlay>
-          )}
-
-          <Body>
-            <HomeTitleWrapper>
-              <HomeTitle>Messages</HomeTitle>
-              <NewMessageIcon onClick={openNewMessage}>
-                {Icons.newMessage}
-              </NewMessageIcon>
-            </HomeTitleWrapper>
-            <SearchWrapper>
-              <Search placeHolderText="Search for people and groups" />
-            </SearchWrapper>
-            <ConversationList url={url} />
-          </Body>
-          <SidebarWrapper>
-            <NewMessageWrapper>
-              <NewMessageTitle>
-                You don’t have a message selected
-              </NewMessageTitle>
-              <NewMessageDesc>
-                Choose one from your existing messages, or start a new one.
-              </NewMessageDesc>
-              <NewMessageBtn
-                onClick={(e) => {
-                  openNewMessage();
+      {convoStatus === "loading" ? (
+        <SpinnerWrapper>
+          <Spinner width={25} height={25} />
+        </SpinnerWrapper>
+      ) : convoStatus === "error" ? (
+        "something happened"
+      ) : (
+        <StyledConversationList>
+          {conversations.map((convo) => (
+            <li key={convo._id}>
+              <TweetWrapper
+                onClick={() => {
+                  history.push(`${url}/${convo._id}`);
                 }}
               >
-                New Message
-              </NewMessageBtn>
-            </NewMessageWrapper>
-          </SidebarWrapper>
-        </Route>
-        <Route path={`${path}/:id`}>
-          <MessageThread url={url} />
-        </Route>
-      </Switch>
+                <TweetImgWrapper>
+                  <TweetImg src={profile_src} />
+                </TweetImgWrapper>
+                <TweetContent>
+                  <NameWrapper>
+                    {convo.members.map((member) => {
+                      // if (member._id == user.id) {
+                      //   return <DisplayName>You</DisplayName>;
+                      // }
+                      return (
+                        <DisplayName key={member._id}>
+                          {member.displayName}
+                        </DisplayName>
+                      );
+                    })}
+                  </NameWrapper>
+                  <LatestMessage>Message here</LatestMessage>
+                </TweetContent>
+              </TweetWrapper>
+            </li>
+          ))}
+        </StyledConversationList>
+      )}
     </>
   );
-}
-
-export { Messages };
+};

@@ -7,29 +7,29 @@ const UserSchema = new Schema({
   displayName: {
     type: String,
     required: true,
+    index: true,
   },
   userName: {
     type: String,
     required: true,
+    index: true,
   },
   email: {
     type: String,
     required: true,
+    index: true,
   },
   password: {
     type: String,
     required: true,
   },
-  // cart: {
-  //   type: Array,
-  //   required: true
-  // },
+
   date: {
     type: Date,
     default: Date.now,
   },
 });
 
-UserSchema.index({ "$**": "text" });
+// UserSchema.index({ displayName: "text" });
 
 module.exports = User = mongoose.model("user", UserSchema);

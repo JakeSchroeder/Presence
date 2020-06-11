@@ -29,6 +29,32 @@ function useUser(userId) {
   };
 }
 
+function searchUsers(queryKey, { query }) {
+  return usersClient.search({ query }).then((data) => data.users);
+}
+
+const getUserSearchConfig = (query) => ({
+  queryKey: ["userSearch", { query }],
+  queryFn: searchUsers,
+  config: {
+    onSuccess(users) {
+      for (const user of users) {
+        queryCache.setQueryData(
+          ["user", { userId: user._id }],
+          user,
+          userQueryConfig
+        );
+      }
+      // queryCache.setQueryData("tweets", tweets);
+    },
+  },
+});
+
+function useUserSearch(query) {
+  const result = useQuery(getUserSearchConfig(query));
+  return { ...result, users: result.data ?? <Spinner /> };
+}
+
 function setQueryDataForUser(user) {
   queryCache.setQueryData({
     queryKey: ["user", { userId: user.id }],
@@ -37,4 +63,4 @@ function setQueryDataForUser(user) {
   });
 }
 
-export { useUser, setQueryDataForUser };
+export { useUser, useUserSearch, setQueryDataForUser };

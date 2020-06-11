@@ -4,8 +4,16 @@ import { client } from "./api-client";
 //   return client(`books?query=${encodeURIComponent(query)}`)
 // }
 
+const loggedInUserId = window.localStorage.getItem("userId");
+
 function read(userId) {
   return client(`user/${userId}`);
 }
 
-export { read };
+function search({ query = "" }) {
+  return client(
+    `user/search?query=${encodeURIComponent(query)}&userId=${loggedInUserId}`
+  );
+}
+
+export { read, search };

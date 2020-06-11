@@ -8,6 +8,7 @@ import useModal from "../../hooks/useModal";
 import { useDropdown } from "../../hooks/useDropdown";
 import SendMessage from "../messages/send-message";
 import NewTweetReplyModal from "./reply-tweet/modal";
+import Toast from "../toast";
 // import { useListItem } from "../../utils/=";
 import {
   useRemoveTweet,
@@ -322,12 +323,20 @@ function TweetRow({ tweet }) {
   const openNewReply = () => setNewReplyOpen(true);
   const closeNewReply = () => setNewReplyOpen(false);
 
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const showSuccessToast = () => setIsToastOpen(true);
+
   return (
     <>
+      {isToastOpen && <Toast message="Your message was sent" />}
       {isNewMessageOpen && (
         <StyledDialogOverlay onDismiss={closeNewMessage}>
           <StyledDialogContent>
-            <SendMessage closeModal={closeNewMessage} />
+            <SendMessage
+              tweet={tweet}
+              closeModal={closeNewMessage}
+              showSuccessToast={showSuccessToast}
+            />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}
