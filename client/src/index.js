@@ -6,8 +6,70 @@ import { Colors } from "./styles/colors";
 import { createGlobalStyle } from "styled-components";
 import { AppProviders } from "./context";
 
+const GlobalStyles = createGlobalStyle`
+  *,*:after, *:before {
+    box-sizing: border-box;
+  }
+  html {
+    width: 100%;
+    height: 100%;
+    font-size: 15px;
+
+  }
+  body {
+    color: ${Colors.body};
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    overflow-x: hidden;
+    height: 100%;
+    font-size: 1rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+    line-height: 1.3125;
+    overflow-y: scroll;
+    overscroll-behavior-y: none;
+  }
+  #root {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: ${({ height }) => height}px;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+  
+  }
+  li {
+    list-style: none;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  h1,h2,h3,h4 {
+    color: ${Colors.title};
+    margin: 0;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 32px;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  h3 {
+    font-size: 18px;
+  }
+  p {
+    margin: 0;
+  }
+  
+`;
+
 ReactDOM.render(
   <React.StrictMode>
+    <GlobalStyles />
     <AppProviders>
       <App />
     </AppProviders>

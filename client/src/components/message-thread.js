@@ -121,8 +121,8 @@ const SpinnerWrapper = styled.div`
 
 const MessagesWrapper = styled.div`
   padding-top: 20px;
-  height: 100%;
-  max-height: 100%;
+  /* height: 100%;
+  max-height: 100%; */
 `;
 
 const MessagesList = styled.ul`
