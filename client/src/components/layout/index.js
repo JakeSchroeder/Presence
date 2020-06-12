@@ -18,19 +18,16 @@ const Wrapper = styled.div`
 `;
 
 const Inner = styled.div`
-  height: 100%;
   width: 100%;
   display: flex;
   align-items: stretch;
   justify-content: space-around;
+  min-height: ${({ height }) => height}px;
 `;
 
 const Main = styled.main`
-  min-height: ${({ height }) => height}px;
   flex-grow: 1;
   flex-shrink: 1;
-  height: 100%;
-  min-height: 100%;
   align-items: stretch;
   display: flex;
   flex-direction: column;
@@ -112,11 +109,9 @@ const Layout = ({ children }) => {
   return (
     <>
       {/* <GlobalStyles height={height} /> */}
-
       <Wrapper>
-        <Inner>
+        <Inner height={height}>
           <Header />
-
           <Main>
             <MainInner>
               <MainPositioner>

@@ -8,9 +8,10 @@ import { useAuth } from "../context/authContext";
 import {
   useMessagesByConversation,
   useCreateNewReply,
+  useLeaveConversation,
 } from "../utils/messages";
 import profile_src from "../images/profile.png";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import NewMessage from "../components/messages/new-message";
 
@@ -251,6 +252,7 @@ function NewReplyForm({ conversationId, onSubmit, placeholder }) {
 
 function MessageThread({ url }) {
   const { id: conversationId } = useParams();
+  const history = useHistory();
   const {
     messages,
     status: messagesStatus,
@@ -258,6 +260,7 @@ function MessageThread({ url }) {
   } = useMessagesByConversation(conversationId);
 
   const [createNewReply, { data, status, error }] = useCreateNewReply();
+  const [leaveConversation] = useLeaveConversation();
 
   const [isNewMessageOpen, setNewMessageOpen] = useState(false);
   const openNewMessage = () => setNewMessageOpen(true);
@@ -292,6 +295,14 @@ function MessageThread({ url }) {
             <HomeTitleUserName>@dwd</HomeTitleUserName>
           </HomeTitleInner>
           {/* add leave convo button */}
+          <button
+            onClick={() => {
+              leaveConversation(conversationId);
+              history.push("/messages");
+            }}
+          >
+            Leave Convo
+          </button>
         </HomeTitleWrapper>
         <MessagesWrapper>
           {messagesStatus === "loading" ? (
@@ -300,12 +311,14 @@ function MessageThread({ url }) {
             </SpinnerWrapper>
           ) : messagesStatus === "error" ? (
             "something happened"
-          ) : (
+          ) : messages.length > 0 ? (
             <MessagesList>
               {messages.map((message) => (
                 <MessageItem key={message._id}>{message.content}</MessageItem>
               ))}
             </MessagesList>
+          ) : (
+            "nothing here"
           )}
         </MessagesWrapper>
         <SidebarFooter>
@@ -327,7 +340,7 @@ function MessageThread({ url }) {
             <NewMessageBtn
               onClick={(e) => {
                 openModal(e);
-              }}
+              }}p
             >
               New Message
             </NewMessageBtn>
@@ -336,5 +349,43 @@ function MessageThread({ url }) {
     </>
   );
 }
+
+// <MainTitle>
+// <GoBackBtn
+//   onClick={() => {
+//     history.goBack();
+//   }}
+// />
+// <TitleText>Tweet</TitleText>
+// </MainTitle>
+// {status === "loading" ? (
+// <SpinnerWrapper>
+//   <Spinner width={25} height={25} />
+// </SpinnerWrapper>
+// ) : status === "error" ? (
+// <p>{error.message}</p>
+// ) : tweets.length > 0 ? (
+// <>
+//   <TweetThread tweet={tweets[0]} />
+//   <TweetListUl>
+//     {tweets.slice(1).map((tweet) => (
+//       <li key={tweet._id}>
+//         <TweetRow key={tweet._id} tweet={tweet} />
+//       </li>
+//     ))}
+//   </TweetListUl>
+// </>
+// ) : (
+// <ErrorWrapper>
+//   <ExistText>Sorry, that page doesn’t exist!</ExistText>
+//   <p>
+//     Why not try a{" "}
+//     <Link style={{ color: `${Colors.primary}` }} to="/explore">
+//       search
+//     </Link>{" "}
+//     to find something else?
+//   </p>
+// </ErrorWrapper>
+// )}
 
 export { MessageThread };

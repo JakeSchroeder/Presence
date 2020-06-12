@@ -16,7 +16,16 @@ function readConversationsByUser() {
 }
 
 function readMessagesByConversation(conversationId) {
-  return client(`messages/getMessagesByConversation/${conversationId}`);
+  return client(
+    `messages/getMessagesByConversation/${conversationId}?userId=${userId}`
+  );
+}
+
+function leaveConversation(conversationId) {
+  return client(
+    `messages/leaveConversation/${conversationId}?userId=${userId}`,
+    { method: "PATCH" }
+  );
 }
 
 // function read(tweetId) {
@@ -56,4 +65,5 @@ export {
   readConversationsByUser,
   readMessagesByConversation,
   createNewReply,
+  leaveConversation,
 };

@@ -335,24 +335,26 @@ const MessageForm = styled.form`
 `;
 
 function CreateMessageForm({
+  loggedInUser,
   tweet,
   members,
   onSubmit,
   placeholder = "Add a comment",
 }) {
   const [value, setValue] = useState("");
-  const { user } = useAuth();
-  const { id } = user;
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     console.log(tweet);
     console.log(members);
 
+    console.log(loggedInUser.id);
+
     const messageData = {
-      userId: id,
+      userId: loggedInUser.id,
       content: value,
-      members: members,
+      members: [loggedInUser.id, ...members],
+      containsTweet: tweet,
     };
 
     onSubmit(messageData);
@@ -373,6 +375,7 @@ function CreateMessageForm({
 }
 
 function SendMessage({ closeModal, tweet, showSuccessToast }) {
+  const { user: loggedInUser } = useAuth();
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState();
   const [userIsSelected, setUserIsSelected] = useState(false);
@@ -406,8 +409,8 @@ function SendMessage({ closeModal, tweet, showSuccessToast }) {
 
   useEffect(() => {
     if (messageStatus === "success") {
-      closeModal();
       showSuccessToast();
+      closeModal();
     }
   }, [messageStatus]);
 
@@ -462,34 +465,51 @@ function SendMessage({ closeModal, tweet, showSuccessToast }) {
             <p>Error: {error.message}</p>
           ) : users.length ? (
             <UsersList>
-              {users.map((user) => (
-                <li key={user._id}>
-                  <TweetWrapper
-                    key={user._id}
-                    onClick={() => {
-                      addUser(user);
-                    }}
-                  >
-                    <TweetImgWrapper>
-                      <TweetImg src={profile_src} />
-                    </TweetImgWrapper>
-                    <TweetContent>
-                      <NameWrapper>
-                        <NameInner>
-                          <DisplayName>{user.displayName}</DisplayName>
-                          {/* {author.displayName} */}
-                          <UserName>@{user.userName}</UserName>
-                        </NameInner>
-                        {/* @{author.userName} */}
+              {users.map((user) => {
+                if (user._id !== loggedInUser.id) {
+                  // console.log(loggedInUser);
+                  return (
+                    <li key={user._id}>
+                      <TweetWrapper
+                        key={user._id}
+                        onClick={() => {
+                          addUser(user);
+                        }}
+                      >
+                        <TweetImgWrapper>
+                          <TweetImg src={profile_src} />
+                        </TweetImgWrapper>
+                        <TweetContent>
+                          <NameWrapper>
+                            <NameInner>
+                              <DisplayName>{user.displayName}</DisplayName>
+                              {/* {author.displayName} */}
+                              <UserName>@{user.userName}</UserName>
+                            </NameInner>
+                            {/* @{author.userName} */}
 
-                        {userIsSelected ? (
-                          <StyledCheckmark>{Icons.checkmark}</StyledCheckmark>
-                        ) : null}
-                      </NameWrapper>
-                    </TweetContent>
-                  </TweetWrapper>
-                </li>
-              ))}
+                            {userIsSelected ? (
+                              <StyledCheckmark>
+                                {Icons.checkmark}
+                              </StyledCheckmark>
+                            ) : null}
+                          </NameWrapper>
+                        </TweetContent>
+                      </TweetWrapper>
+                    </li>
+                  );
+                } else {
+                  return (
+                    <ErrorWrapper>
+                      <ExistText>No results for "{query}"</ExistText>
+                      <p>
+                        The term you entered did not bring up any results. You
+                        may have mistyped your term, try researching.
+                      </p>
+                    </ErrorWrapper>
+                  );
+                }
+              })}
             </UsersList>
           ) : hasSearched ? (
             <ErrorWrapper>
@@ -508,6 +528,7 @@ function SendMessage({ closeModal, tweet, showSuccessToast }) {
           members={addedUsers}
           onSubmit={createMessage}
           placeholder="Add a comment"
+          loggedInUser={loggedInUser}
         />
       </MessageFooter>
     </MessageModalWrapper>

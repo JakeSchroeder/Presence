@@ -180,8 +180,8 @@ function Profile({ history }) {
               <ProfileTabs>
                 <Tabs>
                   <StyledTabList>
-                    <StyledTab>Tweets</StyledTab>
-                    <StyledTab>Tweets & replies</StyledTab>
+                    <StyledTab>Quacks</StyledTab>
+                    <StyledTab>Quacks & replies</StyledTab>
                     <StyledTab>Likes</StyledTab>
                   </StyledTabList>
                   <TabPanel>

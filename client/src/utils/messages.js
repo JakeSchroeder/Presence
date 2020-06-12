@@ -35,7 +35,7 @@ const getMessagesByConversationConfig = (conversationId) => ({
 
 function useMessagesByConversation(conversationId) {
   const result = useQuery(getMessagesByConversationConfig(conversationId));
-  return { ...result, messages: result.data };
+  return { ...result, messages: result.data ?? [] };
 }
 
 function getConversationsByUser(queryKey) {
@@ -62,16 +62,35 @@ const getConversationsByUserConfig = () => ({
   },
 });
 
+// function useTweetThread(tweetId) {
+//   const result = useQuery({
+//     queryKey: ["thread", { tweetId }],
+//     queryFn: getTweetThread,
+//     onSuccess: async (tweets) => {
+//       // await onSuccess?.(tweets);
+//       for (const tweet of tweets) {
+//         queryCache.setQueryData(
+//           ["tweet", { tweetId: tweet._id }],
+//           tweet,
+//           tweetQueryConfig
+//         );
+//       }
+//     },
+//   });
+//   return { ...result, tweets: result.data ?? [] };
+// }
+
 function useConversationsByUser() {
   const result = useQuery(getConversationsByUserConfig());
-  return { ...result, conversations: result.data };
+  return { ...result, conversations: result.data ?? [] };
 }
 
 function useCreateMessage(options) {
   return useMutation((messageData) => messagesClient.create(messageData), {
     onSettled: () => {
       // queryCache.refetchQueries("messagesByConversation");
-      console.log("it worked maybe");
+      queryCache.refetchQueries("messagesByConversation");
+      queryCache.refetchQueries("conversationsByUser");
       // queryCache.refetchQueries("tweetsByUser");
       // queryCache.refetchQueries("thread");
     },
@@ -83,6 +102,7 @@ function useCreateNewReply(options) {
   return useMutation((replyData) => messagesClient.createNewReply(replyData), {
     onSettled: () => {
       queryCache.refetchQueries("messagesByConversation");
+      queryCache.refetchQueries("conversationsByUser");
 
       // queryCache.refetchQueries("tweetsByUser");
       // queryCache.refetchQueries("thread");
@@ -91,9 +111,26 @@ function useCreateNewReply(options) {
   });
 }
 
+function useLeaveConversation(options) {
+  return useMutation(
+    (conversationId) => messagesClient.leaveConversation(conversationId),
+    {
+      onSettled: () => {
+        queryCache.refetchQueries("messagesByConversation");
+        queryCache.refetchQueries("conversationsByUser");
+
+        // queryCache.refetchQueries("tweetsByUser");
+        // queryCache.refetchQueries("thread");
+      },
+      ...options,
+    }
+  );
+}
+
 export {
   useCreateMessage,
   useConversationsByUser,
   useMessagesByConversation,
   useCreateNewReply,
+  useLeaveConversation,
 };

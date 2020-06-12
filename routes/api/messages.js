@@ -16,6 +16,7 @@ router.post("/new", async (req, res) => {
       conversationId: newConversation._id,
       author: req.body.userId,
       content: req.body.content,
+      containsTweet: req.body.tweet ? req.body.tweet : null,
     });
 
     const newMessageRes = await newMessage.save();
@@ -58,15 +59,38 @@ router.get("/getConversationsByUser/:id", async (req, res) => {
 
 router.get("/getMessagesByConversation/:id", async (req, res) => {
   const conversationId = req.params.id;
-
+  const loggedInUser = req.query.userId;
+  console.log(loggedInUser);
   try {
-    const messages = await Message.find({ conversationId: conversationId })
+    const messages = await Message.find({
+      conversationId: conversationId,
+    })
       // .populate({ path: "author", select: "-password" })
       .populate("author", "-password")
       .sort("createdAt");
     res.json({ messages: messages });
   } catch (err) {
     res.json(err);
+  }
+});
+
+router.patch("/leaveConversation/:id", async (req, res) => {
+  const loggedInUser = req.query.userId;
+  const conversationId = req.params.id;
+
+  console.log(conversationId);
+
+  try {
+    const convoRes = await Conversation.update(
+      { _id: conversationId, members: { $eq: loggedInUser } },
+      {
+        $pull: { members: loggedInUser },
+      }
+    );
+    console.log(convoRes);
+    res.json(convoRes);
+  } catch (err) {
+    console.log(err);
   }
 });
 

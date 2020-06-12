@@ -13,7 +13,7 @@ const MessageSchema = new Schema({
     required: true,
   },
   author: { type: Schema.Types.ObjectId, ref: "user", required: true },
-
+  containsTweet: { type: Schema.Types.ObjectId, ref: "Tweet", required: false },
   createdAt: {
     type: Date,
     default: Date.now,

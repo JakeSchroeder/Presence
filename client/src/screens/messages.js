@@ -6,7 +6,7 @@ import { FollowBtn, GenericBtn, Spinner } from "../components/lib";
 import Icons from "../components/icons";
 import Search from "../components/search";
 import profile_src from "../images/profile.png";
-import NewMessage from "../components/messages/new-message";
+import SendMessage from "../components/messages/send-message";
 import useModal from "../hooks/useModal";
 import { useConversationsByUser } from "../utils/messages";
 import { useAuth } from "../context/authContext";
@@ -291,7 +291,7 @@ function Messages() {
           {isNewMessageOpen && (
             <StyledDialogOverlay>
               <StyledDialogContent>
-                <NewMessage closeModal={closeNewMessage} />
+                <SendMessage closeModal={closeNewMessage} />
               </StyledDialogContent>
             </StyledDialogOverlay>
           )}

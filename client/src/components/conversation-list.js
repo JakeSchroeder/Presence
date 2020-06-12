@@ -6,7 +6,8 @@ import Search from "../components/search";
 import { Colors } from "../styles/colors";
 import { useAuth } from "../context/authContext";
 import { useModal } from "../hooks/useModal";
-import NewMessage from "../components/messages/new-message";
+// import NewMessage from "../components/messages/new-message";
+import SendMessage from "../components/messages/send-message";
 import { useConversationsByUser } from "../utils/messages";
 import profile_src from "../images/profile.png";
 import { useHistory } from "react-router-dom";
@@ -245,6 +246,8 @@ const SpinnerWrapper = styled.div`
 
 const StyledConversationList = styled.ul``;
 
+//change name to something more page
+
 export const ConversationList = ({ url }) => {
   const history = useHistory();
 
@@ -265,7 +268,7 @@ export const ConversationList = ({ url }) => {
         </SpinnerWrapper>
       ) : convoStatus === "error" ? (
         "something happened"
-      ) : (
+      ) : conversations.length > 0 ? (
         <StyledConversationList>
           {conversations.map((convo) => (
             <li key={convo._id}>
@@ -296,6 +299,13 @@ export const ConversationList = ({ url }) => {
             </li>
           ))}
         </StyledConversationList>
+      ) : (
+        <NewMessageWrapper>
+          <NewMessageTitle>You don’t have a message selected</NewMessageTitle>
+          <NewMessageDesc>
+            Choose one from your existing messages, or start a new one.
+          </NewMessageDesc>
+        </NewMessageWrapper>
       )}
     </>
   );
