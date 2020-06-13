@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import Moment from "react-moment";
 import Icons from "../components/icons";
 import Search from "../components/search";
-import { Spinner } from "../components/lib";
+import { Spinner, GoBackBtn } from "../components/lib";
 import { Colors } from "../styles/colors";
 import { useAuth } from "../context/authContext";
 import {
@@ -11,13 +12,14 @@ import {
   useLeaveConversation,
 } from "../utils/messages";
 import profile_src from "../images/profile.png";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, Link } from "react-router-dom";
 
 import NewMessage from "../components/messages/new-message";
 
 import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 import { ConversationList } from "../components/conversation-list";
+import SendMessage from "./messages/send-message";
 
 const Body = styled.div`
   height: 100%;
@@ -26,6 +28,10 @@ const Body = styled.div`
   max-width: 600px;
   border-left: 1px solid ${Colors.border};
   border-right: 1px solid ${Colors.border};
+
+  @media (max-width: 1021px) {
+    display: none;
+  }
 `;
 
 const SidebarWrapper = styled.div`
@@ -37,6 +43,10 @@ const SidebarWrapper = styled.div`
   justify-content: space-between;
   /* align-items: flex-start;
   justify-content: center; */
+  @media (max-width: 1021px) {
+    border-left: 1px solid ${Colors.border};
+  }
+
   border-right: 1px solid ${Colors.border};
 `;
 
@@ -131,6 +141,7 @@ const MessagesList = styled.ul`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  padding: 0 20px;
 `;
 
 const MessageItem = styled.li`
@@ -217,6 +228,97 @@ const SidebarFooter = styled.div`
   padding: 10px;
 `;
 
+const MessageTweet = styled.div``;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const StyledGoBackBtn = styled.div`
+  @media (min-width: 1021px) {
+    display: none;
+  }
+`;
+
+const BubbleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ right }) => (right ? `flex-end` : `flex-start`)};
+`;
+
+const Bubble = styled.div`
+  background: ${Colors.primary};
+  padding: 10px 15px;
+  border-top-left-radius: 99px;
+  border-top-right-radius: 99px;
+  border-bottom-left-radius: ${({ right }) => (right ? `99px` : `0px`)};
+  border-bottom-right-radius: ${({ right }) => (right ? `0px` : `99px`)};
+`;
+
+const BubbleContent = styled.p`
+  color: white;
+`;
+
+const BubbleTimeStamp = styled.p``;
+
+const BubbleOuter = styled.div`
+  display: flex;
+`;
+
+const ProfileImg = styled.img`
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+function UserMessage({ content, timeStamp }) {
+  return (
+    <BubbleWrapper right>
+      <Bubble right>
+        <BubbleContent>{content}</BubbleContent>
+      </Bubble>
+      <BubbleTimeStamp>
+        {" "}
+        <Moment format="dddd h:mm A">{timeStamp}</Moment>
+      </BubbleTimeStamp>
+    </BubbleWrapper>
+  );
+}
+
+function OtherMessage({ content, timeStamp, userImg }) {
+  return (
+    <BubbleOuter>
+      <ProfileImg src={profile_src} />
+      <BubbleWrapper>
+        <Bubble>
+          <BubbleContent>{content}</BubbleContent>
+        </Bubble>
+        <BubbleTimeStamp>
+          <Moment format="dddd h:mm A">{timeStamp}</Moment>
+        </BubbleTimeStamp>
+      </BubbleWrapper>
+    </BubbleOuter>
+  );
+}
+
+// function TweetMessage({content, timeStamp, userImg, tweet}) {
+//   return (
+//     <BubbleOuter>
+//       <ProfileImg src={profile_src} />
+//       <BubbleWrapper>
+//         <Bubble>
+//           <BubbleContent>{content}</BubbleContent>
+//         </Bubble>
+//         <BubbleTimeStamp>
+//           <Moment format="dddd HH:mm">{timeStamp}</Moment>
+//         </BubbleTimeStamp>
+//       </BubbleWrapper>
+//     </BubbleOuter>
+//   );
+// }
+
 function NewReplyForm({ conversationId, onSubmit, placeholder }) {
   const [value, setValue] = useState("");
   const { user } = useAuth();
@@ -251,6 +353,7 @@ function NewReplyForm({ conversationId, onSubmit, placeholder }) {
 }
 
 function MessageThread({ url }) {
+  const { user } = useAuth();
   const { id: conversationId } = useParams();
   const history = useHistory();
   const {
@@ -271,7 +374,7 @@ function MessageThread({ url }) {
       {isNewMessageOpen && (
         <StyledDialogOverlay>
           <StyledDialogContent>
-            <NewMessage closeModal={closeNewMessage} />
+            <SendMessage closeModal={closeNewMessage} />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}
@@ -286,23 +389,33 @@ function MessageThread({ url }) {
         <SearchWrapper>
           <Search placeHolderText="Search for people and groups" />
         </SearchWrapper>
-        <ConversationList url={url} />
+        <ConversationList url={url} currentConvo={conversationId} />
       </Body>
       <SidebarWrapper>
         <HomeTitleWrapper>
-          <HomeTitleInner>
-            <HomeTitleDisplayName>Jake Schroeder</HomeTitleDisplayName>
-            <HomeTitleUserName>@dwd</HomeTitleUserName>
-          </HomeTitleInner>
+          <ButtonWrapper>
+            <StyledGoBackBtn>
+              <GoBackBtn
+                onClick={() => {
+                  history.push("/messages");
+                }}
+              />
+            </StyledGoBackBtn>
+            <HomeTitleInner>
+              <HomeTitleDisplayName>Jake Schroeder</HomeTitleDisplayName>
+              <HomeTitleUserName>@dwd</HomeTitleUserName>
+            </HomeTitleInner>
+          </ButtonWrapper>
           {/* add leave convo button */}
-          <button
+          <p
+            style={{ color: Colors.primary, cursor: "pointer" }}
             onClick={() => {
               leaveConversation(conversationId);
               history.push("/messages");
             }}
           >
-            Leave Convo
-          </button>
+            Leave
+          </p>
         </HomeTitleWrapper>
         <MessagesWrapper>
           {messagesStatus === "loading" ? (
@@ -314,7 +427,29 @@ function MessageThread({ url }) {
           ) : messages.length > 0 ? (
             <MessagesList>
               {messages.map((message) => (
-                <MessageItem key={message._id}>{message.content}</MessageItem>
+                <MessageItem>
+                  {message.author._id == user.id ? (
+                    <UserMessage
+                      content={message.content}
+                      timeStamp={message.createdAt}
+                    />
+                  ) : (
+                    <OtherMessage
+                      content={message.content}
+                      timeStamp={message.createdAt}
+                    />
+                  )}
+                  {/* <MessageItem key={message._id}>{message.content}</MessageItem> */}
+                  {/* {message.tweetAttatchment ? (
+                    <MessageTweet key={message._id}>
+                      <Link
+                        to={`/${message.tweetAttatchment.author.userName}/status/${message.tweetAttatchment._id}`}
+                      >
+                        The Tweet Attatchment
+                      </Link>
+                    </MessageTweet>
+                  ) : null} */}
+                </MessageItem>
               ))}
             </MessagesList>
           ) : (

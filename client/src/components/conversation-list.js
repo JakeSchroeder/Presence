@@ -199,6 +199,9 @@ const TweetWrapper = styled.div`
   &:hover {
     background: ${Colors.light};
   }
+  &.selected {
+    border-right: 3px solid ${Colors.primary};
+  }
 `;
 
 const TweetImgWrapper = styled.div`
@@ -248,7 +251,7 @@ const StyledConversationList = styled.ul``;
 
 //change name to something more page
 
-export const ConversationList = ({ url }) => {
+export const ConversationList = ({ url, currentConvo }) => {
   const history = useHistory();
 
   const { user } = useAuth();
@@ -273,6 +276,7 @@ export const ConversationList = ({ url }) => {
           {conversations.map((convo) => (
             <li key={convo._id}>
               <TweetWrapper
+                className={convo._id == currentConvo ? `selected` : ``}
                 onClick={() => {
                   history.push(`${url}/${convo._id}`);
                 }}

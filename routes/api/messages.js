@@ -16,8 +16,11 @@ router.post("/new", async (req, res) => {
       conversationId: newConversation._id,
       author: req.body.userId,
       content: req.body.content,
-      containsTweet: req.body.tweet ? req.body.tweet : null,
+      containsTweet: req.body.tweet != null ? true : false,
+      tweetAttatchment: req.body.tweet != null ? req.body.tweet : null,
     });
+
+    console.log(newMessage);
 
     const newMessageRes = await newMessage.save();
 
@@ -67,6 +70,8 @@ router.get("/getMessagesByConversation/:id", async (req, res) => {
     })
       // .populate({ path: "author", select: "-password" })
       .populate("author", "-password")
+      .populate("tweetAttatchment")
+      .populate("tweetAttatchment.author")
       .sort("createdAt");
     res.json({ messages: messages });
   } catch (err) {

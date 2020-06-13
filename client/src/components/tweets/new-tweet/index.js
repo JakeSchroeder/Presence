@@ -34,7 +34,7 @@ const UserImg = styled.img`
 
 const TweetInput = styled.input`
   width: 100%;
-  font-size: 1rem;
+  font-size: 19px;
   border: 0;
   outline: 0;
   padding: 10px;
@@ -47,7 +47,7 @@ const MediaInputWrapper = styled.div`
   justify-content: space-between;
 `;
 
-const MediaInnerWrapper = styled.div`
+const MediaInnerWrapper = styled.label`
   display: flex;
   align-items: center;
 `;
@@ -145,8 +145,8 @@ function CreateTweetForm({
       </TweetInputWrapper>
       <MediaInputWrapper>
         <MediaInnerWrapper>
+          <input hidden type="file" />
           <MediaImg>{Icons.img}</MediaImg>
-          <MediaPolls>{Icons.polls}</MediaPolls>
         </MediaInnerWrapper>
         <GenericBtn type="submit" disabled={!value}>
           Tweet

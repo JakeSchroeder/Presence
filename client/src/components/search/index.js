@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Colors } from "../../styles/colors";
 import Icons from "../icons";
+import { useTweetSearch } from "../../utils/tweets";
+import { useHistory } from "react-router-dom";
 
 const SearchWrapper = styled.div`
   width: 100%;
@@ -60,13 +62,35 @@ const SearchIcon = styled.div`
   }
 `;
 
-const Search = ({ placeHolderText }) => {
-  return (
-    <SearchWrapper>
-      <SearchIcon>{Icons.search}</SearchIcon>
+const SearchForm = styled.form`
+  width: 100%;
+`;
 
-      <SearchInput type="text" placeholder={placeHolderText} />
-    </SearchWrapper>
+const Search = ({ placeHolderText }) => {
+  const history = useHistory();
+  const [query, setQuery] = useState("");
+  const [hasSearched, setHasSearched] = useState();
+  const { tweets, error, status, isFetching } = useTweetSearch(query);
+
+  useEffect(() => {
+    if (hasSearched) {
+      history.push("/explore");
+    }
+  }, [hasSearched]);
+
+  function handleSearchClick(event) {
+    event.preventDefault();
+    setHasSearched(true);
+    setQuery(event.target.elements.search.value);
+  }
+
+  return (
+    <SearchForm onSubmit={handleSearchClick}>
+      <SearchWrapper>
+        <SearchIcon>{Icons.search}</SearchIcon>
+        <SearchInput id="search" type="text" placeholder="Search Presence" />
+      </SearchWrapper>
+    </SearchForm>
   );
 };
 

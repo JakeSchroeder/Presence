@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import Icons from "../../icons";
 import { Spinner } from "../../lib";
 import { Colors } from "../../../styles/colors";
@@ -354,7 +355,7 @@ function CreateMessageForm({
       userId: loggedInUser.id,
       content: value,
       members: [loggedInUser.id, ...members],
-      containsTweet: tweet,
+      tweet: tweet ? tweet._id : null,
     };
 
     onSubmit(messageData);
@@ -375,6 +376,7 @@ function CreateMessageForm({
 }
 
 function SendMessage({ closeModal, tweet, showSuccessToast }) {
+  const history = useHistory();
   const { user: loggedInUser } = useAuth();
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState();
@@ -409,7 +411,12 @@ function SendMessage({ closeModal, tweet, showSuccessToast }) {
 
   useEffect(() => {
     if (messageStatus === "success") {
-      showSuccessToast();
+      if (showSuccessToast) {
+        console.log(messageData);
+        showSuccessToast(messageData.conversationId);
+      } else {
+        history.push(`/messages/${messageData.conversationId}`);
+      }
       closeModal();
     }
   }, [messageStatus]);

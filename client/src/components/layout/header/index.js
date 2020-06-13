@@ -93,11 +93,30 @@ const NavItemLink = styled(NavLink)`
     svg {
       fill: ${Colors.primary};
     }
+    svg:nth-of-type(1) {
+      display: none;
+    }
+
+    svg:nth-of-type(2) {
+      display: flex;
+    }
+  }
+
+  & li svg:nth-of-type(2) {
+    display: none;
   }
 
   &.active li img {
     border: 2px solid ${Colors.primary};
   }
+
+  /* &.active li {
+    @media (max-width: 1021px) {
+      svg:nth-of-type(2) {
+        display: block;
+      }
+    }
+  } */
 `;
 
 const NavItem = styled.li`
@@ -207,10 +226,6 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const Header = () => {
-  // let { path } = useRouteMatch();
-  // const { state: authState } = useContext(AuthContext);
-  // const { displayName, userName, id } = authState.user;
-
   const [isNewTweetOpen, setNewTweetOpen] = useState(false);
   const openNewTweet = () => setNewTweetOpen(true);
   const closeNewTweet = () => setNewTweetOpen(false);
@@ -257,19 +272,29 @@ const Header = () => {
                   <NavList>
                     <NavItemLink exact to="/home" activeClassName="active">
                       <NavItem>
-                        <NavIcon>{Icons.home}</NavIcon>
+                        <NavIcon>
+                          {Icons.home}
+                          {Icons.homeFilled}
+                        </NavIcon>
+
                         <NavText>Home</NavText>
                       </NavItem>
                     </NavItemLink>
                     <NavItemLink exact to="/explore" activeClassName="active">
                       <NavItem>
-                        <NavIcon>{Icons.explore}</NavIcon>
+                        <NavIcon>
+                          {Icons.explore}
+                          {Icons.exploreFilled}
+                        </NavIcon>
                         <NavText>Explore</NavText>
                       </NavItem>
                     </NavItemLink>
                     <NavItemLink exact to="/messages" activeClassName="active">
                       <NavItem>
-                        <NavIcon>{Icons.messaging}</NavIcon>
+                        <NavIcon>
+                          {Icons.messaging}
+                          {Icons.messagingFilled}
+                        </NavIcon>
                         <NavText>Messages</NavText>
                       </NavItem>
                     </NavItemLink>
@@ -283,7 +308,10 @@ const Header = () => {
                       activeClassName="active"
                     >
                       <NavItem>
-                        <NavIcon>{Icons.profile}</NavIcon>
+                        <NavIcon>
+                          {Icons.profile}
+                          {Icons.profileFilled}
+                        </NavIcon>
                         <NavText>Profile</NavText>
                       </NavItem>
                     </NavItemLink>

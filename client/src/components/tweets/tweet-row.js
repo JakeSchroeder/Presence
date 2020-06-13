@@ -324,11 +324,20 @@ function TweetRow({ tweet }) {
   const closeNewReply = () => setNewReplyOpen(false);
 
   const [isToastOpen, setIsToastOpen] = useState(false);
-  const showSuccessToast = () => setIsToastOpen(true);
+  const [toastLink, setToastLink] = useState();
+  const showSuccessToast = (conversationId) => {
+    setToastLink(conversationId);
+    setIsToastOpen(true);
+  };
 
   return (
     <>
-      {isToastOpen && <Toast message="Your message was sent" />}
+      {isToastOpen && (
+        <Toast
+          message="Your message was sent"
+          link={`/messages/${toastLink}`}
+        />
+      )}
       {isNewMessageOpen && (
         <StyledDialogOverlay onDismiss={closeNewMessage}>
           <StyledDialogContent>
