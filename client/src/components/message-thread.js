@@ -175,7 +175,8 @@ const SpinnerWrapper = styled.div`
 const MessagesWrapper = styled.div`
   /* height: 100%;
   max-height: 100%; */
-  padding-top: 20px;
+  height: 100%;
+  margin: 0 auto;
   max-width: 600px;
   display: flex;
   flex-grow: 1;
@@ -183,21 +184,48 @@ const MessagesWrapper = styled.div`
   flex-direction: column;
 `;
 
+const SidebarFooterWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
+const SidebarFooterInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
 const MessagesInner = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  flex-grow: 1;
+  max-height: 100%;
+  height: 100%;
 `;
 
-const MessagesList = styled.ul`
+const MessagesListWrapper = styled.div`
+  padding-top: 20px;
+  overflow-x: hidden;
+  max-height: 100%;
   height: 100%;
+  display: flex;
+  flex-grow: 1;
+  transform: translate3d(0px, 0px, 0px);
+`;
+
+const MessagesList = styled.div`
+  max-width: 600px;
+  flex-grow: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 0 20px;
+  padding: 0 15px;
 `;
 
-const MessageItem = styled.li`
+const MessageItem = styled.div`
   padding-bottom: 20px;
 `;
 
@@ -479,113 +507,53 @@ function MessageThread({ url }) {
         <SidebarInner>
           <SidebarPositioner>
             <MessagesWrapper>
-              <MessagesInner>
-                {messagesStatus === "loading" ? (
-                  <SpinnerWrapper>
-                    <Spinner width={25} height={25} />
-                  </SpinnerWrapper>
-                ) : messagesStatus === "error" ? (
-                  "something happened"
-                ) : messages.length > 0 ? (
-                  <MessagesList>
-                    {messages.map((message) => (
-                      <MessageItem>
-                        {message.author._id == user.id ? (
-                          <UserMessage
-                            content={message.content}
-                            timeStamp={message.createdAt}
-                          />
-                        ) : (
-                          <OtherMessage
-                            content={message.content}
-                            timeStamp={message.createdAt}
-                          />
-                        )}
-                        {/* <MessageItem key={message._id}>{message.content}</MessageItem> */}
-                        {/* {message.tweetAttatchment ? (
-                    <MessageTweet key={message._id}>
-                      <Link
-                        to={`/${message.tweetAttatchment.author.userName}/status/${message.tweetAttatchment._id}`}
-                      >
-                        The Tweet Attatchment
-                      </Link>
-                    </MessageTweet>
-                  ) : null} */}
-                      </MessageItem>
-                    ))}
-                  </MessagesList>
-                ) : (
-                  "nothing here"
-                )}
-              </MessagesInner>
-              <SidebarFooter>
-                <NewReplyForm
-                  onSubmit={createNewReply}
-                  conversationId={conversationId}
-                />
-              </SidebarFooter>
+              <SidebarFooterWrapper>
+                <SidebarFooterInner>
+                  <MessagesInner>
+                    <MessagesListWrapper>
+                      {messagesStatus === "loading" ? (
+                        <SpinnerWrapper>
+                          <Spinner width={25} height={25} />
+                        </SpinnerWrapper>
+                      ) : messagesStatus === "error" ? (
+                        "something happened"
+                      ) : messages.length > 0 ? (
+                        <MessagesList>
+                          {messages.map((message) => (
+                            <MessageItem>
+                              {message.author._id == user.id ? (
+                                <UserMessage
+                                  content={message.content}
+                                  timeStamp={message.createdAt}
+                                />
+                              ) : (
+                                <OtherMessage
+                                  content={message.content}
+                                  timeStamp={message.createdAt}
+                                />
+                              )}
+                            </MessageItem>
+                          ))}
+                        </MessagesList>
+                      ) : (
+                        "nothing here"
+                      )}
+                    </MessagesListWrapper>
+                  </MessagesInner>
+                  <SidebarFooter>
+                    <NewReplyForm
+                      onSubmit={createNewReply}
+                      conversationId={conversationId}
+                    />
+                  </SidebarFooter>
+                </SidebarFooterInner>
+              </SidebarFooterWrapper>
             </MessagesWrapper>
           </SidebarPositioner>
         </SidebarInner>
       </SidebarWrapper>
-
-      {/* {messageExists ? (
-          "Feed Here"
-        ) : (
-          <NewMessageWrapper>
-            <NewMessageTitle>You don’t have a message selected</NewMessageTitle>
-            <NewMessageDesc>
-              Choose one from your existing messages, or start a new one.
-            </NewMessageDesc>
-            <NewMessageBtn
-              onClick={(e) => {
-                openModal(e);
-              }}p
-            >
-              New Message
-            </NewMessageBtn>
-          </NewMessageWrapper>
-        )} */}
     </>
   );
 }
-
-// <MainTitle>
-// <GoBackBtn
-//   onClick={() => {
-//     history.goBack();
-//   }}
-// />
-// <TitleText>Tweet</TitleText>
-// </MainTitle>
-// {status === "loading" ? (
-// <SpinnerWrapper>
-//   <Spinner width={25} height={25} />
-// </SpinnerWrapper>
-// ) : status === "error" ? (
-// <p>{error.message}</p>
-// ) : tweets.length > 0 ? (
-// <>
-//   <TweetThread tweet={tweets[0]} />
-//   <TweetListUl>
-//     {tweets.slice(1).map((tweet) => (
-//       <li key={tweet._id}>
-//         <TweetRow key={tweet._id} tweet={tweet} />
-//       </li>
-//     ))}
-//   </TweetListUl>
-// </>
-// ) : (
-// <ErrorWrapper>
-//   <ExistText>Sorry, that page doesn’t exist!</ExistText>
-//   <p>
-//     Why not try a{" "}
-//     <Link style={{ color: `${Colors.primary}` }} to="/explore">
-//       search
-//     </Link>{" "}
-//     to find something else?
-//   </p>
-// </ErrorWrapper>
-// )}
 
 export { MessageThread };
