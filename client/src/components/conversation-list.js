@@ -297,7 +297,7 @@ export const ConversationList = ({ url, currentConvo }) => {
                       );
                     })}
                   </NameWrapper>
-                  <LatestMessage>Message here</LatestMessage>
+                  <LatestMessage>Message</LatestMessage>
                 </TweetContent>
               </TweetWrapper>
             </li>

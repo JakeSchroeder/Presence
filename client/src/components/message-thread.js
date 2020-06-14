@@ -26,12 +26,39 @@ const Body = styled.div`
   min-width: 375px;
   width: 100%;
   max-width: 600px;
+  overflow: hidden;
   border-left: 1px solid ${Colors.border};
   border-right: 1px solid ${Colors.border};
+  display: flex;
+  flex-direction: column;
+  position: relative;
 
   @media (max-width: 1021px) {
     display: none;
   }
+`;
+
+const BodyInner = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+const BodyPositioner = styled.div`
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
+const ConversationWrapper = styled.div`
+  max-width: 600px;
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  flex-direction: column;
 `;
 
 const SidebarWrapper = styled.div`
@@ -48,6 +75,21 @@ const SidebarWrapper = styled.div`
   }
 
   border-right: 1px solid ${Colors.border};
+`;
+
+const SidebarInner = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+const SidebarPositioner = styled.div`
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 `;
 
 const SearchWrapper = styled.div`
@@ -131,9 +173,20 @@ const SpinnerWrapper = styled.div`
 `;
 
 const MessagesWrapper = styled.div`
-  padding-top: 20px;
   /* height: 100%;
   max-height: 100%; */
+  padding-top: 20px;
+  max-width: 600px;
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  flex-direction: column;
+`;
+
+const MessagesInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 `;
 
 const MessagesList = styled.ul`
@@ -226,6 +279,8 @@ const SidebarFooter = styled.div`
   border-top: 1px solid ${Colors.border};
   height: 53px;
   padding: 10px;
+  /* position: sticky;
+  bottom: 0; */
 `;
 
 const MessageTweet = styled.div``;
@@ -386,10 +441,14 @@ function MessageThread({ url }) {
             {Icons.newMessage}
           </NewMessageIcon>
         </HomeTitleWrapper>
-        <SearchWrapper>
-          <Search placeHolderText="Search for people and groups" />
-        </SearchWrapper>
-        <ConversationList url={url} currentConvo={conversationId} />
+        <BodyInner>
+          <BodyPositioner>
+            <SearchWrapper>
+              <Search placeHolderText="Search for people and groups" />
+            </SearchWrapper>
+            <ConversationList url={url} currentConvo={conversationId} />
+          </BodyPositioner>
+        </BodyInner>
       </Body>
       <SidebarWrapper>
         <HomeTitleWrapper>
@@ -417,30 +476,33 @@ function MessageThread({ url }) {
             Leave
           </p>
         </HomeTitleWrapper>
-        <MessagesWrapper>
-          {messagesStatus === "loading" ? (
-            <SpinnerWrapper>
-              <Spinner width={25} height={25} />
-            </SpinnerWrapper>
-          ) : messagesStatus === "error" ? (
-            "something happened"
-          ) : messages.length > 0 ? (
-            <MessagesList>
-              {messages.map((message) => (
-                <MessageItem>
-                  {message.author._id == user.id ? (
-                    <UserMessage
-                      content={message.content}
-                      timeStamp={message.createdAt}
-                    />
-                  ) : (
-                    <OtherMessage
-                      content={message.content}
-                      timeStamp={message.createdAt}
-                    />
-                  )}
-                  {/* <MessageItem key={message._id}>{message.content}</MessageItem> */}
-                  {/* {message.tweetAttatchment ? (
+        <SidebarInner>
+          <SidebarPositioner>
+            <MessagesWrapper>
+              <MessagesInner>
+                {messagesStatus === "loading" ? (
+                  <SpinnerWrapper>
+                    <Spinner width={25} height={25} />
+                  </SpinnerWrapper>
+                ) : messagesStatus === "error" ? (
+                  "something happened"
+                ) : messages.length > 0 ? (
+                  <MessagesList>
+                    {messages.map((message) => (
+                      <MessageItem>
+                        {message.author._id == user.id ? (
+                          <UserMessage
+                            content={message.content}
+                            timeStamp={message.createdAt}
+                          />
+                        ) : (
+                          <OtherMessage
+                            content={message.content}
+                            timeStamp={message.createdAt}
+                          />
+                        )}
+                        {/* <MessageItem key={message._id}>{message.content}</MessageItem> */}
+                        {/* {message.tweetAttatchment ? (
                     <MessageTweet key={message._id}>
                       <Link
                         to={`/${message.tweetAttatchment.author.userName}/status/${message.tweetAttatchment._id}`}
@@ -449,19 +511,22 @@ function MessageThread({ url }) {
                       </Link>
                     </MessageTweet>
                   ) : null} */}
-                </MessageItem>
-              ))}
-            </MessagesList>
-          ) : (
-            "nothing here"
-          )}
-        </MessagesWrapper>
-        <SidebarFooter>
-          <NewReplyForm
-            onSubmit={createNewReply}
-            conversationId={conversationId}
-          />
-        </SidebarFooter>
+                      </MessageItem>
+                    ))}
+                  </MessagesList>
+                ) : (
+                  "nothing here"
+                )}
+              </MessagesInner>
+              <SidebarFooter>
+                <NewReplyForm
+                  onSubmit={createNewReply}
+                  conversationId={conversationId}
+                />
+              </SidebarFooter>
+            </MessagesWrapper>
+          </SidebarPositioner>
+        </SidebarInner>
       </SidebarWrapper>
 
       {/* {messageExists ? (

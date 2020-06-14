@@ -156,11 +156,14 @@ function CreateTweetForm({
   );
 }
 
-const NewTweet = ({ parent, isModal, closeModal }) => {
+const NewTweet = ({ parent, isModal, closeNewTweet }) => {
   // const { state } = useContext(AuthContext);
   const [shouldToast, setShouldToast] = useState(false);
   // const { isLoading, isError, error, run, reset } = useAsync();
-  const [createTweet, { status, data, error }] = useCreateTweet();
+  const [
+    createTweet,
+    { status: tweetStatus, data: tweetData, error: tweetError },
+  ] = useCreateTweet();
 
   // const [tweetValue, setTweetValue] = useState("");
   // const [tweetResponse, setTweetResponse] = useState(null);
@@ -179,6 +182,21 @@ const NewTweet = ({ parent, isModal, closeModal }) => {
     transform: translate(-50%,-15px);
     z-index: 1000;`,
   });
+
+  useEffect(() => {
+    if (tweetStatus === "success") {
+      closeNewTweet();
+      setShouldToast(true);
+
+      // if (showSuccessToast) {
+      //   console.log(messageData);
+      //   showSuccessToast(messageData.conversationId);
+      // } else {
+      //   history.push(`/messages/${messageData.conversationId}`);
+      // }
+      // closeModal();
+    }
+  }, [tweetStatus]);
 
   // function handleSubmit(e) {
   //   e.preventDefault();
@@ -205,16 +223,14 @@ const NewTweet = ({ parent, isModal, closeModal }) => {
 
   return (
     <>
-      {status === "success" ? (
+      {shouldToast ?? (
         <ToastModal>
           <Toast
             message="Your Tweet was sent"
-            link={`${data.author.userName}/status/${data._id}`}
+            link={`${tweetData.author.userName}/status/${tweetData._id}`}
           />
         </ToastModal>
-      ) : status === "error" ? (
-        <Toast error message="There was an error" />
-      ) : null}
+      )}
       <TweetWrapper>
         <CreateTweetForm onSubmit={createTweet} />
       </TweetWrapper>

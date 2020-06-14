@@ -233,23 +233,12 @@ const Header = () => {
   const { user, logout } = useAuth();
   console.log(user);
 
-  const [openModal, closeModal, isModalOpen, Modal] = useModal({
-    background: "rgba(0, 0, 0, 0.5)",
-    modalStyle: `
-      position: fixed;
-      left: 50%;
-      top: 5%;
-      transform: translate(-50%,-5%);
-      z-index: 1000;
-    `,
-  });
-
   return (
     <>
       {isNewTweetOpen && (
         <StyledDialogOverlay className="reply" onDismiss={closeNewTweet}>
           <StyledDialogContent>
-            <NewTweetModal closeModal={closeNewTweet} />
+            <NewTweetModal closeNewTweet={closeNewTweet} />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}

@@ -1,5 +1,6 @@
 import React, { forwardRef, useState, useEffect, createContext } from "react";
 import { useHistory } from "react-router-dom";
+import Moment from "react-moment";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import Icons from "../icons";
@@ -114,6 +115,7 @@ const DisplayName = styled.p`
 const UserName = styled.p`
   color: ${Colors.body};
   margin-left: 5px;
+  margin-right: 10px;
 `;
 
 const TweetDescription = styled.p`
@@ -295,6 +297,8 @@ const StyledDialogContent = styled(DialogContent)`
   }
 `;
 
+const TweetDate = styled.p``;
+
 // const TweetActionItem = forwardRef((props, ref) => (
 //   <StyledTweetActionItem
 //     className={props.className}
@@ -325,6 +329,7 @@ function TweetRow({ tweet }) {
 
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [toastLink, setToastLink] = useState();
+
   const showSuccessToast = (conversationId) => {
     setToastLink(conversationId);
     setIsToastOpen(true);
@@ -377,9 +382,12 @@ function TweetRow({ tweet }) {
               }}
             >
               <DisplayName>{author.displayName}</DisplayName>
-
               <UserName>@{author.userName}</UserName>
+              <TweetDate>
+                <Moment format="MMM D">{tweet.createdAt}</Moment>
+              </TweetDate>
             </StyledLink>
+
             {tweet.canDelete ? (
               <Menu>
                 <StyledMenuButton
@@ -577,6 +585,7 @@ function TweetRow({ tweet }) {
                   </TweetActionItem>
                 </StyledMenuButton>
                 <MenuPopover
+                  //exposing some reach ui under-the-hood stuff for custom positioning
                   position={(targetRect, popoverRect) => {
                     function getTopPosition(targetRect, popoverRect) {
                       const { directionUp } = getCollisions(

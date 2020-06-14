@@ -22,8 +22,35 @@ const Body = styled.div`
   min-width: 375px;
   width: 100%;
   max-width: 600px;
+  overflow: hidden;
   border-left: 1px solid ${Colors.border};
   border-right: 1px solid ${Colors.border};
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
+
+const BodyInner = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`;
+
+const BodyPositioner = styled.div`
+  overflow-y: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
+const ConversationWrapper = styled.div`
+  max-width: 600px;
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  flex-direction: column;
 `;
 
 const SidebarWrapper = styled.div`
@@ -69,6 +96,12 @@ const NewMessageIcon = styled.div`
 `;
 
 const HomeTitleWrapper = styled.div`
+  position: sticky;
+  top: 0;
+  z-index: 10;
+`;
+
+const HomeTitleInner = styled.div`
   height: 53px;
   padding: 0 15px;
   border-bottom: 1px solid ${Colors.border};
@@ -302,15 +335,23 @@ function Messages() {
 
           <Body>
             <HomeTitleWrapper>
-              <HomeTitle>Messages</HomeTitle>
-              <NewMessageIcon onClick={openNewMessage}>
-                {Icons.newMessage}
-              </NewMessageIcon>
+              <HomeTitleInner>
+                <HomeTitle>Messages</HomeTitle>
+                <NewMessageIcon onClick={openNewMessage}>
+                  {Icons.newMessage}
+                </NewMessageIcon>
+              </HomeTitleInner>
             </HomeTitleWrapper>
-            <SearchWrapper>
-              <Search placeHolderText="Search for people and groups" />
-            </SearchWrapper>
-            <ConversationList url={url} />
+            <BodyInner>
+              <BodyPositioner>
+                <ConversationWrapper>
+                  <SearchWrapper>
+                    <Search placeHolderText="Search for people and groups" />
+                  </SearchWrapper>
+                  <ConversationList url={url} />
+                </ConversationWrapper>
+              </BodyPositioner>
+            </BodyInner>
           </Body>
           <SidebarWrapper>
             <NewMessageWrapper>

@@ -112,16 +112,16 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const NewTweetModal = ({ closeModal }) => {
+const NewTweetModal = ({ closeNewTweet }) => {
   return (
     <NewTweetModalWrapper>
       <NewTweetModalHeader>
         <TitleWrapper>
-          <CloseBtn onClick={closeModal}>{Icons.close}</CloseBtn>
+          <CloseBtn onClick={closeNewTweet}>{Icons.close}</CloseBtn>
         </TitleWrapper>
       </NewTweetModalHeader>
       <NewTweetContent>
-        <NewTweet isModal closeModal={closeModal} />
+        <NewTweet isModal closeNewTweet={closeNewTweet} />
       </NewTweetContent>
       {/* <NewTweetFooter>
           <NewTweetComment type="text" placeholder="Add a comment" />

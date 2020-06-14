@@ -143,8 +143,8 @@ function CreateTweetReplyForm({
       </TweetInputWrapper>
       <MediaInputWrapper>
         <MediaInnerWrapper>
+          <input hidden type="file" />
           <MediaImg>{Icons.img}</MediaImg>
-          <MediaPolls>{Icons.polls}</MediaPolls>
         </MediaInnerWrapper>
         <GenericBtn type="submit" disabled={!value}>
           Tweet

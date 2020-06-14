@@ -32,17 +32,18 @@ import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 
 import { positionRight, getCollisions } from "@reach/popover";
+import Moment from "react-moment";
 
 const TweetWrapper = styled.div`
   position: relative;
   display: flex;
-
+  flex-direction: column;
   padding: 10px 15px 0 15px;
 
   border-bottom: 1px solid ${Colors.border};
 `;
 const TweetImgWrapper = styled.div`
-  margin: 0 5px;
+  margin-right: 10px;
   ${({ withReply }) =>
     withReply
       ? `
@@ -71,13 +72,15 @@ const TweetContent = styled.div`
 `;
 
 const NameWrapper = styled.div`
-  justify-content: space-between;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 const StyledLink = styled(Link)`
   display: flex;
+  flex-direction: column;
 `;
 
 const DisplayName = styled.p`
@@ -87,7 +90,6 @@ const DisplayName = styled.p`
 
 const UserName = styled.p`
   color: ${Colors.body};
-  margin-left: 5px;
 `;
 
 const TweetDescription = styled.p`
@@ -346,7 +348,7 @@ const LargeTweetAction = styled(TweetAction)`
 const NumLikes = styled.div`
   display: flex;
   border-top: 1px solid ${Colors.border};
-  padding: 10px 0;
+  padding: 15px 5px;
 `;
 
 const LikeCount = styled.span`
@@ -397,6 +399,22 @@ const StyledDialogContent = styled(DialogContent)`
   }
 `;
 
+const TweetDate = styled.div`
+  display: flex;
+  padding: 10px 0;
+`;
+
+const TweetHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const NameInner = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 function TweetThread({ tweet }) {
   const history = useHistory();
 
@@ -436,24 +454,26 @@ function TweetThread({ tweet }) {
         </StyledDialogOverlay>
       )}
       <TweetWrapper>
-        <TweetImgWrapper>
-          <TweetImg src={profile_src} />
-        </TweetImgWrapper>
-        <TweetContent>
+        <TweetHeader>
           <NameWrapper>
-            <StyledLink
-              to={{
-                pathname: `/${tweet.author.userName}`,
-                state: { userId: tweet.author._id },
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <DisplayName>{tweet.author.displayName}</DisplayName>
+            <NameInner>
+              <TweetImgWrapper>
+                <TweetImg src={profile_src} />
+              </TweetImgWrapper>
+              <StyledLink
+                to={{
+                  pathname: `/${tweet.author.userName}`,
+                  state: { userId: tweet.author._id },
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <DisplayName>{tweet.author.displayName}</DisplayName>
 
-              <UserName>@{tweet.author.userName}</UserName>
-            </StyledLink>
+                <UserName>@{tweet.author.userName}</UserName>
+              </StyledLink>
+            </NameInner>
             {tweet.canDelete ? (
               <Menu>
                 <StyledMenuButton>
@@ -540,7 +560,12 @@ function TweetThread({ tweet }) {
               </DeleteDropdown>
             )} */}
           </NameWrapper>
+        </TweetHeader>
+        <TweetContent>
           <LargeDesc>{tweet.content}</LargeDesc>
+          <TweetDate>
+            <Moment format="h:mm A MMMM D, YYYY">{tweet.createdAt}</Moment>
+          </TweetDate>
           <NumLikes>
             <LikeCount>{tweet.likesCount}</LikeCount> Likes
           </NumLikes>
