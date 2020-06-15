@@ -4,14 +4,14 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
-
+const dotenv = require("dotenv").config();
 const user = require("./routes/api/user");
 const tweets = require("./routes/api/tweets");
 const messages = require("./routes/api/messages");
 
 const app = express();
 
-console.log(process.env.SECRET);
+console.log(process.env.MONGO_URI);
 
 // Bodyparser middleware
 app.use(
@@ -22,7 +22,7 @@ app.use(
 app.use(bodyParser.json());
 
 // DB Config
-const db = require("./config/keys").mongoURI;
+const db = process.env.MONGO_URI;
 
 //Connect to MongoDB
 mongoose
