@@ -247,7 +247,10 @@ const SpinnerWrapper = styled.div`
   justify-content: center;
 `;
 
-const StyledConversationList = styled.ul``;
+const StyledConversationList = styled.ul`
+  display: flex;
+  flex-direction: column;
+`;
 
 //change name to something more page
 
@@ -274,7 +277,7 @@ export const ConversationList = ({ url, currentConvo }) => {
       ) : conversations.length > 0 ? (
         <StyledConversationList>
           {conversations.map((convo) => (
-            <li key={convo._id}>
+            <div key={convo._id}>
               <TweetWrapper
                 className={convo._id == currentConvo ? `selected` : ``}
                 onClick={() => {
@@ -300,7 +303,7 @@ export const ConversationList = ({ url, currentConvo }) => {
                   <LatestMessage>Message</LatestMessage>
                 </TweetContent>
               </TweetWrapper>
-            </li>
+            </div>
           ))}
         </StyledConversationList>
       ) : (

@@ -21,8 +21,7 @@ import "@reach/dialog/styles.css";
 import { ConversationList } from "../components/conversation-list";
 import SendMessage from "./messages/send-message";
 
-const Body = styled.div`
-  height: 100%;
+const Body = styled.section`
   min-width: 375px;
   width: 100%;
   max-width: 600px;
@@ -32,16 +31,30 @@ const Body = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  margin: 0 auto;
 
   @media (max-width: 1021px) {
     display: none;
   }
 `;
 
+const BodyWrapper = styled.div`
+  display: flex;
+  align-self: stretch;
+  flex-direction: column;
+  position: relative;
+  flex-basis: 0%;
+  flex-grow: 1;
+  flex-shrink: 1;
+`;
+
 const BodyInner = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
   position: relative;
   width: 100%;
-  height: 100%;
 `;
 
 const BodyPositioner = styled.div`
@@ -51,6 +64,8 @@ const BodyPositioner = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ConversationWrapper = styled.div`
@@ -59,12 +74,13 @@ const ConversationWrapper = styled.div`
   flex-grow: 1;
   width: 100%;
   flex-direction: column;
+  margin: 0 auto;
+  overflow: hidden;
 `;
 
-const SidebarWrapper = styled.div`
+const SidebarWrapper = styled.section`
   max-width: 600px;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -79,8 +95,12 @@ const SidebarWrapper = styled.div`
 
 const SidebarInner = styled.div`
   position: relative;
-  width: 100%;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  flex-basis: 0%;
+  flex-grow: 1;
+  flex-shrink: 1;
 `;
 
 const SidebarPositioner = styled.div`
@@ -90,6 +110,12 @@ const SidebarPositioner = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  flex-basis: 0%;
+  flex-grow: 1;
+  flex-shrink: 1;
 `;
 
 const SearchWrapper = styled.div`
@@ -166,10 +192,11 @@ const StyledDialogContent = styled(DialogContent)`
 `;
 
 const SpinnerWrapper = styled.div`
-  padding-top: 25px;
+  height: 100%;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 
 const MessagesWrapper = styled.div`
@@ -199,10 +226,7 @@ const SidebarFooterInner = styled.div`
 const MessagesInner = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   flex-grow: 1;
-  max-height: 100%;
-  height: 100%;
 `;
 
 const MessagesListWrapper = styled.div`
@@ -211,8 +235,9 @@ const MessagesListWrapper = styled.div`
   max-height: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   flex-grow: 1;
-  transform: translate3d(0px, 0px, 0px);
 `;
 
 const MessagesList = styled.div`
@@ -469,14 +494,18 @@ function MessageThread({ url }) {
             {Icons.newMessage}
           </NewMessageIcon>
         </HomeTitleWrapper>
-        <BodyInner>
+        <BodyWrapper>
           <BodyPositioner>
-            <SearchWrapper>
-              <Search placeHolderText="Search for people and groups" />
-            </SearchWrapper>
-            <ConversationList url={url} currentConvo={conversationId} />
+            <BodyInner>
+              <MessagesWrapper>
+                <SearchWrapper>
+                  <Search placeHolderText="Search for people and groups" />
+                </SearchWrapper>
+                <ConversationList url={url} currentConvo={conversationId} />
+              </MessagesWrapper>
+            </BodyInner>
           </BodyPositioner>
-        </BodyInner>
+        </BodyWrapper>
       </Body>
       <SidebarWrapper>
         <HomeTitleWrapper>
@@ -518,39 +547,43 @@ function MessageThread({ url }) {
                       ) : messagesStatus === "error" ? (
                         "something happened"
                       ) : messages.length > 0 ? (
-                        <MessagesList>
-                          {messages.map((message) => (
-                            <MessageItem>
-                              {message.author._id == user.id ? (
-                                <UserMessage
-                                  content={message.content}
-                                  timeStamp={message.createdAt}
-                                />
-                              ) : (
-                                <OtherMessage
-                                  content={message.content}
-                                  timeStamp={message.createdAt}
-                                />
-                              )}
-                            </MessageItem>
-                          ))}
-                        </MessagesList>
+                        <div>
+                          <div>
+                            <MessagesList>
+                              {messages.map((message) => (
+                                <MessageItem>
+                                  {message.author._id == user.id ? (
+                                    <UserMessage
+                                      content={message.content}
+                                      timeStamp={message.createdAt}
+                                    />
+                                  ) : (
+                                    <OtherMessage
+                                      content={message.content}
+                                      timeStamp={message.createdAt}
+                                    />
+                                  )}
+                                </MessageItem>
+                              ))}
+                            </MessagesList>
+                          </div>
+                        </div>
                       ) : (
                         "nothing here"
                       )}
                     </MessagesListWrapper>
                   </MessagesInner>
-                  <SidebarFooter>
-                    <NewReplyForm
-                      onSubmit={createNewReply}
-                      conversationId={conversationId}
-                    />
-                  </SidebarFooter>
                 </SidebarFooterInner>
               </SidebarFooterWrapper>
             </MessagesWrapper>
           </SidebarPositioner>
         </SidebarInner>
+        <SidebarFooter>
+          <NewReplyForm
+            onSubmit={createNewReply}
+            conversationId={conversationId}
+          />
+        </SidebarFooter>
       </SidebarWrapper>
     </>
   );
