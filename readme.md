@@ -9,7 +9,7 @@ www.divergentdesignlab.org
 Create a web application that enables social media strategists to simulate and test the influence of social engineering tactics. Based on Twitter, the application enables participants and administrators to work within a familiar social media environment. 
 
 ## Development Approach
-To ensure full, autonomous control, use and manipulation of the simulated social media environment, the project required development of an end-to-end clone of Twitter's core functionality. The application was independently developed, separate from Twitter including no use of their API's or other functionality. The application is a standalone full-stack social media platform build on the MERN (MongoDB, Express, React, Node) stack.
+To ensure full, autonomous control, use and manipulation of the simulated social media environment, the project required development of an end-to-end clone of Twitter's core functionality. **The application was independently developed, separate from Twitter including no use of their API's or other functionality.** The application is a standalone full-stack social media platform build on the MERN (MongoDB, Express, React, Node) stack.
 
 ## Technical Highlights
 
