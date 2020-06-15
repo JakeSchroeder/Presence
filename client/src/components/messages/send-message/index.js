@@ -413,7 +413,10 @@ function SendMessage({ closeModal, tweet, showSuccessToast }) {
     if (messageStatus === "success") {
       if (showSuccessToast) {
         console.log(messageData);
-        showSuccessToast(messageData.conversationId);
+        showSuccessToast(
+          "Your Message was sent",
+          `/messages/${messageData.conversationId}`
+        );
       } else {
         history.push(`/messages/${messageData.conversationId}`);
       }

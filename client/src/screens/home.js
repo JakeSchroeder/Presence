@@ -1,7 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styled from "styled-components";
 import TrendsForYou from "../components/trends-for-you";
 import WhoToFollow from "../components/who-to-follow";
+import Toast from "../components/toast";
 import { Colors } from "../styles/colors";
 import {
   // Wrapper,
@@ -44,14 +45,28 @@ function Home() {
   const { user } = useAuth();
   const { tweets, error, status, isFetching } = useTweetsByUser(`${user.id}`);
 
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastLink, setToastLink] = useState();
+
+  const showSuccessToast = (tweetLink) => {
+    setToastLink(tweetLink);
+    setIsToastOpen(true);
+    setInterval(() => {
+      setIsToastOpen(false);
+    }, 3000);
+  };
+
   return (
     // <Wrapper>
     <>
+      {isToastOpen ? (
+        <Toast message="Your Tweet was sent" link={toastLink} />
+      ) : null}
       <Main>
         <MainTitle>
           <TitleText>Home</TitleText>
         </MainTitle>
-        <NewTweet />
+        <NewTweet showSuccessToast={showSuccessToast} />
         <Seperator />
         {status === "loading" ? (
           <SpinnerWrapper>

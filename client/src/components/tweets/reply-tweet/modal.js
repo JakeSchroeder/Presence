@@ -174,12 +174,13 @@ const TweetDescription = styled.p`
   color: ${Colors.title};
 `;
 
-const NewTweetReplyModal = ({ closeModal, tweet }) => {
+const NewTweetReplyModal = ({ closeNewReply, tweet, showSuccessToast }) => {
+  // console.log(showSuccessToast);
   return (
     <NewTweetModalWrapper>
       <NewTweetModalHeader>
         <TitleWrapper>
-          <CloseBtn onClick={closeModal}>{Icons.close}</CloseBtn>
+          <CloseBtn onClick={closeNewReply}>{Icons.close}</CloseBtn>
         </TitleWrapper>
       </NewTweetModalHeader>
       <NewTweetContent>
@@ -196,7 +197,11 @@ const NewTweetReplyModal = ({ closeModal, tweet }) => {
             <TweetDescription>{tweet.content}</TweetDescription>
           </TweetContent>
         </TweetWrapper>
-        <NewTweetReply tweet={tweet} />
+        <NewTweetReply
+          showSuccessToast={showSuccessToast}
+          closeNewReply={closeNewReply}
+          tweet={tweet}
+        />
       </NewTweetContent>
       {/* <NewTweetFooter>
           <NewTweetComment type="text" placeholder="Add a comment" />

@@ -112,7 +112,7 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
-const NewTweetModal = ({ closeNewTweet }) => {
+const NewTweetModal = ({ closeNewTweet, showSuccessToast }) => {
   return (
     <NewTweetModalWrapper>
       <NewTweetModalHeader>
@@ -121,7 +121,11 @@ const NewTweetModal = ({ closeNewTweet }) => {
         </TitleWrapper>
       </NewTweetModalHeader>
       <NewTweetContent>
-        <NewTweet isModal closeNewTweet={closeNewTweet} />
+        <NewTweet
+          isModal
+          showSuccessToast={showSuccessToast}
+          closeNewTweet={closeNewTweet}
+        />
       </NewTweetContent>
       {/* <NewTweetFooter>
           <NewTweetComment type="text" placeholder="Add a comment" />

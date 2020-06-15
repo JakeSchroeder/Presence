@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
+import Toast from "../../toast";
 import Icons from "../../icons";
 import { Colors } from "../../../styles/colors";
 import { TweetBtn } from "../../lib";
@@ -230,15 +231,35 @@ const Header = () => {
   const openNewTweet = () => setNewTweetOpen(true);
   const closeNewTweet = () => setNewTweetOpen(false);
 
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastLink, setToastLink] = useState();
+
+  const showSuccessToast = (tweetLink) => {
+    console.log(tweetLink);
+    setToastLink(tweetLink);
+    setIsToastOpen(true);
+    setInterval(() => {
+      setIsToastOpen(false);
+    }, 3000);
+    console.log(isToastOpen);
+  };
+
   const { user, logout } = useAuth();
   console.log(user);
 
   return (
     <>
+      {isToastOpen ? (
+        <Toast message="Your Tweet was sent" link={toastLink} />
+      ) : null}
+
       {isNewTweetOpen && (
         <StyledDialogOverlay className="reply" onDismiss={closeNewTweet}>
           <StyledDialogContent>
-            <NewTweetModal closeNewTweet={closeNewTweet} />
+            <NewTweetModal
+              showSuccessToast={showSuccessToast}
+              closeNewTweet={closeNewTweet}
+            />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}

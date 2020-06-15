@@ -13,9 +13,7 @@ import {
 } from "../utils/messages";
 import profile_src from "../images/profile.png";
 import { useParams, useHistory, Link } from "react-router-dom";
-
 import NewMessage from "../components/messages/new-message";
-
 import { Dialog, DialogOverlay, DialogContent } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 import { ConversationList } from "../components/conversation-list";
@@ -518,8 +516,7 @@ function MessageThread({ url }) {
               />
             </StyledGoBackBtn>
             <HomeTitleInner>
-              <HomeTitleDisplayName>Jake Schroeder</HomeTitleDisplayName>
-              <HomeTitleUserName>@dwd</HomeTitleUserName>
+              <HomeTitleDisplayName>{user.displayName}</HomeTitleDisplayName>
             </HomeTitleInner>
           </ButtonWrapper>
           {/* add leave convo button */}

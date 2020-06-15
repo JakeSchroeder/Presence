@@ -107,19 +107,18 @@ const MediaPolls = styled.div`
 // `;
 
 function CreateTweetForm({
+  loggedInUserId,
   isModal,
   closeModal,
   onSubmit,
   placeholder = "What's happening?",
 }) {
   const [value, setValue] = useState("");
-  const { user } = useAuth();
-  const { id } = user;
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const tweetData = {
-      author: id,
+      author: loggedInUserId,
       content: value,
     };
 
@@ -156,10 +155,12 @@ function CreateTweetForm({
   );
 }
 
-const NewTweet = ({ parent, isModal, closeNewTweet }) => {
+const NewTweet = ({ parent, isModal, closeNewTweet, showSuccessToast }) => {
   // const { state } = useContext(AuthContext);
-  const [shouldToast, setShouldToast] = useState(false);
   // const { isLoading, isError, error, run, reset } = useAsync();
+  const { user } = useAuth();
+  const loggedInUserId = user.id;
+  const loggedInUserName = user.userName;
   const [
     createTweet,
     { status: tweetStatus, data: tweetData, error: tweetError },
@@ -167,26 +168,13 @@ const NewTweet = ({ parent, isModal, closeNewTweet }) => {
 
   // const [tweetValue, setTweetValue] = useState("");
   // const [tweetResponse, setTweetResponse] = useState(null);
-
-  const [
-    openToastModal,
-    closeToastModal,
-    isToastModalOpen,
-    ToastModal,
-  ] = useModal({
-    background: "rgba(0, 0, 0, 0.5)",
-    modalStyle: `
-    position: fixed;
-    left: 50%;
-    bottom: 15px;
-    transform: translate(-50%,-15px);
-    z-index: 1000;`,
-  });
-
   useEffect(() => {
     if (tweetStatus === "success") {
-      closeNewTweet();
-      setShouldToast(true);
+      if (closeNewTweet) {
+        closeNewTweet();
+      }
+      console.log(tweetData);
+      showSuccessToast(`/${loggedInUserName}/status/${tweetData._id}`);
 
       // if (showSuccessToast) {
       //   console.log(messageData);
@@ -223,16 +211,11 @@ const NewTweet = ({ parent, isModal, closeNewTweet }) => {
 
   return (
     <>
-      {shouldToast ?? (
-        <ToastModal>
-          <Toast
-            message="Your Tweet was sent"
-            link={`${tweetData.author.userName}/status/${tweetData._id}`}
-          />
-        </ToastModal>
-      )}
       <TweetWrapper>
-        <CreateTweetForm onSubmit={createTweet} />
+        <CreateTweetForm
+          loggedInUserId={loggedInUserId}
+          onSubmit={createTweet}
+        />
       </TweetWrapper>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 // import { AuthContext } from "../../../App";
 import { Colors } from "../../../styles/colors";
 import { GenericBtn } from "../../../components/lib";
@@ -107,19 +107,18 @@ const MediaPolls = styled.div`
 // `;
 
 function CreateTweetReplyForm({
+  loggedInUserId,
   tweet,
   onSubmit,
   placeholder = "Add another quack",
 }) {
   const [value, setValue] = useState("");
-  const { user } = useAuth();
-  const { id } = user;
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
     const tweetData = {
-      author: id,
+      author: loggedInUserId,
       content: value,
       parent: tweet._id,
     };
@@ -154,35 +153,46 @@ function CreateTweetReplyForm({
   );
 }
 
-const NewTweetReply = ({ tweet }) => {
-  // const { state } = useContext(AuthContext);
+const NewTweetReply = ({ tweet, closeNewReply, showSuccessToast }) => {
+  // const { state } = useContext(AuthContext)
+  const { user } = useAuth();
+  const loggedInUserName = user.userName;
+  const loggedInUserId = user.id;
+  const [
+    createReply,
+    { status: replyStatus, error: replyError, data: replyData },
+  ] = useCreateReply();
 
-  const { openModal, closeModal, isModalOpen, Modal } = useModal({
-    background: "rgba(0, 0, 0, 0.5)",
-    modalStyle: `
-    position: fixed;
-    left: 50%;
-    bottom: 15px;
-    transform: translate(-50%,-15px);
-    z-index: 1000;`,
-  });
+  useEffect(() => {
+    if (replyStatus === "success") {
+      if (closeNewReply) {
+        closeNewReply();
+      }
 
-  const [createReply, { status, error, data }] = useCreateReply();
+      console.log(loggedInUserName);
+      showSuccessToast(
+        "Your Tweet was sent",
+        `/${loggedInUserName}/status/${replyData._id}`
+      );
+
+      // if (showSuccessToast) {
+      //   console.log(messageData);
+      //   showSuccessToast(messageData.conversationId);
+      // } else {
+      //   history.push(`/messages/${messageData.conversationId}`);
+      // }
+      // closeModal();
+    }
+  }, [replyStatus]);
 
   return (
-    <>
-      {status === "success" ? (
-        <Modal>
-          <Toast
-            message="Your Tweet was sent"
-            link={`${data.author.userName}/status/${data._id}`}
-          />
-        </Modal>
-      ) : null}
-      <TweetWrapper>
-        <CreateTweetReplyForm tweet={tweet} onSubmit={createReply} />
-      </TweetWrapper>
-    </>
+    <TweetWrapper>
+      <CreateTweetReplyForm
+        loggedInUserId={loggedInUserId}
+        tweet={tweet}
+        onSubmit={createReply}
+      />
+    </TweetWrapper>
   );
 };
 

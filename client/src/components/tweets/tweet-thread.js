@@ -3,6 +3,7 @@ import { Link, withRouter, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Colors } from "../../styles/colors";
 import profile_src from "../../images/profile.png";
+import Toast from "../toast";
 import Search from "../search";
 import Icons from "../icons";
 import useModal from "../../hooks/useModal";
@@ -418,7 +419,10 @@ const NameInner = styled.div`
 function TweetThread({ tweet }) {
   const history = useHistory();
 
-  const [removeTweet, { status, error, data }] = useRemoveTweet();
+  const [
+    removeTweet,
+    { status: deleteStatus, error: deleteError, data: deleteData },
+  ] = useRemoveTweet();
   const [likeTweet] = useTweetLike();
   const [unlikeTweet] = useTweetUnLike();
 
@@ -430,26 +434,50 @@ function TweetThread({ tweet }) {
   const openNewReply = () => setNewReplyOpen(true);
   const closeNewReply = () => setNewReplyOpen(false);
 
+  const [isToastOpen, setIsToastOpen] = useState(false);
+  const [toastLink, setToastLink] = useState();
+  const [toastMsg, setToastMsg] = useState();
+
+  const showSuccessToast = (responseMsg, responseLink) => {
+    setToastLink(responseLink);
+    setToastMsg(responseMsg);
+    setIsToastOpen(true);
+    setInterval(() => {
+      setIsToastOpen(false);
+    }, 3000);
+  };
+
+  // useEffect(() => {
+  //   if()
+  //   }, [])
+
   useEffect(() => {
-    console.log(status);
-    if (status === "success") {
+    if (deleteStatus === "success") {
       history.goBack();
     }
-  }, [status]);
+  }, [deleteStatus]);
 
   return (
     <>
+      {isToastOpen && <Toast message={toastMsg} link={toastLink} />}
       {isNewMessageOpen && (
         <StyledDialogOverlay onDismiss={closeNewMessage}>
           <StyledDialogContent>
-            <SendMessage closeModal={closeNewMessage} />
+            <SendMessage
+              showSuccessToast={showSuccessToast}
+              closeModal={closeNewMessage}
+            />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}
       {isNewReplyOpen && (
         <StyledDialogOverlay className="reply" onDismiss={closeNewReply}>
           <StyledDialogContent>
-            <NewTweetReplyModal tweet={tweet} closeModal={closeNewReply} />
+            <NewTweetReplyModal
+              showSuccessToast={showSuccessToast}
+              tweet={tweet}
+              closeNewReply={closeNewReply}
+            />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}

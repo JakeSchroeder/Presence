@@ -329,20 +329,20 @@ function TweetRow({ tweet }) {
 
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [toastLink, setToastLink] = useState();
+  const [toastMsg, setToastMsg] = useState();
 
-  const showSuccessToast = (conversationId) => {
-    setToastLink(conversationId);
+  const showSuccessToast = (responseMsg, responseLink) => {
+    setToastLink(responseLink);
+    setToastMsg(responseMsg);
     setIsToastOpen(true);
+    setInterval(() => {
+      setIsToastOpen(false);
+    }, 3000);
   };
 
   return (
     <>
-      {isToastOpen && (
-        <Toast
-          message="Your message was sent"
-          link={`/messages/${toastLink}`}
-        />
-      )}
+      {isToastOpen && <Toast message={toastMsg} link={toastLink} />}
       {isNewMessageOpen && (
         <StyledDialogOverlay onDismiss={closeNewMessage}>
           <StyledDialogContent>
@@ -357,7 +357,11 @@ function TweetRow({ tweet }) {
       {isNewReplyOpen && (
         <StyledDialogOverlay className="reply" onDismiss={closeNewReply}>
           <StyledDialogContent>
-            <NewTweetReplyModal tweet={tweet} closeModal={closeNewReply} />
+            <NewTweetReplyModal
+              showSuccessToast={showSuccessToast}
+              tweet={tweet}
+              closeNewReply={closeNewReply}
+            />
           </StyledDialogContent>
         </StyledDialogOverlay>
       )}
