@@ -177,41 +177,40 @@ const WhoToFollow = () => {
       <FollowBody>
         <Accordion>
           <AccordionItem>
-            <GroupedAccordionHeader>
-              1. No Explicit Content
-            </GroupedAccordionHeader>
+            <GroupedAccordionHeader>1. Keep it legal</GroupedAccordionHeader>
             <StyledAccordionPanel>
               <AccordionList>
-                <AccordionListItem>No.</AccordionListItem>
                 <AccordionListItem>
-                  You will create a unique Presence account that is unrelated to
-                  Twitter for this class. You will receive information on how to
-                  log in and access your Presence account within the first two
-                  weeks of class.
+                  Discussion around the legality of issues is ok, encouraging or
+                  aiding illegal activities is not.
                 </AccordionListItem>
               </AccordionList>
             </StyledAccordionPanel>
           </AccordionItem>
           <AccordionItem>
             <GroupedAccordionHeader>
-              2. No External Linking
+              2. Sharing of personal data is forbidden
             </GroupedAccordionHeader>
             <StyledAccordionPanel>
-              Ante rhoncus facilisis iaculis nostra faucibus vehicula ac
-              consectetur pretium, lacus nunc consequat id viverra facilisi
-              ligula eleifend, congue gravida malesuada proin scelerisque luctus
-              est convallis.
+              Sharing of personal data is forbidden - no doxxing or IP dumping
+            </StyledAccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <GroupedAccordionHeader>3. No spam</GroupedAccordionHeader>
+            <StyledAccordionPanel>
+              Spam is strictly forbidden and will result in a ban. Professional
+              promotion e.g. from fake companies is allowed within the confines
+              of site-wide rules on self promotion, but will otherwise be
+              considered spam.
             </StyledAccordionPanel>
           </AccordionItem>
           <AccordionItem>
             <GroupedAccordionHeader>
-              3. No Rehosted Content
+              3. No reposting content
             </GroupedAccordionHeader>
             <StyledAccordionPanel>
-              Ante rhoncus facilisis iaculis nostra faucibus vehicula ac
-              consectetur pretium, lacus nunc consequat id viverra facilisi
-              ligula eleifend, congue gravida malesuada proin scelerisque luctus
-              est convallis.
+              Sharing content on this site with all other 3rd party social media
+              sites and or data dumping is forbidden.
             </StyledAccordionPanel>
           </AccordionItem>
         </Accordion>
